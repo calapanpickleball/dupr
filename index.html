@@ -79,6 +79,19 @@
   .badge.resting{background:var(--muted);}
   .badge.queued{background:var(--orange);}
   .badge.hold{background:var(--muted);}
+  .badge.playing{background:#1f7fb8;}
+  tr.draggable-row{cursor:grab;}
+  tr.draggable-row.dragging{opacity:.45;}
+  .bucket-card.drop-target{outline:3px dashed var(--gold);outline-offset:-5px;}
+  .pending-list{display:flex;flex-direction:column;gap:6px;max-height:170px;overflow-y:auto;}
+  .pending-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface-2);
+    border:1px solid var(--blue);border-radius:9px;padding:7px 10px;font-size:13.5px;}
+  .pending-item button{background:none;border:none;color:var(--red);cursor:pointer;font-weight:700;font-size:14px;}
+  .lb-table td,.lb-table th{padding:8px 8px;}
+  .lb-table td.num,.lb-table th.num{text-align:center;font-variant-numeric:tabular-nums;}
+  .lb-table td.rank{font-family:'Baloo 2';font-weight:800;color:var(--muted);text-align:center;width:34px;}
+  .lb-pos{color:#2e9e5b;font-weight:700;} .lb-neg{color:var(--red);font-weight:700;}
+  .lb-name{font-weight:700;}
 
   .btn{border:none;border-radius:9px;padding:9px 16px;font-family:'Inter',sans-serif;font-weight:600;
     font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
@@ -223,6 +236,7 @@
   <button data-tab="participants" class="active">1 · Participants</button>
   <button data-tab="matchups">2 · Match Suggestions</button>
   <button data-tab="queue">3 · Queue &amp; Courts</button>
+  <button data-tab="leaderboard">4 · Leaderboard</button>
   <button data-tab="logs">Logs</button>
 </nav>
 
@@ -235,6 +249,17 @@
     <div class="courts-grid" id="courtsGrid"></div>
     <div class="section-title">Waiting queue</div>
     <div class="queue-list" id="queueList"></div>
+  </section>
+
+  <section class="panel" id="panel-leaderboard">
+    <div class="bucket-card" style="margin-bottom:18px;">
+      <div class="logs-toolbar">
+        <div class="field" style="margin:0;min-width:240px;"><label>Session</label>
+          <select id="lbSessionFilter"><option value="">Current session</option></select></div>
+        <div style="font-size:12.5px;color:var(--muted);">Ranked by Wins → Total Points → Point Differential</div>
+      </div>
+    </div>
+    <div class="bucket-grid" id="lbGrid"></div>
   </section>
 
   <section class="panel" id="panel-logs">
@@ -270,15 +295,16 @@
       <button type="button" id="srcGuestBtn">Guest</button>
     </div>
     <div id="memberSourceBlock">
-      <div class="field"><label>Search member (name or DUPR ID)</label>
+      <div class="field"><label>Search member (name or DUPR ID) — click to add, you can pick several</label>
         <div class="combo-wrap"><input type="text" id="memberSearch" placeholder="Start typing…"><div class="combo-results" id="memberResults"></div></div></div>
-      <div id="memberSelectedWrap" style="display:none;" class="field"><label>Selected</label>
-        <div class="selected-chip"><span id="memberSelectedText"></span><button type="button" id="memberClearBtn">✕</button></div></div>
     </div>
     <div id="guestSourceBlock" style="display:none;">
       <div class="field"><label>Guest name</label><input type="text" id="guestName" placeholder="Guest full name"></div>
+      <div class="field"><label>DUPR ID <span style="text-transform:none;font-weight:500;">(optional)</span></label><input type="text" id="guestDuprId" placeholder="e.g. ABC1234"></div>
       <div class="field"><label>Current DUPR</label><input type="text" id="guestDupr" placeholder="e.g. 3.250 or NR"><div class="error-text" id="errGuestDupr"></div></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="btnGuestToList" style="margin-bottom:12px;">+ Add guest to list</button>
     </div>
+    <div id="pendingWrap" class="field" style="display:none;"><label id="pendingLabel">To be added</label><div class="pending-list" id="pendingList"></div></div>
     <div class="error-text" id="errAdd"></div>
     <div class="modal-actions"><button class="btn btn-ghost" id="btnAddCancel">Cancel</button><button class="btn btn-primary" id="btnAddConfirm">Add to bucket</button></div>
   </div>
@@ -469,11 +495,13 @@ db.collection('ccpc-queue-matches').onSnapshot(snap => {
   queueMatches = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderCourts();
   renderQueueList();
+  renderParticipants();
 }, err => showToast('Queue sync error: ' + err.message, true));
 
 db.collection('ccpc-queue-logs').orderBy('completedAt','desc').limit(2000).onSnapshot(snap => {
   logs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderLogs();
+  renderLeaderboard();
 }, err => showToast('Logs sync error: ' + err.message, true));
 
 db.collection('ccpc-queue-stats').onSnapshot(snap => { statsCache = {}; snap.docs.forEach(d => { statsCache[d.id] = d.data(); }); });
@@ -481,7 +509,7 @@ db.collection('ccpc-queue-stats').onSnapshot(snap => { statsCache = {}; snap.doc
 db.collection('ccpc-queue-sessions').orderBy('createdAt','desc').onSnapshot(snap => {
   sessionsList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderSessionFilterOptions();
-});
+}, err => showToast('Sessions sync error: ' + err.message, true));
 
 db.collection('ccpc-queue-session').doc('state').onSnapshot(doc => {
   sessionState = doc.exists ? doc.data() : {};
@@ -501,6 +529,7 @@ async function ensureDefaultSession(){
   } catch(err){ /* best effort */ }
 }
 function updateSessionLabel(){
+  if (typeof renderLeaderboard === 'function') renderLeaderboard();
   if (typeof updateExportTargetLabel === 'function') updateExportTargetLabel();
   const el = document.getElementById('sessionLabel');
   el.textContent = sessionState.currentSessionName
@@ -508,39 +537,56 @@ function updateSessionLabel(){
     : 'DUPR Queuing · Starting session…';
 }
 
-/* ================= Elapsed-time tracking ================= */
+/* ================= Status + elapsed-time tracking (per session) ================= */
+const STATUS_LABELS = { active:'Available', queued:'On queue', playing:'Playing', resting:'Resting' };
+function playingIds(){
+  const ids = new Set();
+  queueMatches.forEach(m => { if (m.status === 'playing') [...m.team1, ...m.team2].forEach(e => ids.add(e.participantId)); });
+  return ids;
+}
+function statusKey(p, pIds){
+  if (p.status === 'resting') return 'resting';
+  if (p.status === 'queued') return (pIds || playingIds()).has(p.id) ? 'playing' : 'queued';
+  return 'active';
+}
+function timeCategory(p){ const k = statusKey(p); return k === 'resting' ? 'resting' : (k === 'playing' ? 'playing' : 'waiting'); }
+function statDocId(refKey, sessionId){ return `${sessionId || sessionState.currentSessionId || 'none'}__${refKey}`; }
 async function flushElapsed(p){
   if (!p || !p.statusSince) return;
   const elapsed = Math.max(0, Math.round((Date.now() - p.statusSince) / 1000));
   if (elapsed <= 0) return;
-  const field = p.status === 'active' ? 'totalWaitingSeconds' : (p.status === 'resting' ? 'totalRestingSeconds' : null);
-  if (!field) return;
-  try { await db.collection('ccpc-queue-stats').doc(refKeyFor(p)).set({ name: p.name, [field]: firebase.firestore.FieldValue.increment(elapsed) }, { merge:true }); }
+  const field = { waiting:'totalWaitingSeconds', playing:'totalPlayingSeconds', resting:'totalRestingSeconds' }[timeCategory(p)];
+  try { await db.collection('ccpc-queue-stats').doc(statDocId(refKeyFor(p))).set({ name: p.name, sessionId: sessionState.currentSessionId || null, [field]: firebase.firestore.FieldValue.increment(elapsed) }, { merge:true }); }
   catch(err){ /* best effort */ }
 }
+function participantOf(entry){ return participants.find(x => x.id === (entry.participantId || entry.id)); }
 
 /* ================= PARTICIPANTS ================= */
 function bucketLabel(key){ return BUCKETS.find(b=>b.key===key).label; }
 
 function renderParticipants(){
   const wrap = document.getElementById('bucketCards-participants');
+  const pIds = playingIds();
   wrap.innerHTML = BUCKETS.map(b => {
     const list = participants.filter(p => p.bucket === b.key).sort((x,y) => x.name.localeCompare(y.name));
-    const rows = list.length ? list.map(p => `
-      <tr>
+    const rows = list.length ? list.map(p => {
+      const sk = statusKey(p, pIds);
+      const movable = p.status !== 'queued';
+      return `
+      <tr class="${movable ? 'draggable-row' : ''}" ${movable ? 'draggable="true"' : ''} data-pid="${p.id}">
         <td class="stat-hover" data-refkey="${refKeyFor(p)}" data-pid="${p.id}">
           <b>${escapeHtml(p.name)}</b>${p.sourceType==='guest' ? ' <span style="color:var(--muted);font-size:11px;">(guest)</span>' : ''}
         </td>
         <td>${p.duprId ? escapeHtml(p.duprId) : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${p.duprRaw || fmtNum(p.dupr)}</td>
-        <td><span class="badge ${p.status}">${p.status==='queued'?'In match':(p.status==='resting'?'Resting':'Active')}</span></td>
+        <td><span class="badge ${sk}">${STATUS_LABELS[sk]}</span></td>
         <td><div class="row-actions">
-          <button class="btn-icon warn" title="${p.status==='resting'?'Set active':'Set resting'}" ${p.status==='queued'?'disabled':''} onclick="toggleRest('${p.id}','${p.status}')">${p.status==='resting'?'▶':'⏸'}</button>
+          <button class="btn-icon warn" title="${p.status==='resting'?'Set available':'Set resting'}" ${p.status==='queued'?'disabled':''} onclick="toggleRest('${p.id}','${p.status}')">${p.status==='resting'?'▶':'⏸'}</button>
           <button class="btn-icon danger" title="Remove" ${p.status==='queued'?'disabled':''} onclick="removeParticipant('${p.id}')">🗑</button>
         </div></td>
-      </tr>`).join('') : `<tr class="empty-row"><td colspan="5">No one in this bucket yet.</td></tr>`;
+      </tr>`; }).join('') : `<tr class="empty-row"><td colspan="5">No one in this bucket yet. Drag a player here to move them.</td></tr>`;
     return `
-    <div class="bucket-card">
+    <div class="bucket-card" data-bucket="${b.key}">
       <div class="bucket-head">
         <h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3>
         <div style="display:flex;align-items:center;gap:12px;"><span class="count">${list.length} player${list.length===1?'':'s'}</span>
@@ -549,6 +595,46 @@ function renderParticipants(){
       <table><thead><tr><th>Name</th><th>DUPR ID</th><th>DUPR</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>
     </div>`;
   }).join('');
+}
+
+/* ---- drag a participant to another bucket (event delegation; container persists across re-renders) ---- */
+(function(){
+  const wrap = document.getElementById('bucketCards-participants');
+  const clearHighlights = () => wrap.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
+  wrap.addEventListener('dragstart', e => {
+    const tr = e.target.closest && e.target.closest('tr[data-pid]');
+    if (!tr || !tr.hasAttribute('draggable')) return;
+    e.dataTransfer.setData('application/x-ccpc-participant', tr.dataset.pid);
+    e.dataTransfer.setData('text/plain', 'participant:' + tr.dataset.pid);
+    e.dataTransfer.effectAllowed = 'move';
+    tr.classList.add('dragging');
+  });
+  wrap.addEventListener('dragend', () => { wrap.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging')); clearHighlights(); });
+  wrap.addEventListener('dragover', e => {
+    const card = e.target.closest && e.target.closest('.bucket-card[data-bucket]');
+    if (!card) return;
+    e.preventDefault();
+    if (!card.classList.contains('drop-target')) { clearHighlights(); card.classList.add('drop-target'); }
+  });
+  wrap.addEventListener('drop', e => {
+    const card = e.target.closest && e.target.closest('.bucket-card[data-bucket]');
+    clearHighlights();
+    if (!card) return;
+    e.preventDefault();
+    const pid = e.dataTransfer.getData('application/x-ccpc-participant');
+    if (pid) moveParticipantToBucket(pid, card.dataset.bucket);
+  });
+})();
+async function moveParticipantToBucket(pid, bucketKey){
+  const p = participants.find(x => x.id === pid);
+  if (!p || p.bucket === bucketKey) return;
+  if (p.status === 'queued') { showToast(`${p.name} is in a match and can't be moved right now.`, true); return; }
+  try {
+    await db.collection('ccpc-queue-participants').doc(pid).update({ bucket: bucketKey, sitOutStreak: 0 });
+    const old = p.bucket;
+    if (suggestionState[old] && allRoundParticipants(old).some(x => x.id === pid)) discardSuggestions(old);
+    showToast(`${p.name} moved to ${bucketLabel(bucketKey)}.`);
+  } catch(err){ showToast('Move failed: ' + err.message, true); }
 }
 
 async function toggleRest(id, current){
@@ -568,11 +654,12 @@ async function removeParticipant(id){
   catch(err){ showToast('Remove failed: ' + err.message, true); }
 }
 
-/* ---- Hover stat tooltip ---- */
-function computeAllTimeStats(refKey){
+/* ---- Hover stat tooltip (this session only) ---- */
+function sessionLogs(sessionId){ return logs.filter(l => l.sessionId === (sessionId || sessionState.currentSessionId)); }
+function computeSessionStats(refKey){
   let games=0, wins=0, losses=0;
   const partners={}, opponents={};
-  logs.forEach(l => {
+  sessionLogs().forEach(l => {
     const t1keys = l.team1.map(refKeyFor), t2keys = l.team2.map(refKeyFor);
     const inT1 = t1keys.includes(refKey), inT2 = t2keys.includes(refKey);
     if (!inT1 && !inT2) return;
@@ -589,20 +676,19 @@ function showStatTooltip(el){
   const refKey = el.dataset.refkey, pid = el.dataset.pid;
   const live = participants.find(p => p.id === pid);
   if (!live) return;
-  const stats = computeAllTimeStats(refKey);
-  const stored = statsCache[refKey] || { totalWaitingSeconds:0, totalRestingSeconds:0 };
-  let waiting = stored.totalWaitingSeconds || 0, resting = stored.totalRestingSeconds || 0;
-  if (live.statusSince) {
-    const liveElapsed = Math.max(0, Math.round((Date.now() - live.statusSince) / 1000));
-    if (live.status === 'active') waiting += liveElapsed; else if (live.status === 'resting') resting += liveElapsed;
-  }
+  const stats = computeSessionStats(refKey);
+  const stored = statsCache[statDocId(refKey)] || {};
+  const t = { waiting: stored.totalWaitingSeconds || 0, playing: stored.totalPlayingSeconds || 0, resting: stored.totalRestingSeconds || 0 };
+  if (live.statusSince) t[timeCategory(live)] += Math.max(0, Math.round((Date.now() - live.statusSince) / 1000));
   const partnersStr = Object.entries(stats.partners).map(([n,c]) => `${n} (${c})`).join(', ') || '—';
   const opponentsStr = Object.entries(stats.opponents).map(([n,c]) => `${n} (${c})`).join(', ') || '—';
   const tip = document.getElementById('statTooltip');
-  tip.innerHTML = `<div class="t-name">${escapeHtml(live.name)}</div>
+  tip.innerHTML = `<div class="t-name">${escapeHtml(live.name)} <span style="font-weight:500;font-size:11px;color:#bcd3e2;">· ${STATUS_LABELS[statusKey(live)]}</span></div>
     <div>Games played: ${stats.games} · Record: ${stats.wins}W–${stats.losses}L</div>
-    <div>Waiting: ${formatDuration(waiting)} · Resting: ${formatDuration(resting)}</div>
-    <div style="margin-top:4px;">Partners: ${partnersStr}</div><div>Opponents: ${opponentsStr}</div>`;
+    <div>Waiting: ${formatDuration(t.waiting)} · Playing: ${formatDuration(t.playing)}</div>
+    <div>Resting: ${formatDuration(t.resting)}</div>
+    <div style="margin-top:4px;">Partners: ${partnersStr}</div><div>Opponents: ${opponentsStr}</div>
+    <div style="margin-top:4px;font-size:10.5px;color:#8fabbd;">This session only</div>`;
   const rect = el.getBoundingClientRect();
   tip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
   tip.style.top = (rect.bottom + 8) + 'px';
@@ -612,21 +698,21 @@ function hideStatTooltip(){ document.getElementById('statTooltip').classList.rem
 document.addEventListener('mouseover', e => { const el = e.target.closest('.stat-hover'); if (el) showStatTooltip(el); });
 document.addEventListener('mouseout', e => { const el = e.target.closest('.stat-hover'); if (el) hideStatTooltip(); });
 
-/* ================= ADD PARTICIPANT MODAL ================= */
+/* ================= ADD PARTICIPANT MODAL (add several at once) ================= */
 const addOverlay = document.getElementById('addOverlay');
-let addBucket = null, addSource = 'member', selectedMember = null;
+let addBucket = null, addSource = 'member', pendingAdds = [];
 function openAddModal(bucketKey){
-  addBucket = bucketKey; addSource = 'member'; selectedMember = null;
+  addBucket = bucketKey; addSource = 'member'; pendingAdds = [];
   document.getElementById('addModalSub').textContent = `Adding to: ${bucketLabel(bucketKey)}`;
   document.getElementById('memberSearch').value = '';
   document.getElementById('memberResults').classList.remove('show');
-  document.getElementById('memberSelectedWrap').style.display = 'none';
-  document.getElementById('guestName').value = '';
-  document.getElementById('guestDupr').value = '';
+  ['guestName','guestDuprId','guestDupr'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('errAdd').textContent = '';
   document.getElementById('errGuestDupr').textContent = '';
   setSourceUI('member');
+  renderPending();
   addOverlay.classList.add('show');
+  document.getElementById('memberSearch').focus();
 }
 function setSourceUI(src){
   addSource = src;
@@ -641,50 +727,88 @@ document.getElementById('btnAddCancel').addEventListener('click', () => addOverl
 addOverlay.addEventListener('click', e => { if (e.target === addOverlay) addOverlay.classList.remove('show'); });
 function activeMemberIds(){ return new Set(participants.filter(p => p.sourceType==='member').map(p => p.memberId)); }
 function activeGuestNames(){ return new Set(participants.filter(p => p.sourceType==='guest').map(p => p.name.trim().toLowerCase())); }
+function pendingMemberIds(){ return new Set(pendingAdds.filter(x => x.sourceType==='member').map(x => x.memberId)); }
+function pendingGuestNames(){ return new Set(pendingAdds.filter(x => x.sourceType==='guest').map(x => x.name.trim().toLowerCase())); }
+
+function renderPending(){
+  const wrap = document.getElementById('pendingWrap'), list = document.getElementById('pendingList');
+  wrap.style.display = pendingAdds.length ? 'flex' : 'none';
+  document.getElementById('pendingLabel').textContent = `To be added (${pendingAdds.length})`;
+  list.innerHTML = pendingAdds.map((x, i) => `
+    <div class="pending-item"><span><b>${escapeHtml(x.name)}</b>${x.sourceType==='guest' ? ' <span style="color:var(--muted);font-size:11px;">(guest)</span>' : ''}
+      <span style="color:var(--muted);"> · ${x.duprRaw}</span></span><button type="button" data-i="${i}" title="Remove from list">✕</button></div>`).join('');
+  document.getElementById('btnAddConfirm').textContent = pendingAdds.length > 1 ? `Add ${pendingAdds.length} to bucket` : 'Add to bucket';
+}
+document.getElementById('pendingList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]');
+  if (!b) return;
+  pendingAdds.splice(Number(b.dataset.i), 1);
+  renderPending();
+});
+
 const memberSearch = document.getElementById('memberSearch');
 const memberResults = document.getElementById('memberResults');
 memberSearch.addEventListener('input', () => {
   const q = memberSearch.value.trim().toLowerCase();
-  const excluded = activeMemberIds();
+  const excluded = activeMemberIds(), chosen = pendingMemberIds();
   if (!q) { memberResults.classList.remove('show'); memberResults.innerHTML=''; return; }
-  const matches = allMembers.filter(m => !excluded.has(m.id) && (m.name.toLowerCase().includes(q) || (m.duprId||'').toLowerCase().includes(q))).slice(0, 8);
+  const matches = allMembers.filter(m => !excluded.has(m.id) && !chosen.has(m.id) && (m.name.toLowerCase().includes(q) || (m.duprId||'').toLowerCase().includes(q))).slice(0, 8);
   memberResults.innerHTML = matches.length ? matches.map(m => `
       <div class="combo-item" data-id="${m.id}"><span>${escapeHtml(m.name)}</span><span style="color:var(--muted)">${fmtNum(m.clubDupr)}</span></div>`).join('')
     : `<div class="combo-item" style="color:var(--muted);cursor:default;">No available members match.</div>`;
-  memberResults.querySelectorAll('.combo-item').forEach(el => {
+  memberResults.querySelectorAll('.combo-item[data-id]').forEach(el => {
     el.addEventListener('click', () => {
       const m = allMembers.find(x => x.id === el.dataset.id);
-      if (!m) return;
-      selectedMember = m;
-      document.getElementById('memberSelectedText').textContent = `${m.name} — Club DUPR ${fmtNum(m.clubDupr)}`;
-      document.getElementById('memberSelectedWrap').style.display = 'block';
-      memberSearch.value = ''; memberResults.classList.remove('show');
+      if (!m || pendingMemberIds().has(m.id)) return;
+      pendingAdds.push({ sourceType:'member', memberId:m.id, name:m.name, duprId:m.duprId || '', dupr:m.clubDupr, duprRaw:fmtNum(m.clubDupr) });
+      renderPending();
+      memberSearch.value = ''; memberResults.classList.remove('show'); memberSearch.focus();
     });
   });
   memberResults.classList.add('show');
 });
-document.getElementById('memberClearBtn').addEventListener('click', () => { selectedMember = null; document.getElementById('memberSelectedWrap').style.display = 'none'; });
+
+function addGuestToPending(){
+  const errAdd = document.getElementById('errAdd'), errD = document.getElementById('errGuestDupr');
+  errAdd.textContent = ''; errD.textContent = '';
+  const name = document.getElementById('guestName').value.trim();
+  if (!name) { errAdd.textContent = 'Guest name is required.'; return false; }
+  const key = name.toLowerCase();
+  if (activeGuestNames().has(key) || pendingGuestNames().has(key)) { errAdd.textContent = `${name} is already in a bucket or on the list.`; return false; }
+  const d = parseDupr(document.getElementById('guestDupr').value);
+  if (!d.ok) { errD.textContent = d.error; return false; }
+  pendingAdds.push({ sourceType:'guest', memberId:null, name, duprId: document.getElementById('guestDuprId').value.trim(), dupr:d.value, duprRaw:d.raw });
+  ['guestName','guestDuprId','guestDupr'].forEach(id => document.getElementById(id).value = '');
+  renderPending();
+  document.getElementById('guestName').focus();
+  return true;
+}
+document.getElementById('btnGuestToList').addEventListener('click', addGuestToPending);
 
 document.getElementById('btnAddConfirm').addEventListener('click', async () => {
-  document.getElementById('errAdd').textContent = ''; document.getElementById('errGuestDupr').textContent = '';
-  let payload = null;
-  if (addSource === 'member') {
-    if (!selectedMember) { document.getElementById('errAdd').textContent = 'Search and select a member first.'; return; }
-    if (activeMemberIds().has(selectedMember.id)) { document.getElementById('errAdd').textContent = `${selectedMember.name} is already in a bucket.`; return; }
-    payload = { bucket: addBucket, sourceType:'member', memberId: selectedMember.id, name: selectedMember.name, duprId: selectedMember.duprId || '',
-      dupr: selectedMember.clubDupr, duprRaw: fmtNum(selectedMember.clubDupr), status:'active', statusSince: Date.now(), sitOutStreak: 0,
-      joinedAt: firebase.firestore.FieldValue.serverTimestamp() };
-  } else {
-    const name = document.getElementById('guestName').value.trim();
-    if (!name) { document.getElementById('errAdd').textContent = 'Guest name is required.'; return; }
-    if (activeGuestNames().has(name.toLowerCase())) { document.getElementById('errAdd').textContent = `${name} is already in a bucket.`; return; }
-    const d = parseDupr(document.getElementById('guestDupr').value);
-    if (!d.ok) { document.getElementById('errGuestDupr').textContent = d.error; return; }
-    payload = { bucket: addBucket, sourceType:'guest', memberId: null, name, duprId: '', dupr: d.value, duprRaw: d.raw,
-      status:'active', statusSince: Date.now(), sitOutStreak: 0, joinedAt: firebase.firestore.FieldValue.serverTimestamp() };
-  }
-  try { await db.collection('ccpc-queue-participants').add(payload); showToast(`${payload.name} added to ${bucketLabel(addBucket)}.`); addOverlay.classList.remove('show'); }
-  catch (err) { showToast('Add failed: ' + err.message, true); }
+  const errAdd = document.getElementById('errAdd');
+  errAdd.textContent = '';
+  if (document.getElementById('guestName').value.trim()) { if (!addGuestToPending()) return; }
+  if (!pendingAdds.length) { errAdd.textContent = addSource === 'guest' ? 'Add at least one guest to the list.' : 'Search and click a member to add them to the list.'; return; }
+  const takenIds = activeMemberIds(), takenNames = activeGuestNames();
+  const conflicts = pendingAdds.filter(x => x.sourceType==='member' ? takenIds.has(x.memberId) : takenNames.has(x.name.trim().toLowerCase()));
+  if (conflicts.length) { errAdd.textContent = `Already in a bucket: ${conflicts.map(x => x.name).join(', ')}. Remove them from the list.`; return; }
+  const btn = document.getElementById('btnAddConfirm');
+  btn.disabled = true;
+  try {
+    const batch = db.batch(), now = Date.now();
+    pendingAdds.forEach(x => {
+      batch.set(db.collection('ccpc-queue-participants').doc(), {
+        bucket: addBucket, sourceType:x.sourceType, memberId:x.memberId, name:x.name, duprId:x.duprId || '',
+        dupr:x.dupr, duprRaw:x.duprRaw, status:'active', statusSince: now, sitOutStreak: 0,
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    await batch.commit();
+    showToast(`${pendingAdds.length} player${pendingAdds.length===1?'':'s'} added to ${bucketLabel(addBucket)}.`);
+    addOverlay.classList.remove('show');
+  } catch (err) { showToast('Add failed: ' + err.message, true); }
+  finally { btn.disabled = false; }
 });
 
 /* ================= SESSION HISTORY HELPERS ================= */
@@ -943,10 +1067,6 @@ function renderQueueList(){
   el.innerHTML = list.map((m, i) => `
     <div class="queue-row ${m.status==='onhold'?'onhold':''}" draggable="true" data-match-id="${m.id}">
       <div class="drag-handle" title="Drag to reorder or assign to a court">⠿</div>
-      <div class="reorder-btns">
-        <button ${i===0?'disabled':''} onclick="moveQueue('${m.id}', -1)">▲</button>
-        <button ${i===list.length-1?'disabled':''} onclick="moveQueue('${m.id}', 1)">▼</button>
-      </div>
       <div class="qid">${m.matchId}</div>
       <div class="qteams">${escapeHtml(m.team1.map(p=>p.name).join(' & '))}
         <span style="color:var(--muted);font-weight:400;"> vs </span>${escapeHtml(m.team2.map(p=>p.name).join(' & '))}
@@ -981,13 +1101,6 @@ async function swapQueueOrder(idA, idB){
   batch.update(db.collection('ccpc-queue-matches').doc(b.id), { order: a.order });
   await batch.commit();
 }
-async function moveQueue(id, dir){
-  const list = queueMatches.filter(m => m.status==='waiting' || m.status==='onhold').sort((a,b)=>a.order-b.order);
-  const i = list.findIndex(m=>m.id===id);
-  const j = i + dir;
-  if (j<0 || j>=list.length) return;
-  await swapQueueOrder(list[i].id, list[j].id);
-}
 async function holdMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'onhold' }); } catch(err){ showToast(err.message, true); } }
 async function resumeMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'waiting' }); } catch(err){ showToast(err.message, true); } }
 async function deleteQueueMatch(id){
@@ -995,6 +1108,7 @@ async function deleteQueueMatch(id){
   if (!m) return;
   if (!confirm(`Delete match ${m.matchId}? Players will return to the bucket as Active.`)) return;
   try {
+    await Promise.all([...m.team1, ...m.team2].map(participantOf).filter(Boolean).map(flushElapsed));
     const batch = db.batch();
     batch.delete(db.collection('ccpc-queue-matches').doc(id));
     [...m.team1, ...m.team2].forEach(p => batch.update(db.collection('ccpc-queue-participants').doc(p.participantId), { status:'active', statusSince: Date.now() }));
@@ -1031,9 +1145,21 @@ async function assignToCourt(matchDocId, court){
   } catch(err){ showToast('Could not assign court: ' + err.message, true); return; }
   if (m) await sendCallEvent(m, court);
 }
+const startingGames = new Set();
 async function startGame(matchDocId){
-  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'playing', startedAt: Date.now() }); showToast('Game started!'); }
-  catch(err){ showToast('Could not start game: ' + err.message, true); }
+  const m = queueMatches.find(x => x.id === matchDocId);
+  if (!m || m.status !== 'assigned' || startingGames.has(matchDocId)) return;
+  startingGames.add(matchDocId);
+  try {
+    const ps = [...m.team1, ...m.team2].map(participantOf).filter(Boolean);
+    await Promise.all(ps.map(flushElapsed));           // close out waiting time before the clock switches to playing time
+    const batch = db.batch(), now = Date.now();
+    ps.forEach(p => batch.update(db.collection('ccpc-queue-participants').doc(p.id), { statusSince: now }));
+    batch.update(db.collection('ccpc-queue-matches').doc(matchDocId), { status:'playing', startedAt: now });
+    await batch.commit();
+    showToast('Game started!');
+  } catch(err){ showToast('Could not start game: ' + err.message, true); }
+  finally { startingGames.delete(matchDocId); }
 }
 async function backToQueue(matchDocId){
   try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'waiting', court:null, startedAt:null, order: Date.now() }); showToast('Moved back to queue.'); }
@@ -1119,7 +1245,7 @@ document.getElementById('btnEditQueueSave').addEventListener('click', async () =
     const oldIds = new Set([...m.team1, ...m.team2].map(p=>p.participantId));
     const removedIds = [...oldIds].filter(id => !newIdSet.has(id));
     const addedIds = allIds.filter(id => !oldIds.has(id));
-    await Promise.all(addedIds.map(id => { const p = participants.find(x=>x.id===id); return p ? flushElapsed(p) : null; }));
+    await Promise.all([...addedIds, ...removedIds].map(id => { const p = participants.find(x=>x.id===id); return p ? flushElapsed(p) : null; }));
     await adjustSessionCounts(m.team1, m.team2, snapshotArr(newTeam1), snapshotArr(newTeam2));
     const batch = db.batch();
     removedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), { status:'active', statusSince: Date.now() }));
@@ -1178,6 +1304,7 @@ document.getElementById('btnEndConfirm').addEventListener('click', async () => {
   const endedAt = Date.now();
   const duration = Math.max(0, Math.round((endedAt - (m.startedAt || endedAt)) / 1000));
   try {
+    await Promise.all([...m.team1, ...m.team2].map(participantOf).filter(Boolean).map(flushElapsed)); // closes out playing time
     const batch = db.batch();
     const logRef = db.collection('ccpc-queue-logs').doc();
     batch.set(logRef, {
@@ -1208,6 +1335,8 @@ function renderSessionFilterOptions(){
   const cur = sel.value;
   sel.innerHTML = `<option value="">All sessions</option>` + sessionsList.map(s => `<option value="${s.id}">${escapeHtml(s.name)} · ${s.date}</option>`).join('');
   sel.value = cur;
+  const lb = document.getElementById('lbSessionFilter');
+  if (lb) { const lcur = lb.value; lb.innerHTML = `<option value="">Current session</option>` + sessionsList.map(x => `<option value="${x.id}">${escapeHtml(x.name)} · ${x.date}</option>`).join(''); lb.value = lcur; }
   updateExportTargetLabel();
 }
 document.getElementById('logSessionFilter').addEventListener('change', e => { logFilterSessionId = e.target.value; renderLogs(); updateExportTargetLabel(); });
@@ -1310,6 +1439,56 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
 });
 
 
+/* ================= LEADERBOARD (per session, per bucket) ================= */
+let lbSessionSel = '';
+function buildLeaderboard(sessionId){
+  const res = {};
+  BUCKETS.forEach(b => res[b.key] = {});
+  logs.filter(l => l.sessionId === sessionId).forEach(l => {
+    const map = res[l.bucket] || (res[l.bucket] = {});
+    const s1 = Number(l.score1) || 0, s2 = Number(l.score2) || 0;
+    const add = (team, pf, pa, won) => team.forEach(p => {
+      const k = refKeyFor(p);
+      const e = map[k] || (map[k] = { name:p.name, gp:0, w:0, l:0, pf:0, pa:0 });
+      e.name = p.name; e.gp++; if (won) e.w++; else e.l++; e.pf += pf; e.pa += pa;
+    });
+    add(l.team1, s1, s2, l.winner === 'team1');
+    add(l.team2, s2, s1, l.winner === 'team2');
+  });
+  const out = {};
+  Object.keys(res).forEach(bk => {
+    const arr = Object.values(res[bk]).map(e => ({ ...e, pd: e.pf - e.pa }));
+    arr.sort((a,b) => b.w - a.w || b.pf - a.pf || b.pd - a.pd || a.name.localeCompare(b.name));
+    arr.forEach((e, i) => { e.rank = (i > 0 && arr[i-1].w === e.w && arr[i-1].pf === e.pf && arr[i-1].pd === e.pd) ? arr[i-1].rank : i + 1; });
+    out[bk] = arr;
+  });
+  return out;
+}
+function renderLeaderboard(){
+  const grid = document.getElementById('lbGrid');
+  if (!grid) return;
+  const sid = lbSessionSel || sessionState.currentSessionId;
+  const data = buildLeaderboard(sid);
+  const medals = ['🥇','🥈','🥉'];
+  grid.innerHTML = BUCKETS.map(b => {
+    const rows = data[b.key] || [];
+    const body = rows.length ? rows.map(e => `
+      <tr><td class="rank">${e.rank}</td>
+        <td class="lb-name">${e.rank <= 3 ? medals[e.rank-1] + ' ' : ''}${escapeHtml(e.name)}</td>
+        <td class="num">${e.gp}</td><td class="num">${e.w}</td><td class="num">${e.l}</td><td class="num">${e.pf}</td>
+        <td class="num ${e.pd > 0 ? 'lb-pos' : (e.pd < 0 ? 'lb-neg' : '')}">${e.pd > 0 ? '+' : ''}${e.pd}</td></tr>`).join('')
+      : `<tr class="empty-row"><td colspan="7">No completed matches yet.</td></tr>`;
+    return `
+    <div class="bucket-card">
+      <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3>
+        <span class="count">${rows.length} player${rows.length===1?'':'s'}</span></div>
+      <table class="lb-table"><thead><tr><th class="num">#</th><th>Player</th><th class="num">GP</th><th class="num">W</th><th class="num">L</th><th class="num">Pts</th><th class="num">+/−</th></tr></thead>
+      <tbody>${body}</tbody></table>
+    </div>`;
+  }).join('');
+}
+document.getElementById('lbSessionFilter').addEventListener('change', e => { lbSessionSel = e.target.value; renderLeaderboard(); });
+
 /* ================= DUPR CSV EXPORT ================= */
 const DUPR_HEADERS = ['matchType','event','date','playerA1','playerA1DuprId','playerA1ExternalId','playerA2','playerA2DuprId','playerA2ExternalId','playerB1','playerB1DuprId','playerB1ExternalId','playerB2','playerB2DuprId','playerB2ExternalId','teamAGame1','teamBGame1','teamAGame2','teamBGame2','teamAGame3','teamBGame3','teamAGame4','teamBGame4','teamAGame5','teamBGame5','location','scoreType'];
 function csvCell(v){
@@ -1319,7 +1498,16 @@ function csvCell(v){
 /* Exports the session picked in the Logs filter, or the current session when the filter is "All sessions". */
 function exportTargetSession(){
   const id = logFilterSessionId || sessionState.currentSessionId;
-  return sessionsList.find(x => x.id === id) || null;
+  const found = sessionsList.find(x => x.id === id);
+  if (found) return found;
+  if (logFilterSessionId) return null;
+  // Fallbacks so export/settings still work if the sessions list hasn't loaded or the doc is missing
+  if (sessionState.currentSessionId) {
+    return { id: sessionState.currentSessionId, name: sessionState.currentSessionName || 'Session',
+             date: sessionState.currentSessionDate || new Date().toISOString().slice(0,10), _virtual: true };
+  }
+  if (sessionsList.length) return sessionsList[0];
+  return { id: null, name: 'Session', date: new Date().toISOString().slice(0,10), _virtual: true };
 }
 function updateExportTargetLabel(){
   const el = document.getElementById('exportTargetLabel');
@@ -1328,7 +1516,7 @@ function updateExportTargetLabel(){
   el.textContent = s ? `Applies to: ${s.name} (${s.date})` : '';
 }
 function buildDuprCsv(sess){
-  const matches = logs.filter(l => l.sessionId === sess.id).slice().reverse(); // oldest first
+  const matches = logs.filter(l => (l.sessionId || null) === (sess.id || null)).slice().reverse(); // oldest first
   const event = sess.eventName || sess.name || '';
   const scoreType = sess.scoreType || 'SIDEOUT';
   const location = sess.location || '';
@@ -1391,9 +1579,10 @@ document.getElementById('btnDsSave').addEventListener('click', async () => {
   const btn = document.getElementById('btnDsSave');
   btn.disabled = true;
   try {
-    await db.collection('ccpc-queue-sessions').doc(sess.id).update({
-      eventName, date, location: document.getElementById('dsLocation').value.trim(), scoreType: document.getElementById('dsScoreType').value
-    });
+    if (!sess.id) { errEl.textContent = 'No active session yet. Start one with "New session" first.'; return; }
+    const data = { name: sess.name, eventName, date, location: document.getElementById('dsLocation').value.trim(), scoreType: document.getElementById('dsScoreType').value };
+    if (sess._virtual) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    await db.collection('ccpc-queue-sessions').doc(sess.id).set(data, { merge:true });
     if (sess.id === sessionState.currentSessionId) {
       await db.collection('ccpc-queue-session').doc('state').set({ currentSessionDate: date }, { merge:true });
     }
@@ -1408,6 +1597,7 @@ renderMatchupBuckets();
 renderCourts();
 renderQueueList();
 renderLogs();
+renderLeaderboard();
 </script>
 </body>
 </html>
