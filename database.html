@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calapan City Pickleball Club — Roster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#083d5f;
+    --navy-deep:#062c46;
+    --gold:#fab813;
+    --orange:#ff6600;
+    --blue:#3992b9;
+    --red:#bb1421;
+
+    --bg:#f4f2ec;
+    --surface:#ffffff;
+    --surface-2:#f7f7f5;
+    --text:#0e2233;
+    --muted:#5c7186;
+    --border:#e2ded2;
+    --shadow: 0 6px 20px rgba(8,61,95,0.08);
+    --radius:14px;
+  }
+  html[data-theme="dark"]{
+    --bg:#081720;
+    --surface:#0f2634;
+    --surface-2:#0c2029;
+    --text:#eaf1f5;
+    --muted:#8fabbd;
+    --border:#1d3b4c;
+    --shadow: 0 6px 24px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    transition:background .25s ease, color .25s ease;
+  }
+  h1,h2,h3,.headline{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff;
+    padding:22px clamp(16px,4vw,40px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-60px;
+    width:220px;height:220px;
+    background:radial-gradient(circle, rgba(250,184,19,0.25) 0%, transparent 70%);
+  }
+  header.top .titles{position:relative;z-index:1;}
+  header.top h1{
+    margin:0;
+    font-size:clamp(20px,3vw,30px);
+    font-weight:700;
+    letter-spacing:.2px;
+  }
+  header.top .sub{
+    margin-top:4px;
+    font-size:13px;
+    color:#bcd3e2;
+    font-weight:500;
+  }
+  header.top .sub b{color:var(--gold);}
+
+  .theme-toggle{
+    position:relative;z-index:1;
+    display:flex;align-items:center;gap:10px;
+  }
+  .toggle-pill{
+    width:56px;height:30px;
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:20px;
+    position:relative;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .toggle-pill .knob{
+    position:absolute;top:3px;left:3px;
+    width:22px;height:22px;border-radius:50%;
+    background:var(--gold);
+    transition:transform .2s ease;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;
+  }
+  html[data-theme="dark"] .toggle-pill .knob{transform:translateX(26px);background:var(--blue);}
+
+  /* ---------- Layout ---------- */
+  main{
+    max-width:1300px;
+    margin:0 auto;
+    padding:24px clamp(16px,4vw,40px) 60px;
+  }
+
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:flex-end;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+  .field input,.field select{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:8px;
+    padding:9px 10px;
+    font-size:14px;
+    font-family:inherit;
+    min-width:120px;
+  }
+  .field input:focus,.field select:focus{outline:2px solid var(--blue);outline-offset:1px;}
+  .field.grow{flex:1;min-width:180px;}
+  .range-pair{display:flex;gap:6px;align-items:center;}
+  .range-pair input{width:70px;min-width:0;}
+
+  .spacer{flex:1;}
+  .btn{
+    border:none;border-radius:9px;
+    padding:10px 18px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;font-size:14px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--gold);color:#3a2900;}
+  .btn-primary:hover{box-shadow:0 4px 14px rgba(250,184,19,.4);}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+  .btn-ghost:hover{border-color:var(--blue);}
+  .btn-reset{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;padding:9px 4px;}
+
+  /* ---------- Table ---------- */
+  .table-wrap{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  thead th{
+    text-align:left;
+    background:var(--surface-2);
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+  }
+  thead th:hover{color:var(--blue);}
+  thead th .arrow{opacity:.5;font-size:10px;margin-left:4px;}
+  tbody td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    vertical-align:middle;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--surface-2);}
+  .name-cell{font-weight:700;}
+  .dupr-cell{font-variant-numeric:tabular-nums;color:var(--text);}
+  .dupr-cell.nr{color:var(--muted);font-style:italic;}
+  .club-dupr{font-weight:700;color:var(--navy);}
+  html[data-theme="dark"] .club-dupr{color:var(--blue);}
+
+  .badge{
+    display:inline-block;padding:4px 10px;border-radius:20px;
+    font-size:12px;font-weight:700;color:#fff;white-space:nowrap;
+  }
+  .stars{color:var(--gold);letter-spacing:1px;font-size:14px;white-space:nowrap;}
+  .stars .off{color:var(--border);}
+
+  .row-actions{display:flex;gap:8px;}
+  .icon-btn{
+    border:none;background:var(--surface-2);
+    width:30px;height:30px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:14px;
+    border:1px solid var(--border);
+  }
+  .icon-btn.edit:hover{border-color:var(--blue);color:var(--blue);}
+  .icon-btn.del:hover{border-color:var(--red);color:var(--red);}
+
+  .empty-state{padding:60px 20px;text-align:center;color:var(--muted);}
+  .empty-state .big{font-size:40px;margin-bottom:10px;}
+
+  .status-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 4px;font-size:13px;color:var(--muted);
+  }
+  #connDot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:6px;}
+  #connDot.ok{background:#2ecc71;}
+  #connDot.bad{background:var(--red);}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(4,15,22,.55);
+    display:none;align-items:center;justify-content:center;
+    padding:20px;z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--surface);
+    border-radius:16px;
+    width:100%;max-width:480px;
+    padding:26px 26px 22px;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+    max-height:90vh;overflow-y:auto;
+  }
+  .modal h2{margin:0 0 4px;font-size:22px;}
+  .modal .modal-sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
+  .modal .field{margin-bottom:14px;width:100%;}
+  .modal .field input,.modal .field select{width:100%;min-width:0;padding:10px 12px;font-size:15px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .helper{font-size:11px;color:var(--muted);margin-top:4px;}
+  .error-text{font-size:12px;color:var(--red);margin-top:4px;min-height:14px;}
+  .club-dupr-preview{
+    background:var(--surface-2);border:1px dashed var(--border);
+    border-radius:9px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .club-dupr-preview .val{font-size:20px;font-weight:800;color:var(--navy);}
+  html[data-theme="dark"] .club-dupr-preview .val{color:var(--blue);}
+
+  .star-picker{display:flex;gap:6px;}
+  .star-picker button{
+    background:none;border:none;font-size:26px;cursor:pointer;
+    color:var(--border);line-height:1;padding:0;
+    transition:transform .1s ease;
+  }
+  .star-picker button:hover{transform:scale(1.15);}
+  .star-picker button.on{color:var(--gold);}
+
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;
+    font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3);
+    z-index:100;opacity:0;pointer-events:none;transition:opacity .25s ease, bottom .25s ease;
+  }
+  .toast.show{opacity:1;bottom:30px;}
+  .toast.error{background:var(--red);}
+
+  @media (max-width:640px){
+    .two-col{grid-template-columns:1fr;}
+    table,thead,tbody,tr,td,th{font-size:13px;}
+    .toolbar{padding:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="titles">
+    <h1>Calapan City Pickleball Club</h1>
+    <div class="sub">Roster · <b>Member Database</b></div>
+  </div>
+  <div class="theme-toggle">
+    <span id="connWrap" style="font-size:12px;color:#cfe3ee;"><span id="connDot"></span><span id="connText">Connecting…</span></span>
+    <div class="toggle-pill" id="themeToggle" title="Toggle light/dark mode">
+      <div class="knob" id="themeKnob">☀️</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="toolbar">
+    <div class="field grow">
+      <label for="fSearch">Search name or DUPR ID</label>
+      <input type="text" id="fSearch" placeholder="Type a name or DUPR ID…">
+    </div>
+    <div class="field">
+      <label for="fLevel">Level</label>
+      <select id="fLevel">
+        <option value="">All levels</option>
+        <option>Beginner</option>
+        <option>Novice</option>
+        <option>Low Intermediate</option>
+        <option>High Intermediate</option>
+        <option>Advanced</option>
+        <option>Advanced+</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="fRating">Rating</label>
+      <select id="fRating">
+        <option value="">All ratings</option>
+        <option value="6">★★★★★★ (6)</option>
+        <option value="5">★★★★★ (5)</option>
+        <option value="4">★★★★ (4)</option>
+        <option value="3">★★★ (3)</option>
+        <option value="2">★★ (2)</option>
+        <option value="1">★ (1)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Club DUPR range</label>
+      <div class="range-pair">
+        <input type="number" id="fMin" step="0.001" min="2" max="6" placeholder="Min">
+        <span style="color:var(--muted)">–</span>
+        <input type="number" id="fMax" step="0.001" min="2" max="6" placeholder="Max">
+      </div>
+    </div>
+    <button class="btn-reset" id="btnResetFilters">Clear filters</button>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnAdd">+ Add member</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="name">Name<span class="arrow"></span></th>
+          <th data-sort="duprId">DUPR ID<span class="arrow"></span></th>
+          <th data-sort="athDupr">All-Time High DUPR<span class="arrow"></span></th>
+          <th data-sort="curDupr">Current DUPR<span class="arrow"></span></th>
+          <th data-sort="clubDupr">Club DUPR<span class="arrow"></span></th>
+          <th data-sort="level">Level<span class="arrow"></span></th>
+          <th data-sort="rating">Rating<span class="arrow"></span></th>
+          <th style="cursor:default;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="8"><div class="empty-state">Loading roster…</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="status-bar">
+    <span id="countText">0 members</span>
+    <span>Calapan City Pickleball Club</span>
+  </div>
+</main>
+
+<!-- Add / Edit Modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add member</h2>
+    <div class="modal-sub" id="modalSub">Enter the player's details below.</div>
+
+    <div class="field">
+      <label for="mName">Name</label>
+      <input type="text" id="mName" placeholder="Juan Dela Cruz">
+      <div class="error-text" id="errName"></div>
+    </div>
+
+    <div class="field">
+      <label for="mDuprId">DUPR ID <span style="text-transform:none;color:var(--muted);font-weight:500;">(optional)</span></label>
+      <input type="text" id="mDuprId" placeholder="e.g. ABC1234">
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label for="mAth">All-Time High DUPR</label>
+        <input type="text" id="mAth" placeholder="e.g. 3.500 or NR">
+        <div class="error-text" id="errAth"></div>
+      </div>
+      <div class="field">
+        <label for="mCur">Current DUPR</label>
+        <input type="text" id="mCur" placeholder="e.g. 3.250 or NR">
+        <div class="error-text" id="errCur"></div>
+      </div>
+    </div>
+    <div class="helper" style="margin:-6px 0 14px;">Enter a number from 2.000–6.000, or "NR" if not yet rated (NR is treated as 3.000 for Club DUPR).</div>
+
+    <div class="field">
+      <label>Club DUPR (auto-computed)</label>
+      <div class="club-dupr-preview">
+        <span style="color:var(--muted);font-size:12px;">Average of All-Time High &amp; Current</span>
+        <span class="val" id="clubPreview">—</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="mLevel">Level</label>
+      <select id="mLevel">
+        <option>Beginner</option>
+        <option>Novice</option>
+        <option>Low Intermediate</option>
+        <option>High Intermediate</option>
+        <option>Advanced</option>
+        <option>Advanced+</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Rating</label>
+      <div class="star-picker" id="starPicker">
+        <button type="button" data-val="1">★</button>
+        <button type="button" data-val="2">★</button>
+        <button type="button" data-val="3">★</button>
+        <button type="button" data-val="4">★</button>
+        <button type="button" data-val="5">★</button>
+        <button type="button" data-val="6">★</button>
+      </div>
+      <input type="hidden" id="mRating" value="3">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btnCancel">Cancel</button>
+      <button class="btn btn-primary" id="btnSave">Save member</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ---------------- Firebase ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBv_s3wzr6nbFcqZbTI0UDdcijFWnO-t4I",
+  authDomain: "ccpc-dupr.firebaseapp.com",
+  databaseURL: "https://ccpc-dupr-default-rtdb.firebaseio.com",
+  projectId: "ccpc-dupr",
+  storageBucket: "ccpc-dupr.firebasestorage.app",
+  messagingSenderId: "49883771837",
+  appId: "1:49883771837:web:ca4be96157a62afbc858d4",
+  measurementId: "G-9D46L85X2T"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const COLLECTION = "ccpc-dupr";
+
+const connDot = document.getElementById('connDot');
+const connText = document.getElementById('connText');
+
+let members = []; // cached docs {id, ...data}
+let unsub = null;
+
+attachListener();
+
+function attachListener(){
+  if (unsub) unsub();
+  unsub = db.collection(COLLECTION).onSnapshot(
+    snap => {
+      connDot.className = 'ok';
+      connText.textContent = 'Connected';
+      members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      render();
+    },
+    err => {
+      connDot.className = 'bad';
+      connText.textContent = 'Sync error';
+      showToast('Database error: ' + err.message, true);
+    }
+  );
+}
+
+/* ---------------- Theme ---------------- */
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const themeKnob = document.getElementById('themeKnob');
+function applyTheme(t){
+  html.setAttribute('data-theme', t);
+  themeKnob.textContent = t === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('ccpc-theme', t);
+}
+applyTheme(localStorage.getItem('ccpc-theme') || 'light');
+themeToggle.addEventListener('click', () => {
+  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+/* ---------------- DUPR helpers ---------------- */
+function parseDupr(raw){
+  const v = (raw || '').trim();
+  if (v.toUpperCase() === 'NR') return { ok:true, value:'NR' };
+  const num = parseFloat(v);
+  if (isNaN(num) || !/^\d+(\.\d+)?$/.test(v) || num < 2 || num > 6) {
+    return { ok:false, error:'Enter NR or a number 2.000–6.000' };
+  }
+  return { ok:true, value: Math.round(num * 1000) / 1000 };
+}
+function duprNumeric(v){ return v === 'NR' ? 3.0 : v; }
+function computeClubDupr(ath, cur){
+  return Math.round(((duprNumeric(ath) + duprNumeric(cur)) / 2) * 1000) / 1000;
+}
+function fmtDupr(v){ return v === 'NR' ? 'NR' : Number(v).toFixed(3); }
+
+const LEVEL_COLORS = {
+  'Beginner':'#3992b9',
+  'Novice':'#2f7a9e',
+  'Low Intermediate':'#ff6600',
+  'High Intermediate':'#e8890c',
+  'Advanced':'#bb1421',
+  'Advanced+':'#7a0d16'
+};
+function starsHtml(rating){
+  let s = '';
+  for (let i=1;i<=6;i++) s += `<span class="${i<=rating ? '' : 'off'}">★</span>`;
+  return s;
+}
+
+/* ---------------- Filtering & Sorting ---------------- */
+const fSearch = document.getElementById('fSearch');
+const fLevel = document.getElementById('fLevel');
+const fRating = document.getElementById('fRating');
+const fMin = document.getElementById('fMin');
+const fMax = document.getElementById('fMax');
+let sortKey = 'name', sortDir = 1;
+
+[fSearch, fLevel, fRating, fMin, fMax].forEach(el => el.addEventListener('input', render));
+document.getElementById('btnResetFilters').addEventListener('click', () => {
+  fSearch.value=''; fLevel.value=''; fRating.value=''; fMin.value=''; fMax.value='';
+  render();
+});
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    document.querySelectorAll('thead th .arrow').forEach(a => a.textContent = '');
+    th.querySelector('.arrow').textContent = sortDir === 1 ? '▲' : '▼';
+    render();
+  });
+});
+
+function getFiltered(){
+  const search = fSearch.value.trim().toLowerCase();
+  const level = fLevel.value;
+  const rating = fRating.value;
+  const min = fMin.value !== '' ? parseFloat(fMin.value) : null;
+  const max = fMax.value !== '' ? parseFloat(fMax.value) : null;
+
+  let list = members.filter(m => {
+    if (search && !m.name.toLowerCase().includes(search) && !(m.duprId||'').toLowerCase().includes(search)) return false;
+    if (level && m.level !== level) return false;
+    if (rating && Number(m.rating) !== Number(rating)) return false;
+    if (min !== null && m.clubDupr < min) return false;
+    if (max !== null && m.clubDupr > max) return false;
+    return true;
+  });
+
+  list.sort((a,b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (av === undefined || av === null) av = '';
+    if (bv === undefined || bv === null) bv = '';
+    if (sortKey === 'athDupr' || sortKey === 'curDupr' || sortKey === 'clubDupr') {
+      av = duprNumeric(av); bv = duprNumeric(bv);
+    }
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return -1 * sortDir;
+    if (av > bv) return 1 * sortDir;
+    return 0;
+  });
+  return list;
+}
+
+function render(){
+  const list = getFiltered();
+  const tbody = document.getElementById('tbody');
+  document.getElementById('countText').textContent =
+    `${list.length} member${list.length===1?'':'s'}${list.length!==members.length ? ' (of ' + members.length + ')' : ''}`;
+
+  if (members.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="big">🏓</div>No members yet — add your first player.</div></td></tr>`;
+    return;
+  }
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="big">🔍</div>No members match these filters.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(m => `
+    <tr>
+      <td class="name-cell">${escapeHtml(m.name)}</td>
+      <td class="dupr-cell">${m.duprId ? escapeHtml(m.duprId) : '<span style="color:var(--muted)">—</span>'}</td>
+      <td class="dupr-cell ${m.athDupr==='NR'?'nr':''}">${fmtDupr(m.athDupr)}</td>
+      <td class="dupr-cell ${m.curDupr==='NR'?'nr':''}">${fmtDupr(m.curDupr)}</td>
+      <td class="club-dupr">${fmtDupr(m.clubDupr)}</td>
+      <td><span class="badge" style="background:${LEVEL_COLORS[m.level]||'#666'}">${escapeHtml(m.level)}</span></td>
+      <td class="stars">${starsHtml(m.rating)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn edit" title="Edit" data-id="${m.id}">✎</button>
+          <button class="icon-btn del" title="Delete" data-id="${m.id}">🗑</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  tbody.querySelectorAll('.icon-btn.edit').forEach(b => b.addEventListener('click', () => openModal('edit', b.dataset.id)));
+  tbody.querySelectorAll('.icon-btn.del').forEach(b => b.addEventListener('click', () => deleteMember(b.dataset.id)));
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------------- Modal ---------------- */
+const overlay = document.getElementById('overlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalSub = document.getElementById('modalSub');
+const mName = document.getElementById('mName');
+const mDuprId = document.getElementById('mDuprId');
+const mAth = document.getElementById('mAth');
+const mCur = document.getElementById('mCur');
+const mLevel = document.getElementById('mLevel');
+const mRating = document.getElementById('mRating');
+const clubPreview = document.getElementById('clubPreview');
+const starPicker = document.getElementById('starPicker');
+let editId = null;
+
+document.getElementById('btnAdd').addEventListener('click', () => openModal('add'));
+document.getElementById('btnCancel').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+function openModal(mode, id){
+  clearErrors();
+  editId = mode === 'edit' ? id : null;
+  if (mode === 'edit') {
+    const m = members.find(x => x.id === id);
+    modalTitle.textContent = 'Edit member';
+    modalSub.textContent = `Update details for ${m.name}.`;
+    mName.value = m.name;
+    mDuprId.value = m.duprId || '';
+    mAth.value = m.athDupr === 'NR' ? 'NR' : Number(m.athDupr).toFixed(3);
+    mCur.value = m.curDupr === 'NR' ? 'NR' : Number(m.curDupr).toFixed(3);
+    mLevel.value = m.level;
+    setRating(m.rating);
+  } else {
+    modalTitle.textContent = 'Add member';
+    modalSub.textContent = "Enter the player's details below.";
+    mName.value = ''; mDuprId.value = ''; mAth.value=''; mCur.value='';
+    mLevel.value = 'Beginner';
+    setRating(3);
+  }
+  updateClubPreview();
+  overlay.classList.add('show');
+  mName.focus();
+}
+function closeModal(){ overlay.classList.remove('show'); }
+
+function setRating(val){
+  mRating.value = val;
+  starPicker.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('on', Number(b.dataset.val) <= val);
+  });
+}
+starPicker.querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => setRating(Number(b.dataset.val)));
+});
+
+function updateClubPreview(){
+  const a = parseDupr(mAth.value);
+  const c = parseDupr(mCur.value);
+  if (a.ok && c.ok) {
+    clubPreview.textContent = computeClubDupr(a.value, c.value).toFixed(3);
+  } else {
+    clubPreview.textContent = '—';
+  }
+}
+mAth.addEventListener('input', updateClubPreview);
+mCur.addEventListener('input', updateClubPreview);
+
+function clearErrors(){
+  ['errName','errAth','errCur'].forEach(id => document.getElementById(id).textContent = '');
+}
+
+document.getElementById('btnSave').addEventListener('click', async () => {
+  clearErrors();
+  let valid = true;
+  const name = mName.value.trim();
+  if (!name) { document.getElementById('errName').textContent = 'Name is required.'; valid = false; }
+
+  const ath = parseDupr(mAth.value);
+  if (!ath.ok) { document.getElementById('errAth').textContent = ath.error; valid = false; }
+
+  const cur = parseDupr(mCur.value);
+  if (!cur.ok) { document.getElementById('errCur').textContent = cur.error; valid = false; }
+
+  if (!valid) return;
+
+  const clubDupr = computeClubDupr(ath.value, cur.value);
+  const payload = {
+    name,
+    duprId: mDuprId.value.trim(),
+    athDupr: ath.value,
+    curDupr: cur.value,
+    clubDupr,
+    level: mLevel.value,
+    rating: Number(mRating.value),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    if (editId) {
+      await db.collection(COLLECTION).doc(editId).update(payload);
+      showToast('Member updated.');
+    } else {
+      payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection(COLLECTION).add(payload);
+      showToast('Member added.');
+    }
+    closeModal();
+  } catch (err) {
+    showToast('Save failed: ' + err.message, true);
+  }
+});
+
+async function deleteMember(id){
+  const m = members.find(x => x.id === id);
+  if (!confirm(`Remove ${m ? m.name : 'this member'} from the roster?`)) return;
+  try {
+    await db.collection(COLLECTION).doc(id).delete();
+    showToast('Member removed.');
+  } catch (err) {
+    showToast('Delete failed: ' + err.message, true);
+  }
+}
+
+/* ---------------- Toast ---------------- */
+let toastTimer = null;
+function showToast(msg, isError){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>

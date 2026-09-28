@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calapan City Pickleball Club — DUPR Queuing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#083d5f; --navy-deep:#062c46;
+    --gold:#fab813; --orange:#ff6600; --blue:#3992b9; --red:#bb1421;
+    --bg:#f4f2ec; --surface:#ffffff; --surface-2:#f7f7f5;
+    --text:#0e2233; --muted:#5c7186; --border:#e2ded2;
+    --shadow: 0 6px 20px rgba(8,61,95,0.08); --radius:14px;
+  }
+  html[data-theme="dark"]{
+    --bg:#081720; --surface:#0f2634; --surface-2:#0c2029;
+    --text:#eaf1f5; --muted:#8fabbd; --border:#1d3b4c;
+    --shadow: 0 6px 24px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.headline{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  header.top{
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff;padding:20px clamp(16px,4vw,40px);
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    position:relative;overflow:hidden;
+  }
+  header.top::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;
+    background:radial-gradient(circle, rgba(250,184,19,0.25) 0%, transparent 70%);}
+  header.top .titles{position:relative;z-index:1;}
+  header.top h1{margin:0;font-size:clamp(19px,3vw,27px);font-weight:700;}
+  header.top .sub{margin-top:4px;font-size:13px;color:#bcd3e2;font-weight:500;}
+  .top-actions{position:relative;z-index:1;display:flex;align-items:center;gap:14px;}
+  .btn-danger-ghost{background:rgba(187,20,33,0.18);color:#ffd7da;border:1px solid rgba(187,20,33,0.5);
+    padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-danger-ghost:hover{background:rgba(187,20,33,0.32);}
+  .toggle-pill{width:56px;height:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
+    border-radius:20px;position:relative;cursor:pointer;flex-shrink:0;}
+  .toggle-pill .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--gold);
+    transition:transform .2s ease;display:flex;align-items:center;justify-content:center;font-size:12px;}
+  html[data-theme="dark"] .toggle-pill .knob{transform:translateX(26px);background:var(--blue);}
+
+  nav.tabs{display:flex;gap:6px;max-width:1400px;margin:18px auto 0;padding:0 clamp(16px,4vw,40px);flex-wrap:wrap;}
+  nav.tabs button{background:var(--surface);border:1px solid var(--border);color:var(--muted);
+    padding:10px 18px;border-radius:10px 10px 0 0;font-family:'Inter',sans-serif;font-weight:600;
+    font-size:14px;cursor:pointer;border-bottom:none;position:relative;top:1px;}
+  nav.tabs button.active{color:var(--navy);border-bottom:1px solid var(--surface);background:var(--surface);
+    box-shadow:0 -3px 0 var(--gold) inset;}
+  html[data-theme="dark"] nav.tabs button.active{color:#fff;}
+
+  main{max-width:1400px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 60px;border-top:1px solid var(--border);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .bucket-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;align-items:start;}
+
+  .bucket-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;}
+  .bucket-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:16px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .bucket-head h3{margin:0;font-size:17px;}
+  .bucket-head .count{font-size:12px;color:var(--muted);font-weight:600;}
+  .bucket-tag{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{text-align:left;background:var(--surface-2);color:var(--muted);font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;border-bottom:1px solid var(--border);}
+  tbody td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--surface-2);}
+  .empty-row td{padding:26px;text-align:center;color:var(--muted);}
+
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;}
+  .badge.active{background:#2e9e5b;}
+  .badge.resting{background:var(--muted);}
+  .badge.queued{background:var(--orange);}
+  .badge.hold{background:var(--muted);}
+
+  .btn{border:none;border-radius:9px;padding:9px 16px;font-family:'Inter',sans-serif;font-weight:600;
+    font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-primary{background:var(--gold);color:#3a2900;}
+  .btn-primary:hover:not(:disabled){box-shadow:0 4px 14px rgba(250,184,19,.4);}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+  .btn-ghost:hover:not(:disabled){border-color:var(--blue);}
+  .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:7px;}
+  .btn-icon{background:var(--surface-2);border:1px solid var(--border);width:28px;height:28px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;}
+  .btn-icon:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-icon.danger:hover:not(:disabled){border-color:var(--red);color:var(--red);}
+  .btn-icon.warn:hover:not(:disabled){border-color:var(--orange);color:var(--orange);}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+  /* Suggestions */
+  .sugg-toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center;}
+  .sugg-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .sugg-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface-2);
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .sugg-side{flex:1;min-width:150px;}
+  .sugg-side .side-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+  .sugg-slot select{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+    border-radius:8px;padding:7px 8px;font-size:13px;margin-bottom:6px;font-family:inherit;}
+  .sugg-vs{font-family:'Baloo 2';font-weight:700;color:var(--navy);font-size:15px;padding:0 4px;}
+  html[data-theme="dark"] .sugg-vs{color:var(--blue);}
+  .sugg-avg{font-size:11px;color:var(--muted);}
+  .sugg-actions{display:flex;flex-direction:column;gap:6px;}
+  .bench-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .bench-chip select{background:var(--surface);border:1px dashed var(--border);color:var(--muted);
+    border-radius:20px;padding:6px 10px;font-size:12.5px;font-family:inherit;}
+
+  /* Courts & Queue */
+  .courts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:22px;}
+  .court-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;box-shadow:var(--shadow);transition:border-color .15s ease;}
+  .court-card.assigned{border-color:var(--gold);}
+  .court-card.busy{border-color:var(--orange);}
+  .court-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .court-title h3{margin:0;font-size:16px;}
+  .court-status{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff;}
+  .court-status.free{background:#2e9e5b;}
+  .court-status.busy{background:var(--orange);}
+  .court-status.assigned{background:var(--gold);color:#3a2900;}
+  .court-match .mid{font-size:12px;color:var(--muted);margin-bottom:4px;}
+  .court-match .teams{font-weight:700;margin-bottom:6px;}
+  .court-timer{font-family:'Baloo 2';font-size:22px;color:var(--navy);margin-bottom:10px;}
+  html[data-theme="dark"] .court-timer{color:var(--blue);}
+  .court-empty{color:var(--muted);font-size:13px;text-align:center;padding:20px 0;}
+
+  .queue-list{display:flex;flex-direction:column;gap:10px;}
+  .queue-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow);cursor:grab;}
+  .queue-row.onhold{opacity:.6;}
+  .queue-row .drag-handle{color:var(--muted);font-size:16px;}
+  .queue-row .qid{font-family:'Baloo 2';font-weight:700;color:var(--navy);font-size:14px;min-width:56px;}
+  html[data-theme="dark"] .queue-row .qid{color:var(--blue);}
+  .queue-row .qteams{flex:1;min-width:200px;font-weight:600;}
+  .queue-row .qmeta{font-size:12px;color:var(--muted);}
+  .reorder-btns{display:flex;flex-direction:column;gap:2px;}
+  .reorder-btns button{background:none;border:1px solid var(--border);border-radius:5px;width:22px;height:20px;
+    font-size:10px;cursor:pointer;color:var(--text);}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(4,15,22,.55);display:none;align-items:center;justify-content:center;
+    padding:20px;z-index:60;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--surface);border-radius:16px;width:100%;max-width:500px;padding:26px;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;}
+  .modal h2{margin:0 0 4px;font-size:21px;}
+  .modal .modal-sub{color:var(--muted);font-size:13px;margin-bottom:16px;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+  .field input,.field select{background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+    border-radius:8px;padding:9px 10px;font-size:14px;font-family:inherit;width:100%;}
+  .error-text{font-size:12px;color:var(--red);min-height:14px;}
+  .source-toggle{display:flex;gap:8px;margin-bottom:14px;}
+  .source-toggle button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);
+    color:var(--text);cursor:pointer;font-weight:600;font-size:13.5px;}
+  .source-toggle button.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .combo-wrap{position:relative;}
+  .combo-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);
+    border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);max-height:220px;overflow-y:auto;
+    z-index:10;display:none;}
+  .combo-results.show{display:block;}
+  .combo-item{padding:9px 12px;cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between;}
+  .combo-item:hover{background:var(--surface-2);}
+  .selected-chip{display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);
+    border:1px solid var(--blue);border-radius:9px;padding:9px 12px;font-size:13.5px;}
+  .selected-chip button{background:none;border:none;color:var(--red);cursor:pointer;font-weight:700;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+
+  .court-pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 4px;}
+  .court-pick-btn{padding:16px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);
+    cursor:pointer;font-weight:700;font-size:15px;color:var(--text);}
+  .court-pick-btn:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;}
+  .court-pick-btn:hover:not(:disabled){border-color:var(--gold);}
+
+  .score-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .leading-text{font-size:12px;color:var(--muted);margin:-6px 0 14px;min-height:14px;}
+
+  .edit-teams{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+  .edit-team-col{flex:1;min-width:160px;}
+  .edit-team-col .side-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+  .edit-team-col select{margin-bottom:8px;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;
+    padding:12px 20px;border-radius:10px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:100;
+    opacity:0;pointer-events:none;transition:opacity .25s ease, bottom .25s ease;}
+  .toast.show{opacity:1;bottom:30px;}
+  .toast.error{background:var(--red);}
+
+  .section-title{font-size:15px;font-weight:700;margin:0 0 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+
+  .stat-hover{cursor:help;border-bottom:1px dashed var(--border);}
+  .stat-tooltip{position:fixed;z-index:200;background:var(--navy-deep);color:#eaf1f5;padding:12px 14px;
+    border-radius:10px;font-size:12px;max-width:280px;box-shadow:0 10px 30px rgba(0,0,0,.4);
+    pointer-events:none;display:none;line-height:1.6;}
+  .stat-tooltip.show{display:block;}
+  .stat-tooltip .t-name{font-family:'Baloo 2';font-weight:700;font-size:14px;color:var(--gold);margin-bottom:4px;}
+
+  .logs-toolbar{display:flex;gap:10px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+
+  @media (max-width:640px){ .score-row{grid-template-columns:1fr;} .court-pick-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="titles">
+    <h1>Calapan City Pickleball Club</h1>
+    <div class="sub" id="sessionLabel">Loading session…</div>
+  </div>
+  <div class="top-actions">
+    <button class="btn-danger-ghost" id="btnNewSession">↻ New session</button>
+    <div class="toggle-pill" id="themeToggle" title="Toggle light/dark mode"><div class="knob" id="themeKnob">☀️</div></div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="participants" class="active">1 · Participants</button>
+  <button data-tab="matchups">2 · Match Suggestions</button>
+  <button data-tab="queue">3 · Queue &amp; Courts</button>
+  <button data-tab="logs">Logs</button>
+</nav>
+
+<main>
+  <section class="panel active" id="panel-participants"><div class="bucket-grid" id="bucketCards-participants"></div></section>
+  <section class="panel" id="panel-matchups"><div class="bucket-grid" id="bucketCards-matchups"></div></section>
+
+  <section class="panel" id="panel-queue">
+    <div class="section-title">Courts</div>
+    <div class="courts-grid" id="courtsGrid"></div>
+    <div class="section-title">Waiting queue</div>
+    <div class="queue-list" id="queueList"></div>
+  </section>
+
+  <section class="panel" id="panel-logs">
+    <div class="bucket-card">
+      <div class="bucket-head"><h3>Match Logs</h3><span class="count" id="logsCount">0 matches</span></div>
+      <div class="logs-toolbar">
+        <div class="field" style="margin:0;min-width:220px;"><label>Filter by session</label>
+          <select id="logSessionFilter"><option value="">All sessions</option></select></div>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+            <button class="btn btn-ghost btn-sm" id="btnDuprSettings">⚙ DUPR settings</button>
+            <button class="btn btn-primary btn-sm" id="btnExportDupr">⬇ Export DUPR CSV</button>
+          </div>
+          <div style="font-size:12px;color:var(--muted);" id="exportTargetLabel"></div>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Match</th><th>Bucket</th><th>Team 1</th><th>Team 2</th><th>Score</th><th>Winner</th>
+          <th>Court</th><th>Duration</th><th>Session</th><th>Actions</th></tr></thead>
+        <tbody id="logsBody"><tr class="empty-row"><td colspan="10">No matches logged yet.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- Add Participant Modal -->
+<div class="overlay" id="addOverlay">
+  <div class="modal">
+    <h2>Add participant</h2>
+    <div class="modal-sub" id="addModalSub">Adding to bucket</div>
+    <div class="source-toggle">
+      <button type="button" class="active" id="srcMemberBtn">From Members Database</button>
+      <button type="button" id="srcGuestBtn">Guest</button>
+    </div>
+    <div id="memberSourceBlock">
+      <div class="field"><label>Search member (name or DUPR ID)</label>
+        <div class="combo-wrap"><input type="text" id="memberSearch" placeholder="Start typing…"><div class="combo-results" id="memberResults"></div></div></div>
+      <div id="memberSelectedWrap" style="display:none;" class="field"><label>Selected</label>
+        <div class="selected-chip"><span id="memberSelectedText"></span><button type="button" id="memberClearBtn">✕</button></div></div>
+    </div>
+    <div id="guestSourceBlock" style="display:none;">
+      <div class="field"><label>Guest name</label><input type="text" id="guestName" placeholder="Guest full name"></div>
+      <div class="field"><label>Current DUPR</label><input type="text" id="guestDupr" placeholder="e.g. 3.250 or NR"><div class="error-text" id="errGuestDupr"></div></div>
+    </div>
+    <div class="error-text" id="errAdd"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnAddCancel">Cancel</button><button class="btn btn-primary" id="btnAddConfirm">Add to bucket</button></div>
+  </div>
+</div>
+
+<!-- Court Picker Modal -->
+<div class="overlay" id="courtOverlay">
+  <div class="modal">
+    <h2>Assign a court</h2>
+    <div class="modal-sub">Pick a court. The game will not start automatically — use "Start game" on the court card when ready.</div>
+    <div class="court-pick-grid" id="courtPickGrid"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnCourtCancel">Cancel</button></div>
+  </div>
+</div>
+
+<!-- End Match Modal -->
+<div class="overlay" id="endOverlay">
+  <div class="modal">
+    <h2>End match</h2>
+    <div class="modal-sub" id="endModalSub">Enter the final score.</div>
+    <div class="score-row">
+      <div class="field"><label id="score1Label">Team 1 score</label><input type="number" id="score1Input"></div>
+      <div class="field"><label id="score2Label">Team 2 score</label><input type="number" id="score2Input"></div>
+    </div>
+    <div class="leading-text" id="leadingIndicator"></div>
+    <div class="error-text" id="errEnd"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnEndCancel">Cancel</button><button class="btn btn-primary" id="btnEndConfirm">Confirm result</button></div>
+  </div>
+</div>
+
+<!-- Edit Queue Match Modal -->
+<div class="overlay" id="editQueueOverlay">
+  <div class="modal">
+    <h2>Edit match</h2>
+    <div class="modal-sub" id="editQueueSub"></div>
+    <div class="edit-teams">
+      <div class="edit-team-col"><div class="side-label">Team A</div><div id="editTeam1Slots"></div></div>
+      <div class="edit-team-col"><div class="side-label">Team B</div><div id="editTeam2Slots"></div></div>
+    </div>
+    <div class="error-text" id="errEditQueue"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnEditQueueCancel">Cancel</button><button class="btn btn-primary" id="btnEditQueueSave">Save changes</button></div>
+  </div>
+</div>
+
+<!-- DUPR Export Settings Modal -->
+<div class="overlay" id="duprSettingsOverlay">
+  <div class="modal">
+    <h2>DUPR export settings</h2>
+    <div class="modal-sub" id="duprSettingsSub"></div>
+    <div class="field"><label>Event name</label><input type="text" id="dsEvent" placeholder="e.g. Saturday Open Play"></div>
+    <div class="field"><label>Date</label><input type="date" id="dsDate"></div>
+    <div class="field"><label>Location</label><input type="text" id="dsLocation" placeholder="e.g. PKL Box, Calapan City, Oriental Mindoro"></div>
+    <div class="field"><label>Scoring type</label>
+      <select id="dsScoreType"><option value="SIDEOUT">SIDEOUT</option><option value="RALLY">RALLY</option></select></div>
+    <div class="error-text" id="errDs"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btnDsCancel">Cancel</button>
+      <button class="btn btn-primary" id="btnDsSave">Save settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log Edit Modal -->
+<div class="overlay" id="logEditOverlay">
+  <div class="modal">
+    <h2>Edit match result</h2>
+    <div class="modal-sub" id="logEditSub"></div>
+    <div class="score-row">
+      <div class="field"><label id="logScore1Label">Team 1 score</label><input type="number" id="logScore1Input"></div>
+      <div class="field"><label id="logScore2Label">Team 2 score</label><input type="number" id="logScore2Input"></div>
+    </div>
+    <div class="error-text" id="errLogEdit"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnLogEditCancel">Cancel</button><button class="btn btn-primary" id="btnLogEditSave">Save changes</button></div>
+  </div>
+</div>
+
+<!-- New Session Modal -->
+<div class="overlay" id="sessionOverlay">
+  <div class="modal">
+    <h2>Start new session</h2>
+    <div class="modal-sub">Clears bucket participants, the queue, and pairing history for a fresh day. Match logs stay archived under their own session — nothing is deleted.</div>
+    <div class="field"><label>Session name</label><input type="text" id="sessNameInput" placeholder="e.g. Saturday Open Play"></div>
+    <div class="field"><label>Date</label><input type="date" id="sessDateInput"></div>
+    <div class="error-text" id="errSession"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnSessionCancel">Cancel</button><button class="btn btn-primary" id="btnSessionStart">Start session</button></div>
+  </div>
+</div>
+
+<div class="stat-tooltip" id="statTooltip"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ================= Firebase ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBv_s3wzr6nbFcqZbTI0UDdcijFWnO-t4I",
+  authDomain: "ccpc-dupr.firebaseapp.com",
+  databaseURL: "https://ccpc-dupr-default-rtdb.firebaseio.com",
+  projectId: "ccpc-dupr",
+  storageBucket: "ccpc-dupr.firebasestorage.app",
+  messagingSenderId: "49883771837",
+  appId: "1:49883771837:web:ca4be96157a62afbc858d4",
+  measurementId: "G-9D46L85X2T"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const COURTS = 4;
+const BUCKETS = [
+  { key:'singles', label:'Singles', color:'#3992b9', size:2 },
+  { key:'fun', label:'Fun Mode (Low)', color:'#ff6600', size:4 },
+  { key:'competitive', label:'Competitive Mode (High)', color:'#bb1421', size:4 }
+];
+const COURT_BUSY_STATUSES = ['assigned','playing'];
+const QUEUE_MATCH_STATUSES = ['waiting','onhold','assigned','playing'];
+
+/* ================= Theme ================= */
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const themeKnob = document.getElementById('themeKnob');
+function applyTheme(t){ html.setAttribute('data-theme', t); themeKnob.textContent = t==='dark' ? '🌙' : '☀️'; localStorage.setItem('ccpc-theme', t); }
+applyTheme(localStorage.getItem('ccpc-theme') || 'light');
+themeToggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+/* ================= Tabs ================= */
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ================= Toast / helpers ================= */
+let toastTimer = null;
+function showToast(msg, isError){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function setsEqual(a,b){ if(a.size!==b.size) return false; for(const x of a) if(!b.has(x)) return false; return true; }
+function formatDuration(totalSeconds){
+  const s = Math.max(0, Math.round(totalSeconds || 0));
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60);
+  if (h>0) return `${h}h ${m}m`;
+  if (m>0) return `${m}m`;
+  return `${s}s`;
+}
+function refKeyFor(p){
+  return p.sourceType === 'member' ? ('m_' + p.memberId) : ('g_' + (p.name||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_'));
+}
+
+/* ================= DUPR helpers ================= */
+function parseDupr(raw){
+  const v = (raw || '').trim();
+  if (v.toUpperCase() === 'NR') return { ok:true, raw:'NR', value:3.0 };
+  const num = parseFloat(v);
+  if (isNaN(num) || !/^\d+(\.\d+)?$/.test(v) || num < 2 || num > 6) return { ok:false, error:'Enter NR or a number 2.000–6.000' };
+  const rounded = Math.round(num * 1000) / 1000;
+  return { ok:true, raw: rounded.toFixed(3), value: rounded };
+}
+function fmtNum(n){ return (Math.round(n*1000)/1000).toFixed(3); }
+
+/* ================= Live data caches ================= */
+let allMembers = [];
+let participants = [];
+let queueMatches = [];
+let logs = [];
+let sessionsList = [];
+let statsCache = {};
+let sessionState = { matchCounter:0, partnerCounts:{}, opponentCounts:{} };
+let logFilterSessionId = '';
+let sessionEnsureAttempted = false;
+
+db.collection('ccpc-dupr').onSnapshot(snap => { allMembers = snap.docs.map(d => ({ id:d.id, ...d.data() })); });
+
+db.collection('ccpc-queue-participants').onSnapshot(snap => {
+  participants = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderParticipants();
+  updateMatchupPoolCounts();
+}, err => showToast('Participants sync error: ' + err.message, true));
+
+db.collection('ccpc-queue-matches').onSnapshot(snap => {
+  queueMatches = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderCourts();
+  renderQueueList();
+}, err => showToast('Queue sync error: ' + err.message, true));
+
+db.collection('ccpc-queue-logs').orderBy('completedAt','desc').limit(2000).onSnapshot(snap => {
+  logs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderLogs();
+}, err => showToast('Logs sync error: ' + err.message, true));
+
+db.collection('ccpc-queue-stats').onSnapshot(snap => { statsCache = {}; snap.docs.forEach(d => { statsCache[d.id] = d.data(); }); });
+
+db.collection('ccpc-queue-sessions').orderBy('createdAt','desc').onSnapshot(snap => {
+  sessionsList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderSessionFilterOptions();
+});
+
+db.collection('ccpc-queue-session').doc('state').onSnapshot(doc => {
+  sessionState = doc.exists ? doc.data() : {};
+  updateSessionLabel();
+  if (!sessionState.currentSessionId && !sessionEnsureAttempted) { sessionEnsureAttempted = true; ensureDefaultSession(); }
+});
+
+async function ensureDefaultSession(){
+  try {
+    const name = 'Session 1';
+    const date = new Date().toISOString().slice(0,10);
+    const sessRef = await db.collection('ccpc-queue-sessions').add({ name, date, eventName: name, location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('ccpc-queue-session').doc('state').set({
+      matchCounter:0, partnerCounts:{}, opponentCounts:{},
+      currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date
+    }, { merge:true });
+  } catch(err){ /* best effort */ }
+}
+function updateSessionLabel(){
+  if (typeof updateExportTargetLabel === 'function') updateExportTargetLabel();
+  const el = document.getElementById('sessionLabel');
+  el.textContent = sessionState.currentSessionName
+    ? `DUPR Queuing · Session: ${sessionState.currentSessionName} (${sessionState.currentSessionDate||''})`
+    : 'DUPR Queuing · Starting session…';
+}
+
+/* ================= Elapsed-time tracking ================= */
+async function flushElapsed(p){
+  if (!p || !p.statusSince) return;
+  const elapsed = Math.max(0, Math.round((Date.now() - p.statusSince) / 1000));
+  if (elapsed <= 0) return;
+  const field = p.status === 'active' ? 'totalWaitingSeconds' : (p.status === 'resting' ? 'totalRestingSeconds' : null);
+  if (!field) return;
+  try { await db.collection('ccpc-queue-stats').doc(refKeyFor(p)).set({ name: p.name, [field]: firebase.firestore.FieldValue.increment(elapsed) }, { merge:true }); }
+  catch(err){ /* best effort */ }
+}
+
+/* ================= PARTICIPANTS ================= */
+function bucketLabel(key){ return BUCKETS.find(b=>b.key===key).label; }
+
+function renderParticipants(){
+  const wrap = document.getElementById('bucketCards-participants');
+  wrap.innerHTML = BUCKETS.map(b => {
+    const list = participants.filter(p => p.bucket === b.key).sort((x,y) => x.name.localeCompare(y.name));
+    const rows = list.length ? list.map(p => `
+      <tr>
+        <td class="stat-hover" data-refkey="${refKeyFor(p)}" data-pid="${p.id}">
+          <b>${escapeHtml(p.name)}</b>${p.sourceType==='guest' ? ' <span style="color:var(--muted);font-size:11px;">(guest)</span>' : ''}
+        </td>
+        <td>${p.duprId ? escapeHtml(p.duprId) : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${p.duprRaw || fmtNum(p.dupr)}</td>
+        <td><span class="badge ${p.status}">${p.status==='queued'?'In match':(p.status==='resting'?'Resting':'Active')}</span></td>
+        <td><div class="row-actions">
+          <button class="btn-icon warn" title="${p.status==='resting'?'Set active':'Set resting'}" ${p.status==='queued'?'disabled':''} onclick="toggleRest('${p.id}','${p.status}')">${p.status==='resting'?'▶':'⏸'}</button>
+          <button class="btn-icon danger" title="Remove" ${p.status==='queued'?'disabled':''} onclick="removeParticipant('${p.id}')">🗑</button>
+        </div></td>
+      </tr>`).join('') : `<tr class="empty-row"><td colspan="5">No one in this bucket yet.</td></tr>`;
+    return `
+    <div class="bucket-card">
+      <div class="bucket-head">
+        <h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3>
+        <div style="display:flex;align-items:center;gap:12px;"><span class="count">${list.length} player${list.length===1?'':'s'}</span>
+          <button class="btn btn-primary btn-sm" onclick="openAddModal('${b.key}')">+ Add</button></div>
+      </div>
+      <table><thead><tr><th>Name</th><th>DUPR ID</th><th>DUPR</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>
+    </div>`;
+  }).join('');
+}
+
+async function toggleRest(id, current){
+  const p = participants.find(x=>x.id===id);
+  if (!p) return;
+  await flushElapsed(p);
+  const next = current === 'resting' ? 'active' : 'resting';
+  const update = { status: next, statusSince: Date.now() };
+  if (next === 'active') update.sitOutStreak = 0;
+  try { await db.collection('ccpc-queue-participants').doc(id).update(update); }
+  catch(err){ showToast('Update failed: ' + err.message, true); }
+}
+async function removeParticipant(id){
+  const p = participants.find(x=>x.id===id);
+  if (!confirm(`Remove ${p ? p.name : 'this participant'} from the bucket?`)) return;
+  try { if (p) await flushElapsed(p); await db.collection('ccpc-queue-participants').doc(id).delete(); }
+  catch(err){ showToast('Remove failed: ' + err.message, true); }
+}
+
+/* ---- Hover stat tooltip ---- */
+function computeAllTimeStats(refKey){
+  let games=0, wins=0, losses=0;
+  const partners={}, opponents={};
+  logs.forEach(l => {
+    const t1keys = l.team1.map(refKeyFor), t2keys = l.team2.map(refKeyFor);
+    const inT1 = t1keys.includes(refKey), inT2 = t2keys.includes(refKey);
+    if (!inT1 && !inT2) return;
+    games++;
+    const won = (inT1 && l.winner==='team1') || (inT2 && l.winner==='team2');
+    if (won) wins++; else losses++;
+    const mine = inT1 ? l.team1 : l.team2, theirs = inT1 ? l.team2 : l.team1;
+    mine.forEach(p => { if (refKeyFor(p) !== refKey) partners[p.name] = (partners[p.name]||0) + 1; });
+    theirs.forEach(p => { opponents[p.name] = (opponents[p.name]||0) + 1; });
+  });
+  return { games, wins, losses, partners, opponents };
+}
+function showStatTooltip(el){
+  const refKey = el.dataset.refkey, pid = el.dataset.pid;
+  const live = participants.find(p => p.id === pid);
+  if (!live) return;
+  const stats = computeAllTimeStats(refKey);
+  const stored = statsCache[refKey] || { totalWaitingSeconds:0, totalRestingSeconds:0 };
+  let waiting = stored.totalWaitingSeconds || 0, resting = stored.totalRestingSeconds || 0;
+  if (live.statusSince) {
+    const liveElapsed = Math.max(0, Math.round((Date.now() - live.statusSince) / 1000));
+    if (live.status === 'active') waiting += liveElapsed; else if (live.status === 'resting') resting += liveElapsed;
+  }
+  const partnersStr = Object.entries(stats.partners).map(([n,c]) => `${n} (${c})`).join(', ') || '—';
+  const opponentsStr = Object.entries(stats.opponents).map(([n,c]) => `${n} (${c})`).join(', ') || '—';
+  const tip = document.getElementById('statTooltip');
+  tip.innerHTML = `<div class="t-name">${escapeHtml(live.name)}</div>
+    <div>Games played: ${stats.games} · Record: ${stats.wins}W–${stats.losses}L</div>
+    <div>Waiting: ${formatDuration(waiting)} · Resting: ${formatDuration(resting)}</div>
+    <div style="margin-top:4px;">Partners: ${partnersStr}</div><div>Opponents: ${opponentsStr}</div>`;
+  const rect = el.getBoundingClientRect();
+  tip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
+  tip.style.top = (rect.bottom + 8) + 'px';
+  tip.classList.add('show');
+}
+function hideStatTooltip(){ document.getElementById('statTooltip').classList.remove('show'); }
+document.addEventListener('mouseover', e => { const el = e.target.closest('.stat-hover'); if (el) showStatTooltip(el); });
+document.addEventListener('mouseout', e => { const el = e.target.closest('.stat-hover'); if (el) hideStatTooltip(); });
+
+/* ================= ADD PARTICIPANT MODAL ================= */
+const addOverlay = document.getElementById('addOverlay');
+let addBucket = null, addSource = 'member', selectedMember = null;
+function openAddModal(bucketKey){
+  addBucket = bucketKey; addSource = 'member'; selectedMember = null;
+  document.getElementById('addModalSub').textContent = `Adding to: ${bucketLabel(bucketKey)}`;
+  document.getElementById('memberSearch').value = '';
+  document.getElementById('memberResults').classList.remove('show');
+  document.getElementById('memberSelectedWrap').style.display = 'none';
+  document.getElementById('guestName').value = '';
+  document.getElementById('guestDupr').value = '';
+  document.getElementById('errAdd').textContent = '';
+  document.getElementById('errGuestDupr').textContent = '';
+  setSourceUI('member');
+  addOverlay.classList.add('show');
+}
+function setSourceUI(src){
+  addSource = src;
+  document.getElementById('srcMemberBtn').classList.toggle('active', src==='member');
+  document.getElementById('srcGuestBtn').classList.toggle('active', src==='guest');
+  document.getElementById('memberSourceBlock').style.display = src==='member' ? 'block' : 'none';
+  document.getElementById('guestSourceBlock').style.display = src==='guest' ? 'block' : 'none';
+}
+document.getElementById('srcMemberBtn').addEventListener('click', () => setSourceUI('member'));
+document.getElementById('srcGuestBtn').addEventListener('click', () => setSourceUI('guest'));
+document.getElementById('btnAddCancel').addEventListener('click', () => addOverlay.classList.remove('show'));
+addOverlay.addEventListener('click', e => { if (e.target === addOverlay) addOverlay.classList.remove('show'); });
+function activeMemberIds(){ return new Set(participants.filter(p => p.sourceType==='member').map(p => p.memberId)); }
+function activeGuestNames(){ return new Set(participants.filter(p => p.sourceType==='guest').map(p => p.name.trim().toLowerCase())); }
+const memberSearch = document.getElementById('memberSearch');
+const memberResults = document.getElementById('memberResults');
+memberSearch.addEventListener('input', () => {
+  const q = memberSearch.value.trim().toLowerCase();
+  const excluded = activeMemberIds();
+  if (!q) { memberResults.classList.remove('show'); memberResults.innerHTML=''; return; }
+  const matches = allMembers.filter(m => !excluded.has(m.id) && (m.name.toLowerCase().includes(q) || (m.duprId||'').toLowerCase().includes(q))).slice(0, 8);
+  memberResults.innerHTML = matches.length ? matches.map(m => `
+      <div class="combo-item" data-id="${m.id}"><span>${escapeHtml(m.name)}</span><span style="color:var(--muted)">${fmtNum(m.clubDupr)}</span></div>`).join('')
+    : `<div class="combo-item" style="color:var(--muted);cursor:default;">No available members match.</div>`;
+  memberResults.querySelectorAll('.combo-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const m = allMembers.find(x => x.id === el.dataset.id);
+      if (!m) return;
+      selectedMember = m;
+      document.getElementById('memberSelectedText').textContent = `${m.name} — Club DUPR ${fmtNum(m.clubDupr)}`;
+      document.getElementById('memberSelectedWrap').style.display = 'block';
+      memberSearch.value = ''; memberResults.classList.remove('show');
+    });
+  });
+  memberResults.classList.add('show');
+});
+document.getElementById('memberClearBtn').addEventListener('click', () => { selectedMember = null; document.getElementById('memberSelectedWrap').style.display = 'none'; });
+
+document.getElementById('btnAddConfirm').addEventListener('click', async () => {
+  document.getElementById('errAdd').textContent = ''; document.getElementById('errGuestDupr').textContent = '';
+  let payload = null;
+  if (addSource === 'member') {
+    if (!selectedMember) { document.getElementById('errAdd').textContent = 'Search and select a member first.'; return; }
+    if (activeMemberIds().has(selectedMember.id)) { document.getElementById('errAdd').textContent = `${selectedMember.name} is already in a bucket.`; return; }
+    payload = { bucket: addBucket, sourceType:'member', memberId: selectedMember.id, name: selectedMember.name, duprId: selectedMember.duprId || '',
+      dupr: selectedMember.clubDupr, duprRaw: fmtNum(selectedMember.clubDupr), status:'active', statusSince: Date.now(), sitOutStreak: 0,
+      joinedAt: firebase.firestore.FieldValue.serverTimestamp() };
+  } else {
+    const name = document.getElementById('guestName').value.trim();
+    if (!name) { document.getElementById('errAdd').textContent = 'Guest name is required.'; return; }
+    if (activeGuestNames().has(name.toLowerCase())) { document.getElementById('errAdd').textContent = `${name} is already in a bucket.`; return; }
+    const d = parseDupr(document.getElementById('guestDupr').value);
+    if (!d.ok) { document.getElementById('errGuestDupr').textContent = d.error; return; }
+    payload = { bucket: addBucket, sourceType:'guest', memberId: null, name, duprId: '', dupr: d.value, duprRaw: d.raw,
+      status:'active', statusSince: Date.now(), sitOutStreak: 0, joinedAt: firebase.firestore.FieldValue.serverTimestamp() };
+  }
+  try { await db.collection('ccpc-queue-participants').add(payload); showToast(`${payload.name} added to ${bucketLabel(addBucket)}.`); addOverlay.classList.remove('show'); }
+  catch (err) { showToast('Add failed: ' + err.message, true); }
+});
+
+/* ================= SESSION HISTORY HELPERS ================= */
+function pairKey(id1, id2){ return [id1, id2].sort().join('__'); }
+function partnerCount(id1, id2){ return (sessionState.partnerCounts || {})[pairKey(id1,id2)] || 0; }
+function opponentCount(id1, id2){ return (sessionState.opponentCounts || {})[pairKey(id1,id2)] || 0; }
+
+/* ================= SUGGESTION ENGINE ================= */
+let suggestionState = { singles:{matches:[],bench:[]}, fun:{matches:[],bench:[]}, competitive:{matches:[],bench:[]} };
+function shuffle(arr){ const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function sampleCombo(pool, k){ return shuffle(pool).slice(0,k); }
+function evaluateGroup(combo, groupSize){
+  if (groupSize === 2){ const [p,q] = combo; return { score: opponentCount(p.id,q.id)*20, team1:[p], team2:[q] }; }
+  const [a,b,c,d] = combo;
+  const splits = [[[a,b],[c,d]], [[a,c],[b,d]], [[a,d],[b,c]]];
+  let best = null;
+  for (const [t1, t2] of splits){
+    const partnerScore = (partnerCount(t1[0].id,t1[1].id) + partnerCount(t2[0].id,t2[1].id)) * 100;
+    let oppScore = 0;
+    for (const p of t1) for (const q of t2) oppScore += opponentCount(p.id,q.id) * 20;
+    const duprDiff = Math.abs((t1[0].dupr+t1[1].dupr) - (t2[0].dupr+t2[1].dupr));
+    const score = partnerScore + oppScore + duprDiff;
+    if (!best || score < best.score) best = { score, team1:t1, team2:t2 };
+  }
+  return best;
+}
+function generateSuggestions(bucketKey){
+  const groupSize = BUCKETS.find(b=>b.key===bucketKey).size;
+  const activePool = participants.filter(p => p.bucket === bucketKey && p.status === 'active');
+  const tiers = {};
+  activePool.forEach(p => { const t = p.sitOutStreak || 0; (tiers[t] = tiers[t] || []).push(p); });
+  const tierKeys = Object.keys(tiers).map(Number).sort((a,b) => b - a);
+  let pool = [];
+  tierKeys.forEach(t => { pool = pool.concat(shuffle(tiers[t])); });
+  const suggestions = [];
+  while (pool.length >= groupSize){
+    const windowSize = Math.min(pool.length, groupSize===2 ? 6 : 8);
+    const windowPool = pool.slice(0, windowSize);
+    let best = null;
+    for (let i=0;i<25;i++){
+      const combo = sampleCombo(windowPool, groupSize);
+      const evalR = evaluateGroup(combo, groupSize);
+      if (!best || evalR.score < best.score) best = { ...evalR, combo };
+    }
+    suggestions.push({ team1: best.team1, team2: best.team2 });
+    const chosenIds = new Set(best.combo.map(p=>p.id));
+    pool = pool.filter(p => !chosenIds.has(p.id));
+  }
+  suggestionState[bucketKey] = { matches: suggestions, bench: pool };
+  renderSuggestions(bucketKey);
+  const placedIds = new Set();
+  suggestions.forEach(m => { [...m.team1, ...m.team2].forEach(p => placedIds.add(p.id)); });
+  const batch = db.batch();
+  let touched = false;
+  activePool.forEach(p => {
+    if (placedIds.has(p.id)) { if ((p.sitOutStreak||0) !== 0) { batch.update(db.collection('ccpc-queue-participants').doc(p.id), { sitOutStreak: 0 }); touched = true; } }
+    else { batch.update(db.collection('ccpc-queue-participants').doc(p.id), { sitOutStreak: (p.sitOutStreak||0) + 1 }); touched = true; }
+  });
+  if (touched) batch.commit().catch(() => {});
+}
+function allRoundParticipants(bucketKey){
+  const st = suggestionState[bucketKey];
+  const list = [];
+  st.matches.forEach(m => { list.push(...m.team1, ...m.team2); });
+  list.push(...st.bench);
+  return list;
+}
+function findLoc(bucketKey, participantId){
+  const st = suggestionState[bucketKey];
+  for (let mi=0; mi<st.matches.length; mi++){
+    const m = st.matches[mi];
+    for (let si=0; si<m.team1.length; si++) if (m.team1[si].id === participantId) return {type:'match', mi, side:'team1', si};
+    for (let si=0; si<m.team2.length; si++) if (m.team2[si].id === participantId) return {type:'match', mi, side:'team2', si};
+  }
+  for (let bi=0; bi<st.bench.length; bi++) if (st.bench[bi].id === participantId) return {type:'bench', bi};
+  return null;
+}
+function getAt(bucketKey, loc){ const st = suggestionState[bucketKey]; return loc.type==='match' ? st.matches[loc.mi][loc.side][loc.si] : st.bench[loc.bi]; }
+function setAt(bucketKey, loc, participant){ const st = suggestionState[bucketKey]; if (loc.type==='match') st.matches[loc.mi][loc.side][loc.si] = participant; else st.bench[loc.bi] = participant; }
+function swapSlot(bucketKey, selfLoc, newId){
+  const oldParticipant = getAt(bucketKey, selfLoc);
+  const otherLoc = findLoc(bucketKey, newId);
+  if (!otherLoc) return;
+  const newParticipant = getAt(bucketKey, otherLoc);
+  setAt(bucketKey, selfLoc, newParticipant); setAt(bucketKey, otherLoc, oldParticipant);
+  renderSuggestions(bucketKey);
+}
+function slotSelectHtml(bucketKey, loc, currentParticipant){
+  const options = allRoundParticipants(bucketKey).map(p => `<option value="${p.id}" ${p.id===currentParticipant.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
+  const locStr = JSON.stringify(loc).replace(/"/g,'&quot;');
+  return `<select data-loc="${locStr}" onchange="swapSlot('${bucketKey}', JSON.parse(this.dataset.loc), this.value)">${options}</select>`;
+}
+function renderSuggestions(bucketKey){
+  const st = suggestionState[bucketKey];
+  const container = document.getElementById('suggBody-' + bucketKey);
+  if (!container) return;
+  if (!st.matches.length && !st.bench.length) { container.innerHTML = `<div style="padding:8px 0;color:var(--muted);font-size:13px;">No suggestions yet — click "Generate matchups".</div>`; return; }
+  const cards = st.matches.map((m, idx) => {
+    const t1avg = m.team1.reduce((s,p)=>s+p.dupr,0) / m.team1.length;
+    const t2avg = m.team2.reduce((s,p)=>s+p.dupr,0) / m.team2.length;
+    const t1selects = m.team1.map((p,si) => slotSelectHtml(bucketKey, {type:'match',mi:idx,side:'team1',si}, p)).join('');
+    const t2selects = m.team2.map((p,si) => slotSelectHtml(bucketKey, {type:'match',mi:idx,side:'team2',si}, p)).join('');
+    return `<div class="sugg-card">
+      <div class="sugg-side"><div class="side-label">Team A</div>${t1selects}<div class="sugg-avg">avg DUPR ${t1avg.toFixed(3)}</div></div>
+      <div class="sugg-vs">VS</div>
+      <div class="sugg-side"><div class="side-label">Team B</div>${t2selects}<div class="sugg-avg">avg DUPR ${t2avg.toFixed(3)}</div></div>
+      <div class="sugg-actions"><button class="btn btn-primary btn-sm" onclick="this.disabled=true; addSuggestionToQueue('${bucketKey}', ${idx})">Add to queue</button></div>
+    </div>`;
+  }).join('');
+  const benchHtml = st.bench.length ? `<div><div class="side-label" style="margin-bottom:6px;">Sitting out this round</div>
+      <div class="bench-wrap">${st.bench.map((p,bi) => `<div class="bench-chip">${slotSelectHtml(bucketKey, {type:'bench',bi}, p)}</div>`).join('')}</div></div>` : '';
+  container.innerHTML = (cards || `<div style="color:var(--muted);font-size:13px;">All suggested matches added — generate again for another round.</div>`) + benchHtml;
+}
+
+function currentMatchIdSetFrom(arr){ return new Set(arr.map(p => p.id)); }
+function matchIdSetFromSnapshot(m){ return new Set([...m.team1, ...m.team2].map(p => p.participantId)); }
+function findDuplicateMatch(bucketKey, idSet, excludeMatchId){
+  return queueMatches.find(x => x.id !== excludeMatchId && QUEUE_MATCH_STATUSES.includes(x.status) && x.bucket === bucketKey && setsEqual(matchIdSetFromSnapshot(x), idSet));
+}
+function snapshotArr(arr){ return arr.map(p => ({ participantId:p.id, name:p.name, duprId:p.duprId||'', dupr:p.dupr, sourceType:p.sourceType, memberId:p.memberId||null })); }
+
+async function commitMatchToQueue(bucketKey, team1, team2){
+  const idSet = currentMatchIdSetFrom([...team1, ...team2]);
+  if (findDuplicateMatch(bucketKey, idSet, null)) throw new Error('This exact matchup is already queued.');
+  await Promise.all([...team1, ...team2].map(p => flushElapsed(p)));
+  const sessionRef = db.collection('ccpc-queue-session').doc('state');
+  const matchId = await db.runTransaction(async tx => {
+    const snap = await tx.get(sessionRef);
+    const data = snap.exists ? snap.data() : {};
+    const counter = (data.matchCounter || 0) + 1;
+    const partnerCounts = { ...(data.partnerCounts || {}) };
+    const opponentCounts = { ...(data.opponentCounts || {}) };
+    const addPair = (obj, a, b) => { const k = pairKey(a,b); obj[k] = (obj[k]||0) + 1; };
+    if (team1.length === 2) addPair(partnerCounts, team1[0].id, team1[1].id);
+    if (team2.length === 2) addPair(partnerCounts, team2[0].id, team2[1].id);
+    for (const p of team1) for (const q of team2) addPair(opponentCounts, p.id, q.id);
+    tx.set(sessionRef, { matchCounter: counter, partnerCounts, opponentCounts }, { merge:true });
+    return 'M-' + String(counter).padStart(3,'0');
+  });
+  const batch = db.batch();
+  [...team1, ...team2].forEach(p => { batch.update(db.collection('ccpc-queue-participants').doc(p.id), { status:'queued', statusSince: Date.now() }); });
+  const matchRef = db.collection('ccpc-queue-matches').doc();
+  batch.set(matchRef, { matchId, bucket: bucketKey, team1: snapshotArr(team1), team2: snapshotArr(team2),
+    status:'waiting', court:null, startedAt:null, order: Date.now(), createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  await batch.commit();
+  return matchId;
+}
+async function addSuggestionToQueue(bucketKey, idx){
+  const s = suggestionState[bucketKey].matches[idx];
+  if (!s) return;
+  try {
+    const matchId = await commitMatchToQueue(bucketKey, s.team1, s.team2);
+    suggestionState[bucketKey].matches.splice(idx, 1);
+    renderSuggestions(bucketKey);
+    showToast(`${matchId} added to queue.`);
+  } catch (err) { showToast('Could not add match: ' + err.message, true); renderSuggestions(bucketKey); }
+}
+async function addAllSuggestions(bucketKey){
+  const list = suggestionState[bucketKey].matches.slice();
+  const failed = []; let successCount = 0;
+  for (const s of list) { try { await commitMatchToQueue(bucketKey, s.team1, s.team2); successCount++; } catch (err) { showToast(err.message, true); failed.push(s); } }
+  suggestionState[bucketKey].matches = failed;
+  renderSuggestions(bucketKey);
+  if (successCount) showToast(`${successCount} match${successCount===1?'':'es'} added to queue.`);
+}
+function discardSuggestions(bucketKey){ suggestionState[bucketKey] = { matches:[], bench:[] }; renderSuggestions(bucketKey); }
+
+function renderMatchupBuckets(){
+  const wrap = document.getElementById('bucketCards-matchups');
+  wrap.innerHTML = BUCKETS.map(b => `
+    <div class="bucket-card">
+      <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3><span class="count" id="poolCount-${b.key}"></span></div>
+      <div class="sugg-toolbar">
+        <button class="btn btn-primary btn-sm" onclick="generateSuggestions('${b.key}')">🔀 Generate matchups</button>
+        <button class="btn btn-ghost btn-sm" onclick="this.disabled=true; addAllSuggestions('${b.key}').finally(()=>{this.disabled=false;})">Add all to queue</button>
+        <button class="btn btn-ghost btn-sm" onclick="discardSuggestions('${b.key}')">Discard</button>
+      </div>
+      <div class="sugg-body" id="suggBody-${b.key}"><div style="color:var(--muted);font-size:13px;">No suggestions yet — click "Generate matchups".</div></div>
+    </div>`).join('');
+  updateMatchupPoolCounts();
+  BUCKETS.forEach(b => renderSuggestions(b.key));
+}
+function updateMatchupPoolCounts(){
+  BUCKETS.forEach(b => {
+    const el = document.getElementById('poolCount-'+b.key);
+    if (!el) return;
+    el.textContent = `${participants.filter(p => p.bucket===b.key && p.status==='active').length} available`;
+  });
+}
+
+/* ================= COURTS & QUEUE ================= */
+function renderCourts(){
+  const grid = document.getElementById('courtsGrid');
+  const active = queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status));
+  let html = '';
+  for (let c=1; c<=COURTS; c++){
+    const m = active.find(x => x.court === c);
+    if (!m) {
+      html += `<div class="court-card free" data-court="${c}" data-free="1">
+        <div class="court-title"><h3>Court ${c}</h3><span class="court-status free">Available</span></div>
+        <div class="court-empty">Drag a match here, or use "Add to court" in the queue.</div>
+      </div>`;
+    } else if (m.status === 'assigned') {
+      const t1=m.team1.map(p=>p.name).join(' & '), t2=m.team2.map(p=>p.name).join(' & ');
+      html += `<div class="court-card assigned" data-court="${c}">
+        <div class="court-title"><h3>Court ${c}</h3><span class="court-status assigned">Not started</span></div>
+        <div class="court-match"><div class="mid">${m.matchId} · ${bucketLabel(m.bucket)}</div>
+          <div class="teams">${escapeHtml(t1)} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(t2)}</div></div>
+        <div class="row-actions" style="margin-bottom:8px;">
+          <button class="btn btn-primary btn-sm" onclick="startGame('${m.id}')">▶ Start game</button>
+          <button class="btn btn-ghost btn-sm" onclick="callPlayers('${m.id}')">📣 Call players</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="backToQueue('${m.id}')">↩ Back to queue</button>
+      </div>`;
+    } else {
+      const t1=m.team1.map(p=>p.name).join(' & '), t2=m.team2.map(p=>p.name).join(' & ');
+      html += `<div class="court-card busy" data-court="${c}">
+        <div class="court-title"><h3>Court ${c}</h3><span class="court-status busy">In progress</span></div>
+        <div class="court-match"><div class="mid">${m.matchId} · ${bucketLabel(m.bucket)}</div>
+          <div class="teams">${escapeHtml(t1)} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(t2)}</div></div>
+        <div class="court-timer timer" data-started="${m.startedAt}">00:00</div>
+        <div class="row-actions">
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="openEndModal('${m.id}')">End match</button>
+          <button class="btn-icon" title="Reset timer" onclick="resetTimer('${m.id}')">⟲</button>
+        </div>
+      </div>`;
+    }
+  }
+  grid.innerHTML = html;
+  attachCourtDropZones();
+}
+function attachCourtDropZones(){
+  document.querySelectorAll('.court-card[data-free="1"]').forEach(card => {
+    card.addEventListener('dragover', e => { e.preventDefault(); card.style.borderColor='var(--gold)'; });
+    card.addEventListener('dragleave', () => { card.style.borderColor=''; });
+    card.addEventListener('drop', e => {
+      e.preventDefault(); card.style.borderColor='';
+      try { const data = JSON.parse(e.dataTransfer.getData('text/plain')); if (data.type==='queue') assignToCourt(data.id, Number(card.dataset.court)); } catch(err){}
+    });
+  });
+}
+setInterval(() => {
+  document.querySelectorAll('.timer').forEach(el => {
+    const started = Number(el.dataset.started);
+    if (!started) return;
+    const secs = Math.max(0, Math.floor((Date.now() - started) / 1000));
+    el.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+  });
+}, 1000);
+
+function renderQueueList(){
+  const list = queueMatches.filter(m => m.status==='waiting' || m.status==='onhold').sort((a,b) => a.order - b.order);
+  const el = document.getElementById('queueList');
+  const freeCourts = COURTS - queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status)).length;
+  if (!list.length) { el.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--muted);">Queue is empty. Add matches from Match Suggestions.</div>`; return; }
+  el.innerHTML = list.map((m, i) => `
+    <div class="queue-row ${m.status==='onhold'?'onhold':''}" draggable="true" data-match-id="${m.id}">
+      <div class="drag-handle" title="Drag to reorder or assign to a court">⠿</div>
+      <div class="reorder-btns">
+        <button ${i===0?'disabled':''} onclick="moveQueue('${m.id}', -1)">▲</button>
+        <button ${i===list.length-1?'disabled':''} onclick="moveQueue('${m.id}', 1)">▼</button>
+      </div>
+      <div class="qid">${m.matchId}</div>
+      <div class="qteams">${escapeHtml(m.team1.map(p=>p.name).join(' & '))}
+        <span style="color:var(--muted);font-weight:400;"> vs </span>${escapeHtml(m.team2.map(p=>p.name).join(' & '))}
+        ${m.status==='onhold' ? '<span class="badge hold" style="margin-left:8px;">On hold</span>' : ''}</div>
+      <div class="qmeta">${bucketLabel(m.bucket)}</div>
+      <div class="row-actions">
+        <button class="btn-icon" title="Edit" onclick="openEditQueueModal('${m.id}')">✎</button>
+        <button class="btn-icon warn" title="${m.status==='onhold'?'Resume':'Hold'}" onclick="${m.status==='onhold'?`resumeMatch('${m.id}')`:`holdMatch('${m.id}')`}">${m.status==='onhold'?'▶':'⏸'}</button>
+        <button class="btn-icon danger" title="Delete" onclick="deleteQueueMatch('${m.id}')">🗑</button>
+      </div>
+      <button class="btn btn-primary btn-sm" ${m.status==='onhold'||freeCourts<=0?'disabled':''} onclick="openCourtModal('${m.id}')">Add to court</button>
+    </div>
+  `).join('');
+  attachQueueDrag();
+}
+function attachQueueDrag(){
+  document.querySelectorAll('.queue-row[draggable="true"]').forEach(row => {
+    row.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', JSON.stringify({type:'queue', id: row.dataset.matchId})); row.style.opacity='0.5'; });
+    row.addEventListener('dragend', () => { row.style.opacity=''; });
+    row.addEventListener('dragover', e => e.preventDefault());
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      try { const data = JSON.parse(e.dataTransfer.getData('text/plain')); if (data.type==='queue' && data.id !== row.dataset.matchId) swapQueueOrder(data.id, row.dataset.matchId); } catch(err){}
+    });
+  });
+}
+async function swapQueueOrder(idA, idB){
+  const a = queueMatches.find(x=>x.id===idA), b = queueMatches.find(x=>x.id===idB);
+  if (!a || !b) return;
+  const batch = db.batch();
+  batch.update(db.collection('ccpc-queue-matches').doc(a.id), { order: b.order });
+  batch.update(db.collection('ccpc-queue-matches').doc(b.id), { order: a.order });
+  await batch.commit();
+}
+async function moveQueue(id, dir){
+  const list = queueMatches.filter(m => m.status==='waiting' || m.status==='onhold').sort((a,b)=>a.order-b.order);
+  const i = list.findIndex(m=>m.id===id);
+  const j = i + dir;
+  if (j<0 || j>=list.length) return;
+  await swapQueueOrder(list[i].id, list[j].id);
+}
+async function holdMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'onhold' }); } catch(err){ showToast(err.message, true); } }
+async function resumeMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'waiting' }); } catch(err){ showToast(err.message, true); } }
+async function deleteQueueMatch(id){
+  const m = queueMatches.find(x=>x.id===id);
+  if (!m) return;
+  if (!confirm(`Delete match ${m.matchId}? Players will return to the bucket as Active.`)) return;
+  try {
+    const batch = db.batch();
+    batch.delete(db.collection('ccpc-queue-matches').doc(id));
+    [...m.team1, ...m.team2].forEach(p => batch.update(db.collection('ccpc-queue-participants').doc(p.participantId), { status:'active', statusSince: Date.now() }));
+    await batch.commit();
+    showToast('Match deleted.');
+  } catch(err){ showToast('Delete failed: ' + err.message, true); }
+}
+
+/* ---- Court assignment / game control ---- */
+const courtOverlay = document.getElementById('courtOverlay');
+function openCourtModal(matchDocId){
+  const occupied = queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status));
+  const grid = document.getElementById('courtPickGrid');
+  grid.innerHTML = '';
+  for (let c=1;c<=COURTS;c++){
+    const isBusy = occupied.some(m=>m.court===c);
+    const btn = document.createElement('button');
+    btn.className = 'court-pick-btn';
+    btn.textContent = `Court ${c}` + (isBusy ? ' (busy)' : '');
+    btn.disabled = isBusy;
+    btn.addEventListener('click', () => { btn.disabled = true; assignToCourt(matchDocId, c); });
+    grid.appendChild(btn);
+  }
+  courtOverlay.classList.add('show');
+}
+document.getElementById('btnCourtCancel').addEventListener('click', () => courtOverlay.classList.remove('show'));
+courtOverlay.addEventListener('click', e => { if (e.target===courtOverlay) courtOverlay.classList.remove('show'); });
+async function assignToCourt(matchDocId, court){
+  const m = queueMatches.find(x=>x.id===matchDocId);
+  try {
+    await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'assigned', court, startedAt:null });
+    courtOverlay.classList.remove('show');
+    showToast(`Match assigned to Court ${court}. Calling players…`);
+  } catch(err){ showToast('Could not assign court: ' + err.message, true); return; }
+  if (m) await sendCallEvent(m, court);
+}
+async function startGame(matchDocId){
+  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'playing', startedAt: Date.now() }); showToast('Game started!'); }
+  catch(err){ showToast('Could not start game: ' + err.message, true); }
+}
+async function backToQueue(matchDocId){
+  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'waiting', court:null, startedAt:null, order: Date.now() }); showToast('Moved back to queue.'); }
+  catch(err){ showToast('Could not move to queue: ' + err.message, true); }
+}
+async function resetTimer(matchDocId){
+  if (!confirm('Reset the timer for this match?')) return;
+  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ startedAt: Date.now() }); }
+  catch(err){ showToast('Could not reset timer: ' + err.message, true); }
+}
+async function sendCallEvent(m, court){
+  try {
+    await db.collection('ccpc-queue-events').add({
+      type:'call', matchId:m.matchId, bucket:m.bucket, court,
+      team1: m.team1.map(p=>p.name), team2: m.team2.map(p=>p.name),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch(err){ showToast('Could not call players: ' + err.message, true); }
+}
+async function callPlayers(matchDocId){
+  const m = queueMatches.find(x=>x.id===matchDocId);
+  if (!m) return;
+  await sendCallEvent(m, m.court);
+  showToast(`Players called to Court ${m.court}.`);
+}
+
+/* ---- Edit queue match (full re-pick, current sitting/active only) ---- */
+const editQueueOverlay = document.getElementById('editQueueOverlay');
+let editQueueMatchId = null;
+function isInMatch(participantId, m){ return [...m.team1, ...m.team2].some(x=>x.participantId===participantId); }
+function openEditQueueModal(matchDocId){
+  const m = queueMatches.find(x=>x.id===matchDocId);
+  if (!m) return;
+  editQueueMatchId = matchDocId;
+  document.getElementById('editQueueSub').textContent = `${m.matchId} · ${bucketLabel(m.bucket)}`;
+  document.getElementById('errEditQueue').textContent = '';
+  const eligible = participants.filter(p => p.bucket===m.bucket && (p.status==='active' || (p.status==='queued' && isInMatch(p.id, m))));
+  const buildSlots = (team, sideKey) => team.map((occupant, idx) => {
+    const options = eligible.map(p => `<option value="${p.id}" ${p.id===occupant.participantId?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
+    return `<select id="editSlot-${sideKey}-${idx}">${options}</select>`;
+  }).join('');
+  document.getElementById('editTeam1Slots').innerHTML = buildSlots(m.team1, 'team1');
+  document.getElementById('editTeam2Slots').innerHTML = buildSlots(m.team2, 'team2');
+  editQueueOverlay.classList.add('show');
+}
+document.getElementById('btnEditQueueCancel').addEventListener('click', () => editQueueOverlay.classList.remove('show'));
+editQueueOverlay.addEventListener('click', e => { if (e.target===editQueueOverlay) editQueueOverlay.classList.remove('show'); });
+async function adjustSessionCounts(oldTeam1, oldTeam2, newTeam1, newTeam2){
+  const sessionRef = db.collection('ccpc-queue-session').doc('state');
+  await db.runTransaction(async tx => {
+    const snap = await tx.get(sessionRef);
+    const data = snap.exists ? snap.data() : {};
+    const partnerCounts = { ...(data.partnerCounts||{}) };
+    const opponentCounts = { ...(data.opponentCounts||{}) };
+    const bump = (obj, a, b, delta) => { const k=pairKey(a,b); obj[k] = Math.max(0, (obj[k]||0)+delta); };
+    if (oldTeam1.length===2) bump(partnerCounts, oldTeam1[0].participantId, oldTeam1[1].participantId, -1);
+    if (oldTeam2.length===2) bump(partnerCounts, oldTeam2[0].participantId, oldTeam2[1].participantId, -1);
+    for (const p of oldTeam1) for (const q of oldTeam2) bump(opponentCounts, p.participantId, q.participantId, -1);
+    if (newTeam1.length===2) bump(partnerCounts, newTeam1[0].participantId, newTeam1[1].participantId, 1);
+    if (newTeam2.length===2) bump(partnerCounts, newTeam2[0].participantId, newTeam2[1].participantId, 1);
+    for (const p of newTeam1) for (const q of newTeam2) bump(opponentCounts, p.participantId, q.participantId, 1);
+    tx.set(sessionRef, { partnerCounts, opponentCounts }, { merge:true });
+  });
+}
+document.getElementById('btnEditQueueSave').addEventListener('click', async () => {
+  const m = queueMatches.find(x=>x.id===editQueueMatchId);
+  if (!m) return;
+  const errEl = document.getElementById('errEditQueue');
+  errEl.textContent = '';
+  const team1Ids = m.team1.map((_,idx)=>document.getElementById(`editSlot-team1-${idx}`).value);
+  const team2Ids = m.team2.map((_,idx)=>document.getElementById(`editSlot-team2-${idx}`).value);
+  const allIds = [...team1Ids, ...team2Ids];
+  if (new Set(allIds).size !== allIds.length) { errEl.textContent = 'Each player can only appear once.'; return; }
+  const newTeam1 = team1Ids.map(id => participants.find(p=>p.id===id));
+  const newTeam2 = team2Ids.map(id => participants.find(p=>p.id===id));
+  if (newTeam1.some(p=>!p) || newTeam2.some(p=>!p)) { errEl.textContent = 'Pick a player for every slot.'; return; }
+  const newIdSet = new Set(allIds);
+  const dup = findDuplicateMatch(m.bucket, newIdSet, m.id);
+  if (dup) { errEl.textContent = `That exact matchup is already in ${dup.matchId}.`; return; }
+  const btn = document.getElementById('btnEditQueueSave');
+  btn.disabled = true;
+  try {
+    const oldIds = new Set([...m.team1, ...m.team2].map(p=>p.participantId));
+    const removedIds = [...oldIds].filter(id => !newIdSet.has(id));
+    const addedIds = allIds.filter(id => !oldIds.has(id));
+    await Promise.all(addedIds.map(id => { const p = participants.find(x=>x.id===id); return p ? flushElapsed(p) : null; }));
+    await adjustSessionCounts(m.team1, m.team2, snapshotArr(newTeam1), snapshotArr(newTeam2));
+    const batch = db.batch();
+    removedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), { status:'active', statusSince: Date.now() }));
+    addedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), { status:'queued', statusSince: Date.now() }));
+    batch.update(db.collection('ccpc-queue-matches').doc(m.id), { team1: snapshotArr(newTeam1), team2: snapshotArr(newTeam2) });
+    await batch.commit();
+    editQueueOverlay.classList.remove('show');
+    showToast(`${m.matchId} updated.`);
+  } catch (err) { showToast('Could not update match: ' + err.message, true); }
+  finally { btn.disabled = false; }
+});
+
+/* ---- End match (auto winner by score) ---- */
+const endOverlay = document.getElementById('endOverlay');
+let endMatchId = null, endTeamNames = {t1:'Team 1', t2:'Team 2'};
+function openEndModal(matchDocId){
+  const m = queueMatches.find(x=>x.id===matchDocId);
+  if (!m) return;
+  endMatchId = matchDocId;
+  document.getElementById('errEnd').textContent = '';
+  document.getElementById('score1Input').value = '';
+  document.getElementById('score2Input').value = '';
+  document.getElementById('leadingIndicator').textContent = '';
+  endTeamNames.t1 = m.team1.map(p=>p.name).join(' & ');
+  endTeamNames.t2 = m.team2.map(p=>p.name).join(' & ');
+  document.getElementById('endModalSub').textContent = `${m.matchId} · ${bucketLabel(m.bucket)}`;
+  document.getElementById('score1Label').textContent = endTeamNames.t1 + ' score';
+  document.getElementById('score2Label').textContent = endTeamNames.t2 + ' score';
+  endOverlay.classList.add('show');
+}
+function updateLeadingIndicator(){
+  const s1 = document.getElementById('score1Input').value, s2 = document.getElementById('score2Input').value;
+  const el = document.getElementById('leadingIndicator');
+  if (s1==='' || s2==='') { el.textContent=''; return; }
+  const n1=Number(s1), n2=Number(s2);
+  if (isNaN(n1)||isNaN(n2)) { el.textContent=''; return; }
+  el.textContent = n1===n2 ? 'Scores are tied — adjust to determine a winner.' : `${n1>n2?endTeamNames.t1:endTeamNames.t2} is currently ahead.`;
+}
+document.getElementById('score1Input').addEventListener('input', updateLeadingIndicator);
+document.getElementById('score2Input').addEventListener('input', updateLeadingIndicator);
+document.getElementById('btnEndCancel').addEventListener('click', () => endOverlay.classList.remove('show'));
+endOverlay.addEventListener('click', e => { if (e.target===endOverlay) endOverlay.classList.remove('show'); });
+document.getElementById('btnEndConfirm').addEventListener('click', async () => {
+  const errEl = document.getElementById('errEnd');
+  errEl.textContent = '';
+  const m = queueMatches.find(x=>x.id===endMatchId);
+  if (!m) return;
+  const s1raw = document.getElementById('score1Input').value, s2raw = document.getElementById('score2Input').value;
+  if (s1raw==='' || s2raw==='') { errEl.textContent = 'Enter both scores.'; return; }
+  const score1 = Number(s1raw), score2 = Number(s2raw);
+  if (isNaN(score1) || isNaN(score2)) { errEl.textContent = 'Scores must be numbers.'; return; }
+  if (score1 === score2) { errEl.textContent = "Scores can't be tied — adjust to determine a winner."; return; }
+  const winner = score1 > score2 ? 'team1' : 'team2';
+  const btn = document.getElementById('btnEndConfirm');
+  btn.disabled = true;
+  const endedAt = Date.now();
+  const duration = Math.max(0, Math.round((endedAt - (m.startedAt || endedAt)) / 1000));
+  try {
+    const batch = db.batch();
+    const logRef = db.collection('ccpc-queue-logs').doc();
+    batch.set(logRef, {
+      matchId: m.matchId, bucket: m.bucket, team1: m.team1, team2: m.team2,
+      winner, score1, score2, court: m.court,
+      startedAt: m.startedAt || null, endedAt, durationSeconds: duration,
+      sessionId: sessionState.currentSessionId || null, sessionName: sessionState.currentSessionName || '', sessionDate: sessionState.currentSessionDate || '',
+      completedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    batch.delete(db.collection('ccpc-queue-matches').doc(m.id));
+    [...m.team1, ...m.team2].forEach(p => { batch.update(db.collection('ccpc-queue-participants').doc(p.participantId), { status:'active', statusSince: Date.now() }); });
+    await batch.commit();
+    await db.collection('ccpc-queue-events').add({
+      type:'winner', matchId: m.matchId, bucket: m.bucket, court: m.court,
+      team1: m.team1.map(p=>p.name), team2: m.team2.map(p=>p.name), winner, score1, score2,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    endOverlay.classList.remove('show');
+    showToast(`${m.matchId} logged. Players returned to their bucket.`);
+  } catch (err) { showToast('Could not save result: ' + err.message, true); }
+  finally { btn.disabled = false; }
+});
+
+/* ================= LOGS ================= */
+function renderSessionFilterOptions(){
+  const sel = document.getElementById('logSessionFilter');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">All sessions</option>` + sessionsList.map(s => `<option value="${s.id}">${escapeHtml(s.name)} · ${s.date}</option>`).join('');
+  sel.value = cur;
+  updateExportTargetLabel();
+}
+document.getElementById('logSessionFilter').addEventListener('change', e => { logFilterSessionId = e.target.value; renderLogs(); updateExportTargetLabel(); });
+function renderLogs(){
+  const filtered = logFilterSessionId ? logs.filter(l => l.sessionId === logFilterSessionId) : logs;
+  document.getElementById('logsCount').textContent = `${filtered.length} match${filtered.length===1?'':'es'}`;
+  const body = document.getElementById('logsBody');
+  if (!filtered.length) { body.innerHTML = `<tr class="empty-row"><td colspan="10">No matches logged yet.</td></tr>`; return; }
+  body.innerHTML = filtered.map(l => {
+    const t1 = l.team1.map(p=>p.name).join(' & '), t2 = l.team2.map(p=>p.name).join(' & ');
+    const winnerName = l.winner === 'team1' ? t1 : t2;
+    const mins = Math.floor((l.durationSeconds||0)/60), secs = (l.durationSeconds||0)%60;
+    return `<tr>
+      <td>${l.matchId}</td><td>${bucketLabel(l.bucket)}</td><td>${escapeHtml(t1)}</td><td>${escapeHtml(t2)}</td>
+      <td>${l.score1} – ${l.score2}</td><td>${escapeHtml(winnerName)}</td><td>Court ${l.court}</td>
+      <td>${mins}m ${secs}s</td><td>${escapeHtml(l.sessionName||'—')}</td>
+      <td><div class="row-actions">
+        <button class="btn-icon" title="Edit result" onclick="openLogEditModal('${l.id}')">✎</button>
+        <button class="btn-icon danger" title="Delete" onclick="deleteLog('${l.id}')">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+const logEditOverlay = document.getElementById('logEditOverlay');
+let logEditId = null, logEditNames = {t1:'Team 1', t2:'Team 2'};
+function openLogEditModal(logId){
+  const l = logs.find(x=>x.id===logId);
+  if (!l) return;
+  logEditId = logId;
+  logEditNames.t1 = l.team1.map(p=>p.name).join(' & ');
+  logEditNames.t2 = l.team2.map(p=>p.name).join(' & ');
+  document.getElementById('logEditSub').textContent = `${l.matchId} · ${bucketLabel(l.bucket)}`;
+  document.getElementById('logScore1Label').textContent = logEditNames.t1 + ' score';
+  document.getElementById('logScore2Label').textContent = logEditNames.t2 + ' score';
+  document.getElementById('logScore1Input').value = l.score1;
+  document.getElementById('logScore2Input').value = l.score2;
+  document.getElementById('errLogEdit').textContent = '';
+  logEditOverlay.classList.add('show');
+}
+document.getElementById('btnLogEditCancel').addEventListener('click', () => logEditOverlay.classList.remove('show'));
+logEditOverlay.addEventListener('click', e => { if (e.target===logEditOverlay) logEditOverlay.classList.remove('show'); });
+document.getElementById('btnLogEditSave').addEventListener('click', async () => {
+  const errEl = document.getElementById('errLogEdit');
+  errEl.textContent = '';
+  const s1raw = document.getElementById('logScore1Input').value, s2raw = document.getElementById('logScore2Input').value;
+  if (s1raw==='' || s2raw==='') { errEl.textContent = 'Enter both scores.'; return; }
+  const score1 = Number(s1raw), score2 = Number(s2raw);
+  if (isNaN(score1)||isNaN(score2)) { errEl.textContent='Scores must be numbers.'; return; }
+  if (score1===score2) { errEl.textContent = "Scores can't be tied."; return; }
+  const winner = score1>score2 ? 'team1' : 'team2';
+  const btn = document.getElementById('btnLogEditSave');
+  btn.disabled = true;
+  try { await db.collection('ccpc-queue-logs').doc(logEditId).update({ score1, score2, winner }); logEditOverlay.classList.remove('show'); showToast('Match result updated.'); }
+  catch (err) { showToast('Could not update log: ' + err.message, true); }
+  finally { btn.disabled = false; }
+});
+async function deleteLog(logId){
+  const l = logs.find(x=>x.id===logId);
+  if (!confirm(`Delete log ${l ? l.matchId : ''}? This cannot be undone.`)) return;
+  try { await db.collection('ccpc-queue-logs').doc(logId).delete(); showToast('Log deleted.'); }
+  catch (err) { showToast('Delete failed: ' + err.message, true); }
+}
+
+/* ================= NEW SESSION ================= */
+const sessionOverlay = document.getElementById('sessionOverlay');
+document.getElementById('btnNewSession').addEventListener('click', () => {
+  document.getElementById('sessNameInput').value = '';
+  document.getElementById('sessDateInput').value = new Date().toISOString().slice(0,10);
+  document.getElementById('errSession').textContent = '';
+  sessionOverlay.classList.add('show');
+});
+document.getElementById('btnSessionCancel').addEventListener('click', () => sessionOverlay.classList.remove('show'));
+sessionOverlay.addEventListener('click', e => { if (e.target===sessionOverlay) sessionOverlay.classList.remove('show'); });
+document.getElementById('btnSessionStart').addEventListener('click', async () => {
+  const errEl = document.getElementById('errSession');
+  errEl.textContent = '';
+  const name = document.getElementById('sessNameInput').value.trim();
+  const date = document.getElementById('sessDateInput').value;
+  if (!name) { errEl.textContent = 'Enter a session name.'; return; }
+  if (!date) { errEl.textContent = 'Pick a date.'; return; }
+  const btn = document.getElementById('btnSessionStart');
+  btn.disabled = true;
+  try {
+    const prev = sessionsList.find(x => x.id === sessionState.currentSessionId) || {};
+    const sessRef = await db.collection('ccpc-queue-sessions').add({ name, date, eventName: name, location: prev.location || '', scoreType: prev.scoreType || 'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    const [partsSnap, matchesSnap] = await Promise.all([
+      db.collection('ccpc-queue-participants').get(),
+      db.collection('ccpc-queue-matches').get()
+    ]);
+    await Promise.all(partsSnap.docs.map(d => flushElapsed({ id:d.id, ...d.data() })));
+    const batch = db.batch();
+    partsSnap.forEach(d => batch.delete(d.ref));
+    matchesSnap.forEach(d => batch.delete(d.ref));
+    batch.set(db.collection('ccpc-queue-session').doc('state'), { partnerCounts:{}, opponentCounts:{}, currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date }, { merge:true });
+    await batch.commit();
+    sessionOverlay.classList.remove('show');
+    showToast(`Session "${name}" started.`);
+  } catch (err) { showToast('Could not start session: ' + err.message, true); }
+  finally { btn.disabled = false; }
+});
+
+
+/* ================= DUPR CSV EXPORT ================= */
+const DUPR_HEADERS = ['matchType','event','date','playerA1','playerA1DuprId','playerA1ExternalId','playerA2','playerA2DuprId','playerA2ExternalId','playerB1','playerB1DuprId','playerB1ExternalId','playerB2','playerB2DuprId','playerB2ExternalId','teamAGame1','teamBGame1','teamAGame2','teamBGame2','teamAGame3','teamBGame3','teamAGame4','teamBGame4','teamAGame5','teamBGame5','location','scoreType'];
+function csvCell(v){
+  const t = (v === null || v === undefined) ? '' : String(v);
+  return /[",\n\r]/.test(t) ? '"' + t.replace(/"/g,'""') + '"' : t;
+}
+/* Exports the session picked in the Logs filter, or the current session when the filter is "All sessions". */
+function exportTargetSession(){
+  const id = logFilterSessionId || sessionState.currentSessionId;
+  return sessionsList.find(x => x.id === id) || null;
+}
+function updateExportTargetLabel(){
+  const el = document.getElementById('exportTargetLabel');
+  if (!el) return;
+  const s = exportTargetSession();
+  el.textContent = s ? `Applies to: ${s.name} (${s.date})` : '';
+}
+function buildDuprCsv(sess){
+  const matches = logs.filter(l => l.sessionId === sess.id).slice().reverse(); // oldest first
+  const event = sess.eventName || sess.name || '';
+  const scoreType = sess.scoreType || 'SIDEOUT';
+  const location = sess.location || '';
+  let missingIds = 0;
+  const rows = matches.map(l => {
+    const cell = (team, i) => {
+      const p = team[i];
+      if (!p) return ['', '', ''];
+      if (!p.duprId) missingIds++;
+      return [p.name, p.duprId || '', ''];
+    };
+    const a1 = cell(l.team1,0), a2 = cell(l.team1,1), b1 = cell(l.team2,0), b2 = cell(l.team2,1);
+    const row = [l.bucket === 'singles' ? 'S' : 'D', event, sess.date, ...a1, ...a2, ...b1, ...b2,
+      l.score1, l.score2, '', '', '', '', '', '', '', '', location, scoreType];
+    return row.map(csvCell).join(',');
+  });
+  return { csv: [DUPR_HEADERS.join(','), ...rows].join('\n') + '\n', count: matches.length, missingIds, location };
+}
+document.getElementById('btnExportDupr').addEventListener('click', () => {
+  const sess = exportTargetSession();
+  if (!sess) { showToast('No session found to export.', true); return; }
+  const { csv, count, missingIds, location } = buildDuprCsv(sess);
+  if (!count) { showToast(`No logged matches in "${sess.name}" yet.`, true); return; }
+  const slug = (sess.eventName || sess.name || 'session').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `dupr-matches_${slug}_${sess.date}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  const notes = [];
+  if (missingIds) notes.push(`${missingIds} player slot${missingIds===1?'':'s'} without DUPR ID`);
+  if (!location) notes.push('no location set');
+  showToast(`Exported ${count} match${count===1?'':'es'}.` + (notes.length ? ' Note: ' + notes.join(', ') + '.' : ''));
+});
+
+/* ---- DUPR export settings (stored on the session) ---- */
+const duprSettingsOverlay = document.getElementById('duprSettingsOverlay');
+document.getElementById('btnDuprSettings').addEventListener('click', () => {
+  const sess = exportTargetSession();
+  if (!sess) { showToast('No session found.', true); return; }
+  document.getElementById('duprSettingsSub').textContent = `Applies to session: ${sess.name}`;
+  document.getElementById('dsEvent').value = sess.eventName || sess.name || '';
+  document.getElementById('dsDate').value = sess.date || '';
+  document.getElementById('dsLocation').value = sess.location || '';
+  document.getElementById('dsScoreType').value = sess.scoreType || 'SIDEOUT';
+  document.getElementById('errDs').textContent = '';
+  duprSettingsOverlay.classList.add('show');
+});
+document.getElementById('btnDsCancel').addEventListener('click', () => duprSettingsOverlay.classList.remove('show'));
+duprSettingsOverlay.addEventListener('click', e => { if (e.target === duprSettingsOverlay) duprSettingsOverlay.classList.remove('show'); });
+document.getElementById('btnDsSave').addEventListener('click', async () => {
+  const sess = exportTargetSession();
+  if (!sess) return;
+  const eventName = document.getElementById('dsEvent').value.trim();
+  const date = document.getElementById('dsDate').value;
+  const errEl = document.getElementById('errDs');
+  if (!eventName) { errEl.textContent = 'Enter an event name.'; return; }
+  if (!date) { errEl.textContent = 'Pick a date.'; return; }
+  const btn = document.getElementById('btnDsSave');
+  btn.disabled = true;
+  try {
+    await db.collection('ccpc-queue-sessions').doc(sess.id).update({
+      eventName, date, location: document.getElementById('dsLocation').value.trim(), scoreType: document.getElementById('dsScoreType').value
+    });
+    if (sess.id === sessionState.currentSessionId) {
+      await db.collection('ccpc-queue-session').doc('state').set({ currentSessionDate: date }, { merge:true });
+    }
+    duprSettingsOverlay.classList.remove('show');
+    showToast('DUPR export settings saved.');
+  } catch (err) { showToast('Could not save settings: ' + err.message, true); }
+  finally { btn.disabled = false; }
+});
+
+/* ================= INIT ================= */
+renderMatchupBuckets();
+renderCourts();
+renderQueueList();
+renderLogs();
+</script>
+</body>
+</html>
