@@ -38,13 +38,27 @@
   .btn-danger-ghost{background:rgba(187,20,33,0.18);color:#ffd7da;border:1px solid rgba(187,20,33,0.5);
     padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
   .btn-danger-ghost:hover{background:rgba(187,20,33,0.32);}
+  .btn-top{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.3);
+    padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .btn-top:hover{background:rgba(255,255,255,0.22);}
+  .top-actions{flex-wrap:wrap;justify-content:flex-end;}
+  .modal.wide{max-width:760px;}
+  .snap-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);
+    border-radius:10px;background:var(--surface-2);margin-bottom:8px;}
+  .snap-title{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .snap-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+  .snap-actions{display:flex;gap:6px;flex:none;}
+  .snap-sec{margin-top:16px;}
+  .snap-sec h4{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
+  .snap-line{font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;}
+  .snap-line:last-child{border-bottom:none;}
   .toggle-pill{width:56px;height:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
     border-radius:20px;position:relative;cursor:pointer;flex-shrink:0;}
   .toggle-pill .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--gold);
     transition:transform .2s ease;display:flex;align-items:center;justify-content:center;font-size:12px;}
   html[data-theme="dark"] .toggle-pill .knob{transform:translateX(26px);background:var(--blue);}
 
-  nav.tabs{display:flex;gap:6px;max-width:1400px;margin:18px auto 0;padding:0 clamp(16px,4vw,40px);flex-wrap:wrap;}
+  nav.tabs{display:flex;gap:6px;max-width:1800px;margin:18px auto 0;padding:0 clamp(16px,4vw,40px);flex-wrap:wrap;}
   nav.tabs button{background:var(--surface);border:1px solid var(--border);color:var(--muted);
     padding:10px 18px;border-radius:10px 10px 0 0;font-family:'Inter',sans-serif;font-weight:600;
     font-size:14px;cursor:pointer;border-bottom:none;position:relative;top:1px;}
@@ -52,7 +66,7 @@
     box-shadow:0 -3px 0 var(--gold) inset;}
   html[data-theme="dark"] nav.tabs button.active{color:#fff;}
 
-  main{max-width:1400px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 60px;border-top:1px solid var(--border);}
+  main{max-width:1800px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 60px;border-top:1px solid var(--border);}
   .panel{display:none;}
   .panel.active{display:block;}
 
@@ -247,6 +261,8 @@
     <div class="sub" id="sessionLabel">Loading session…</div>
   </div>
   <div class="top-actions">
+    <button class="btn-top" id="btnSaveSnap" title="Save a snapshot of the current session">💾 Save</button>
+    <button class="btn-top" id="btnSnapshots" title="View or restore saved snapshots">🗂 Snapshots</button>
     <button class="btn-danger-ghost" id="btnNewSession">↻ New session</button>
     <div class="toggle-pill" id="themeToggle" title="Toggle light/dark mode"><div class="knob" id="themeKnob">☀️</div></div>
   </div>
@@ -320,7 +336,7 @@
     </div>
     <div id="guestSourceBlock" style="display:none;">
       <div class="field"><label>Guest name</label><input type="text" id="guestName" placeholder="Guest full name"></div>
-      <div class="field"><label>DUPR ID <span style="text-transform:none;font-weight:500;">(optional)</span></label><input type="text" id="guestDuprId" placeholder="e.g. ABC1234"></div>
+      <div class="field"><label>DUPR ID </label><input type="text" id="guestDuprId" placeholder="e.g. ABC1234" required></div>
       <div class="field"><label>Current DUPR</label><input type="text" id="guestDupr" placeholder="e.g. 3.250 or NR"><div class="error-text" id="errGuestDupr"></div></div>
       <button type="button" class="btn btn-ghost btn-sm" id="btnGuestToList" style="margin-bottom:12px;">+ Add guest to list</button>
     </div>
@@ -419,11 +435,42 @@
   </div>
 </div>
 
+<!-- Save Snapshot Modal -->
+<div class="overlay" id="saveSnapOverlay">
+  <div class="modal">
+    <h2>Save snapshot</h2>
+    <div class="modal-sub" id="saveSnapSub">Saves the current participants, queue and pairing history so you can view or restore them later.</div>
+    <div class="field"><label>Label (optional)</label><input type="text" id="snapLabelInput" placeholder="e.g. Before finals"></div>
+    <div class="error-text" id="errSaveSnap"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnSaveSnapCancel">Cancel</button><button class="btn btn-primary" id="btnSaveSnapConfirm">Save snapshot</button></div>
+  </div>
+</div>
+
+<!-- Snapshots List Modal -->
+<div class="overlay" id="snapListOverlay">
+  <div class="modal wide">
+    <h2>Saved snapshots</h2>
+    <div class="modal-sub">Auto-saved before every New session and every Restore. Newest first.</div>
+    <div id="snapList"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnSnapListClose">Close</button></div>
+  </div>
+</div>
+
+<!-- Snapshot View Modal -->
+<div class="overlay" id="snapViewOverlay">
+  <div class="modal wide">
+    <h2 id="snapViewTitle">Snapshot</h2>
+    <div class="modal-sub" id="snapViewSub"></div>
+    <div id="snapViewBody"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" id="btnSnapViewClose">Close</button><button class="btn btn-primary" id="btnSnapViewRestore">Restore this snapshot</button></div>
+  </div>
+</div>
+
 <!-- New Session Modal -->
 <div class="overlay" id="sessionOverlay">
   <div class="modal">
     <h2>Start new session</h2>
-    <div class="modal-sub">Clears bucket participants, the queue, and pairing history for a fresh day. Match logs stay archived under their own session — nothing is deleted.</div>
+    <div class="modal-sub">Clears bucket participants, the queue, and pairing history for a fresh day. The current state is auto-saved as a snapshot first (see 🗂 Snapshots), and match logs stay archived under their own session.</div>
     <div class="field"><label>Session name</label><input type="text" id="sessNameInput" placeholder="e.g. Saturday Open Play"></div>
     <div class="field"><label>Date</label><input type="date" id="sessDateInput"></div>
     <div class="error-text" id="errSession"></div>
@@ -1585,6 +1632,11 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
   const btn = document.getElementById('btnSessionStart');
   btn.disabled = true;
   try {
+    const live = await readLiveState();
+    if (live.participants.length || live.matches.length) {
+      try { await saveSnapshot('auto', `Before starting "${name}"`, live); }
+      catch (e) { throw new Error('Could not auto-save the current session, so nothing was cleared. ' + e.message); }
+    }
     const prev = sessionsList.find(x => x.id === sessionState.currentSessionId) || {};
     const sessRef = await db.collection('ccpc-queue-sessions').add({ name, date, eventName: name, location: prev.location || '', scoreType: prev.scoreType || 'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
     const [partsSnap, matchesSnap] = await Promise.all([
@@ -1602,6 +1654,200 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
   } catch (err) { showToast('Could not start session: ' + err.message, true); }
   finally { btn.disabled = false; }
 });
+
+
+/* ================= SNAPSHOTS (save / view / restore a session) ================= */
+const SNAP_COL = 'ccpc-queue-snapshots';
+let snapshotsList = [], snapBusy = false, snapViewId = null;
+db.collection(SNAP_COL).orderBy('savedAtMs','desc').limit(60).onSnapshot(snap => {
+  snapshotsList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderSnapshotsList();
+}, err => showToast('Snapshots sync error: ' + err.message, true));
+
+async function readLiveState(){
+  const [pSnap, mSnap, sSnap] = await Promise.all([
+    db.collection('ccpc-queue-participants').get(),
+    db.collection('ccpc-queue-matches').get(),
+    db.collection('ccpc-queue-session').doc('state').get()
+  ]);
+  return {
+    participants: pSnap.docs.map(d => ({ id:d.id, ...d.data() })),
+    matches: mSnap.docs.map(d => ({ id:d.id, ...d.data() })),
+    state: sSnap.exists ? sSnap.data() : {}
+  };
+}
+async function saveSnapshot(kind, label, live){
+  live = live || await readLiveState();
+  const st = live.state || {};
+  const ref = await db.collection(SNAP_COL).add({
+    kind, label: label || '',
+    savedAtMs: Date.now(), savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    sessionId: st.currentSessionId || null, sessionName: st.currentSessionName || '', sessionDate: st.currentSessionDate || '',
+    participants: live.participants, matches: live.matches,
+    partnerCounts: st.partnerCounts || {}, opponentCounts: st.opponentCounts || {}, matchCounter: st.matchCounter || 0
+  });
+  return ref.id;
+}
+function fmtSnapTime(ms){ try { return new Date(ms).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }); } catch(e){ return ''; } }
+function snapNames(team){ return (team || []).map(p => escapeHtml(p.name)).join(' &amp; '); }
+
+/* --- manual save --- */
+const saveSnapOverlay = document.getElementById('saveSnapOverlay');
+document.getElementById('btnSaveSnap').addEventListener('click', () => {
+  document.getElementById('snapLabelInput').value = '';
+  document.getElementById('errSaveSnap').textContent = '';
+  document.getElementById('saveSnapSub').textContent = `Saves the current participants, queue and pairing history of "${sessionState.currentSessionName || 'this session'}" so you can view or restore them later.`;
+  saveSnapOverlay.classList.add('show');
+  document.getElementById('snapLabelInput').focus();
+});
+document.getElementById('btnSaveSnapCancel').addEventListener('click', () => saveSnapOverlay.classList.remove('show'));
+saveSnapOverlay.addEventListener('click', e => { if (e.target === saveSnapOverlay) saveSnapOverlay.classList.remove('show'); });
+document.getElementById('btnSaveSnapConfirm').addEventListener('click', async () => {
+  const btn = document.getElementById('btnSaveSnapConfirm'), err = document.getElementById('errSaveSnap');
+  err.textContent = ''; btn.disabled = true;
+  try {
+    await saveSnapshot('manual', document.getElementById('snapLabelInput').value.trim());
+    saveSnapOverlay.classList.remove('show');
+    showToast('Snapshot saved.');
+  } catch (e) { err.textContent = 'Could not save: ' + e.message; }
+  finally { btn.disabled = false; }
+});
+
+/* --- list --- */
+const snapListOverlay = document.getElementById('snapListOverlay');
+document.getElementById('btnSnapshots').addEventListener('click', () => { renderSnapshotsList(); snapListOverlay.classList.add('show'); });
+document.getElementById('btnSnapListClose').addEventListener('click', () => snapListOverlay.classList.remove('show'));
+snapListOverlay.addEventListener('click', e => { if (e.target === snapListOverlay) snapListOverlay.classList.remove('show'); });
+function renderSnapshotsList(){
+  const el = document.getElementById('snapList');
+  if (!el) return;
+  if (!snapshotsList.length) { el.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted);font-size:13px;">No snapshots yet. Use 💾 Save, or start a new session and one is saved automatically.</div>`; return; }
+  el.innerHTML = snapshotsList.map(s => {
+    const auto = s.kind === 'auto';
+    return `<div class="snap-item">
+      <div><div class="snap-title">${escapeHtml(s.label || s.sessionName || 'Snapshot')}
+        <span class="badge" style="background:${auto ? '#6b7f8c' : '#2e9e5b'};">${auto ? 'Auto' : 'Manual'}</span></div>
+        <div class="snap-meta">${escapeHtml(s.sessionName || '')}${s.sessionDate ? ' · ' + escapeHtml(s.sessionDate) : ''} · saved ${fmtSnapTime(s.savedAtMs)} · ${(s.participants||[]).length} players · ${(s.matches||[]).length} in queue</div></div>
+      <div class="snap-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openSnapshotView('${s.id}')">View</button>
+        <button class="btn btn-primary btn-sm" onclick="restoreSnapshot('${s.id}')">Restore</button>
+        <button class="btn btn-ghost btn-sm" title="Delete snapshot" onclick="deleteSnapshot('${s.id}')">✕</button>
+      </div></div>`;
+  }).join('');
+}
+async function deleteSnapshot(id){
+  const s = snapshotsList.find(x => x.id === id);
+  if (!s || !confirm(`Delete snapshot "${s.label || s.sessionName || 'Snapshot'}"? This can't be undone.`)) return;
+  try { await db.collection(SNAP_COL).doc(id).delete(); showToast('Snapshot deleted.'); }
+  catch (e) { showToast('Delete failed: ' + e.message, true); }
+}
+
+/* --- view (read-only) --- */
+const snapViewOverlay = document.getElementById('snapViewOverlay');
+document.getElementById('btnSnapViewClose').addEventListener('click', () => snapViewOverlay.classList.remove('show'));
+snapViewOverlay.addEventListener('click', e => { if (e.target === snapViewOverlay) snapViewOverlay.classList.remove('show'); });
+document.getElementById('btnSnapViewRestore').addEventListener('click', () => { if (snapViewId) restoreSnapshot(snapViewId); });
+function openSnapshotView(id){
+  const s = snapshotsList.find(x => x.id === id);
+  if (!s) return;
+  snapViewId = id;
+  document.getElementById('snapViewTitle').textContent = s.label || s.sessionName || 'Snapshot';
+  document.getElementById('snapViewSub').textContent = `${s.sessionName || ''}${s.sessionDate ? ' · ' + s.sessionDate : ''} · saved ${fmtSnapTime(s.savedAtMs)} · ${s.kind === 'auto' ? 'auto-saved' : 'manual'} · read-only preview`;
+  const parts = s.participants || [], ms = (s.matches || []).slice().sort((a,b) => (a.order||0) - (b.order||0));
+  const playingSet = new Set();
+  ms.forEach(m => { if (m.status === 'playing') [...m.team1, ...m.team2].forEach(p => playingSet.add(p.participantId)); });
+  const stLabel = p => p.status === 'resting' ? 'Resting' : (p.status === 'queued' ? (playingSet.has(p.id) ? 'Playing' : 'On queue') : 'Available');
+  const partsHtml = BUCKETS.map(b => {
+    const list = parts.filter(p => p.bucket === b.key).sort((x,y) => (x.name||'').localeCompare(y.name||''));
+    return `<div class="snap-sec"><h4>${b.label} (${list.length})</h4>` + (list.length
+      ? list.map(p => `<div class="snap-line"><span>${escapeHtml(p.name)}</span><span style="color:var(--muted);">${escapeHtml(String(p.duprRaw ?? p.dupr ?? ''))} · ${stLabel(p)}</span></div>`).join('')
+      : `<div class="snap-line" style="color:var(--muted);">No one.</div>`) + `</div>`;
+  }).join('');
+  const matchHtml = ms.length ? ms.map(m => `<div class="snap-line"><span><b>${escapeHtml(m.matchId || '')}</b> · ${snapNames(m.team1)} vs ${snapNames(m.team2)}</span><span style="color:var(--muted);">${bucketLabel(m.bucket)} · ${m.status}${m.court ? ' · Court ' + m.court : ''}</span></div>`).join('')
+    : `<div class="snap-line" style="color:var(--muted);">Nothing in the queue.</div>`;
+  const pc = Object.keys(s.partnerCounts || {}).length, oc = Object.keys(s.opponentCounts || {}).length;
+  let lbHtml = '';
+  if (s.sessionId) {
+    const data = buildLeaderboard(s.sessionId);
+    const done = logs.filter(l => l.sessionId === s.sessionId).length;
+    lbHtml = `<div class="snap-sec"><h4>Completed matches in this session: ${done}</h4>` + BUCKETS.map(b => {
+      const top = (data[b.key] || []).slice(0, 3);
+      return top.length ? `<div class="snap-line"><span><b>${b.label}</b></span><span>${top.map((e,i) => `${i+1}. ${escapeHtml(e.name)} (${e.w}W)`).join(' · ')}</span></div>` : '';
+    }).join('') + `</div>`;
+  }
+  document.getElementById('snapViewBody').innerHTML =
+    `<div class="snap-sec"><h4>Queue (${ms.length})</h4>${matchHtml}</div>` + partsHtml +
+    `<div class="snap-sec"><h4>Pairing history</h4><div class="snap-line"><span>${pc} partner pair${pc===1?'':'s'} and ${oc} opponent pair${oc===1?'':'s'} tracked</span></div></div>` + lbHtml;
+  snapViewOverlay.classList.add('show');
+}
+
+/* --- restore --- */
+async function restoreSnapshot(id){
+  const s = snapshotsList.find(x => x.id === id);
+  if (!s || snapBusy) return;
+  const np = (s.participants || []).length, nm = (s.matches || []).length;
+  const msg = `Restore "${s.label || s.sessionName || 'Snapshot'}"?\n\n` +
+    `• Replaces the current participants and queue with the snapshot (${np} players, ${nm} queued matches).\n` +
+    `• Switches back to session "${s.sessionName || '—'}".\n` +
+    `• Matches that were on a court go back to the waiting queue, and all timers restart now.\n` +
+    `• The current state is auto-saved first, so you can undo this.`;
+  if (!confirm(msg)) return;
+  snapBusy = true;
+  try {
+    const live = await readLiveState();
+    if (live.participants.length || live.matches.length) {
+      try { await saveSnapshot('auto', `Before restoring "${s.label || s.sessionName || 'Snapshot'}"`, live); }
+      catch (e) { throw new Error('Could not auto-save the current state first, so nothing was changed. ' + e.message); }
+    }
+    await Promise.all(live.participants.map(flushElapsed));   // close out current timers
+
+    // make sure the session record exists
+    if (s.sessionId && !sessionsList.find(x => x.id === s.sessionId)) {
+      await db.collection('ccpc-queue-sessions').doc(s.sessionId).set({ name: s.sessionName || 'Restored session', date: s.sessionDate || '', eventName: s.sessionName || 'Restored session', location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+
+    const now = Date.now();
+    const keepP = new Set((s.participants || []).map(p => p.id)), keepM = new Set((s.matches || []).map(m => m.id));
+    const ops = [];
+    live.participants.filter(p => !keepP.has(p.id)).forEach(p => ops.push(b => b.delete(db.collection('ccpc-queue-participants').doc(p.id))));
+    live.matches.filter(m => !keepM.has(m.id)).forEach(m => ops.push(b => b.delete(db.collection('ccpc-queue-matches').doc(m.id))));
+    (s.participants || []).forEach(p => { const { id, ...data } = p; ops.push(b => b.set(db.collection('ccpc-queue-participants').doc(id), { ...data, statusSince: now })); });
+    (s.matches || []).forEach(m => {
+      const { id, ...data } = m;
+      const onCourt = COURT_BUSY_STATUSES.includes(data.status);
+      ops.push(b => b.set(db.collection('ccpc-queue-matches').doc(id), onCourt ? { ...data, status:'waiting', court:null, startedAt:null } : data));
+    });
+    for (let i = 0; i < ops.length; i += 400) {
+      const batch = db.batch();
+      ops.slice(i, i + 400).forEach(fn => fn(batch));
+      await batch.commit();
+    }
+
+    // pairing history: snapshot counts merged with what logs + restored queue actually contain (max of both)
+    const P = { ...(s.partnerCounts || {}) }, O = { ...(s.opponentCounts || {}) };
+    const rP = {}, rO = {};
+    const inc = (obj, a, b) => { const k = pairKey(a, b); obj[k] = (obj[k] || 0) + 1; };
+    const addTeams = (t1, t2) => {
+      if (t1.length === 2) inc(rP, t1[0].participantId, t1[1].participantId);
+      if (t2.length === 2) inc(rP, t2[0].participantId, t2[1].participantId);
+      t1.forEach(p => t2.forEach(q => inc(rO, p.participantId, q.participantId)));
+    };
+    if (s.sessionId) logs.filter(l => l.sessionId === s.sessionId).forEach(l => addTeams(l.team1 || [], l.team2 || []));
+    (s.matches || []).forEach(m => addTeams(m.team1 || [], m.team2 || []));
+    Object.keys(rP).forEach(k => { P[k] = Math.max(P[k] || 0, rP[k]); });
+    Object.keys(rO).forEach(k => { O[k] = Math.max(O[k] || 0, rO[k]); });
+    await db.collection('ccpc-queue-session').doc('state').set({
+      partnerCounts: P, opponentCounts: O,
+      currentSessionId: s.sessionId || null, currentSessionName: s.sessionName || '', currentSessionDate: s.sessionDate || '',
+      matchCounter: Math.max((live.state && live.state.matchCounter) || 0, s.matchCounter || 0)
+    }, { mergeFields: ['partnerCounts','opponentCounts','currentSessionId','currentSessionName','currentSessionDate','matchCounter'] });
+
+    BUCKETS.forEach(b => discardSuggestions(b.key));
+    snapViewOverlay.classList.remove('show'); snapListOverlay.classList.remove('show');
+    showToast(`Restored "${s.label || s.sessionName || 'snapshot'}".`);
+  } catch (e) { showToast('Restore failed: ' + e.message, true); }
+  finally { snapBusy = false; }
+}
 
 
 /* ================= LEADERBOARD (per session, per bucket) ================= */

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Calapan City Pickleball Club — Queue &amp; Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#083d5f; --navy-deep:#062c46;
+    --gold:#fab813; --orange:#ff6600; --blue:#3992b9; --red:#bb1421; --green:#2e9e5b;
+    --bg:#f4f2ec; --surface:#ffffff; --surface-2:#f7f7f5;
+    --text:#0e2233; --muted:#5c7186; --border:#e2ded2;
+    --shadow:0 6px 20px rgba(8,61,95,0.08); --radius:14px;
+  }
+  html[data-theme="dark"]{
+    --bg:#081720; --surface:#0f2634; --surface-2:#0c2029;
+    --text:#eaf1f5; --muted:#8fabbd; --border:#1d3b4c;
+    --shadow:0 6px 24px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.headline{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  header.top{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;
+    padding:18px clamp(16px,4vw,40px);display:flex;align-items:center;justify-content:space-between;gap:16px;
+    position:relative;overflow:hidden;flex-wrap:wrap;}
+  header.top::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(250,184,19,0.25) 0%,transparent 70%);}
+  header.top .titles{position:relative;z-index:1;}
+  header.top h1{margin:0;font-size:clamp(19px,3vw,27px);font-weight:700;}
+  header.top .sub{margin-top:4px;font-size:13px;color:#bcd3e2;font-weight:500;}
+  .top-right{position:relative;z-index:1;display:flex;align-items:center;gap:14px;}
+  .live{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#bcd3e2;font-weight:600;}
+  .dot{width:9px;height:9px;border-radius:50%;background:#7a8b96;}
+  .live.on .dot{background:#39d27a;box-shadow:0 0 0 0 rgba(57,210,122,.7);animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(57,210,122,.6);}70%{box-shadow:0 0 0 8px rgba(57,210,122,0);}100%{box-shadow:0 0 0 0 rgba(57,210,122,0);}}
+  .toggle-pill{width:56px;height:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
+    border-radius:20px;position:relative;cursor:pointer;flex-shrink:0;}
+  .knob{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;display:flex;
+    align-items:center;justify-content:center;font-size:13px;transition:transform .2s;}
+  html[data-theme="dark"] .knob{transform:translateX(26px);background:var(--gold);}
+
+  main{max-width:1280px;margin:0 auto;padding:22px clamp(14px,3vw,32px) 50px;}
+  .banner{display:none;background:rgba(187,20,33,.12);border:1px solid var(--red);color:var(--red);border-radius:10px;
+    padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:16px;}
+  .banner.show{display:block;}
+  h2.sec{margin:0 0 12px;font-size:21px;color:var(--navy);display:flex;align-items:center;gap:10px;}
+  html[data-theme="dark"] h2.sec{color:var(--blue);}
+  h2.sec .cnt{font-family:'Inter';font-size:12px;font-weight:700;color:var(--muted);background:var(--surface);
+    border:1px solid var(--border);border-radius:20px;padding:3px 10px;}
+  section{margin-bottom:30px;}
+
+  /* Single column, one section after the other */
+  .stack{display:flex;flex-direction:column;gap:6px;}
+  main{max-width:820px !important;}
+
+  /* Queue */
+  .queue-list{display:flex;flex-direction:column;gap:8px;}
+  .q-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 12px;box-shadow:var(--shadow);}
+  .q-row.next{border-color:var(--gold);box-shadow:0 0 0 2px rgba(250,184,19,.35), var(--shadow);}
+  .q-row.onhold{opacity:.6;}
+  .q-pos{font-family:'Baloo 2';font-weight:800;font-size:20px;color:var(--navy);min-width:30px;text-align:center;}
+  html[data-theme="dark"] .q-pos{color:var(--blue);}
+  .q-body{flex:1;min-width:0;}
+  .q-teams{font-weight:700;font-size:14.5px;line-height:1.35;}
+  .q-teams .v{color:var(--muted);font-weight:500;margin:0 5px;}
+  .q-meta{font-size:12px;color:var(--muted);margin-top:2px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .tag{display:inline-block;width:9px;height:9px;border-radius:50%;}
+  .badge{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:20px;color:#fff;}
+  .badge.next{background:var(--gold);color:#3a2900;} .badge.hold{background:#8a97a0;}
+  .empty{background:var(--surface);border:1px dashed var(--border);border-radius:11px;padding:22px;text-align:center;color:var(--muted);font-size:14px;}
+
+  /* Leaderboard */
+  .lb-wrap{display:flex;flex-direction:column;gap:14px;}
+  .lb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .lb-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);}
+  .lb-head h3{margin:0;font-size:17px;display:flex;align-items:center;gap:8px;}
+  .lb-head .c{font-size:12px;color:var(--muted);font-weight:600;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);text-align:left;padding:8px 8px;font-weight:700;}
+  td{padding:8px 8px;border-top:1px solid var(--border);}
+  th.n,td.n{text-align:center;font-variant-numeric:tabular-nums;}
+  td.rank{font-family:'Baloo 2';font-weight:800;color:var(--muted);text-align:center;width:34px;}
+  td.nm{font-weight:700;}
+  .pos{color:var(--green);font-weight:700;} .neg{color:var(--red);font-weight:700;}
+  .lb-note{font-size:12px;color:var(--muted);margin:-4px 0 12px;}
+  .empty-row td{text-align:center;color:var(--muted);padding:18px;}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding-bottom:26px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="titles">
+    <h1>Calapan City Pickleball Club</h1>
+    <div class="sub" id="sessionLabel">Loading session…</div>
+  </div>
+  <div class="top-right">
+    <div class="live" id="liveBox"><span class="dot"></span><span id="liveText">Connecting…</span></div>
+    <div class="toggle-pill" id="themeToggle" title="Toggle light/dark mode"><div class="knob" id="themeKnob">☀️</div></div>
+  </div>
+</header>
+
+<main>
+  <div class="banner" id="errBanner">Can't load live data right now. Check your connection — this page will keep retrying.</div>
+
+  <div class="stack">
+    <section>
+      <h2 class="sec">⏳ Match queue <span class="cnt" id="queueCount"></span></h2>
+      <div class="queue-list" id="queueList"></div>
+    </section>
+
+    <section>
+      <h2 class="sec">🏆 Leaderboard</h2>
+      <div class="lb-note">This session · ranked by Wins → Total Points → Point Differential</div>
+      <div class="lb-wrap" id="lbWrap"></div>
+    </section>
+  </div>
+</main>
+
+<footer>View only · updates automatically</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ================= Firebase (read-only: this page never writes) ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBv_s3wzr6nbFcqZbTI0UDdcijFWnO-t4I",
+  authDomain: "ccpc-dupr.firebaseapp.com",
+  databaseURL: "https://ccpc-dupr-default-rtdb.firebaseio.com",
+  projectId: "ccpc-dupr",
+  storageBucket: "ccpc-dupr.firebasestorage.app",
+  messagingSenderId: "49883771837",
+  appId: "1:49883771837:web:ca4be96157a62afbc858d4",
+  measurementId: "G-9D46L85X2T"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const BUCKETS = [
+  { key:'singles', label:'Singles', color:'#3992b9' },
+  { key:'fun', label:'Fun Mode (Low)', color:'#ff6600' },
+  { key:'competitive', label:'Competitive Mode (High)', color:'#bb1421' }
+];
+const bucketOf = k => BUCKETS.find(b => b.key === k) || { label:k, color:'#8a97a0' };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* theme */
+const html = document.documentElement, themeKnob = document.getElementById('themeKnob');
+function applyTheme(t){ html.setAttribute('data-theme', t); themeKnob.textContent = t === 'dark' ? '🌙' : '☀️'; try { localStorage.setItem('ccpc-theme', t); } catch(e){} }
+let savedTheme = 'light'; try { savedTheme = localStorage.getItem('ccpc-theme') || 'light'; } catch(e){}
+applyTheme(savedTheme);
+document.getElementById('themeToggle').addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+/* state */
+let state = {}, matches = [], logs = [], logsSid = null, unsubLogs = null;
+
+function markLive(){
+  document.getElementById('errBanner').classList.remove('show');
+  document.getElementById('liveBox').classList.add('on');
+  document.getElementById('liveText').textContent = 'Live · updated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit', second:'2-digit' });
+}
+function onErr(err){
+  console.error(err);
+  document.getElementById('liveBox').classList.remove('on');
+  document.getElementById('liveText').textContent = 'Offline';
+  document.getElementById('errBanner').classList.add('show');
+}
+
+db.collection('ccpc-queue-session').doc('state').onSnapshot(doc => {
+  state = doc.exists ? doc.data() : {};
+  document.getElementById('sessionLabel').textContent = state.currentSessionName
+    ? `Match queue · ${state.currentSessionName}${state.currentSessionDate ? ' (' + state.currentSessionDate + ')' : ''}`
+    : 'Match queue';
+  subscribeLogs(state.currentSessionId || null);
+  markLive();
+}, onErr);
+
+db.collection('ccpc-queue-matches').onSnapshot(snap => {
+  matches = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderQueue(); markLive();
+}, onErr);
+
+function subscribeLogs(sid){
+  if (sid === logsSid) return;
+  logsSid = sid;
+  if (unsubLogs) { unsubLogs(); unsubLogs = null; }
+  logs = []; renderLeaderboard();
+  if (!sid) return;
+  unsubLogs = db.collection('ccpc-queue-logs').where('sessionId', '==', sid).onSnapshot(snap => {
+    logs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    renderLeaderboard();
+  }, onErr);
+}
+
+/* ---------- Queue ---------- */
+function renderQueue(){
+  const list = matches.filter(m => m.status === 'waiting' || m.status === 'onhold').sort((a, b) => (a.order || 0) - (b.order || 0));
+  document.getElementById('queueCount').textContent = list.length ? `${list.length} waiting` : '';
+  const el = document.getElementById('queueList');
+  if (!list.length) { el.innerHTML = `<div class="empty">No matches waiting right now.</div>`; return; }
+  let nextMarked = false;
+  el.innerHTML = list.map((m, i) => {
+    const hold = m.status === 'onhold';
+    const isNext = !hold && !nextMarked; if (isNext) nextMarked = true;
+    const b = bucketOf(m.bucket);
+    return `<div class="q-row ${isNext ? 'next' : ''} ${hold ? 'onhold' : ''}">
+      <div class="q-pos">${i + 1}</div>
+      <div class="q-body">
+        <div class="q-teams">${esc((m.team1 || []).map(p => p.name).join(' & '))}<span class="v">vs</span>${esc((m.team2 || []).map(p => p.name).join(' & '))}</div>
+        <div class="q-meta"><span class="tag" style="background:${b.color}"></span>${esc(b.label)}
+          ${isNext ? '<span class="badge next">NEXT UP</span>' : ''}${hold ? '<span class="badge hold">ON HOLD</span>' : ''}</div>
+      </div></div>`;
+  }).join('');
+}
+
+/* ---------- Leaderboard (same ranking rules as the main app) ---------- */
+function refKeyFor(p){
+  return p.sourceType === 'member' ? ('m_' + p.memberId) : ('g_' + (p.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_'));
+}
+function buildLeaderboard(){
+  const res = {}; BUCKETS.forEach(b => res[b.key] = {});
+  logs.forEach(l => {
+    const map = res[l.bucket] || (res[l.bucket] = {});
+    const s1 = Number(l.score1) || 0, s2 = Number(l.score2) || 0;
+    const add = (team, pf, pa, won) => (team || []).forEach(p => {
+      const k = refKeyFor(p);
+      const e = map[k] || (map[k] = { name:p.name, gp:0, w:0, l:0, pf:0, pa:0 });
+      e.name = p.name; e.gp++; if (won) e.w++; else e.l++; e.pf += pf; e.pa += pa;
+    });
+    add(l.team1, s1, s2, l.winner === 'team1');
+    add(l.team2, s2, s1, l.winner === 'team2');
+  });
+  const out = {};
+  Object.keys(res).forEach(bk => {
+    const arr = Object.values(res[bk]).map(e => ({ ...e, pd:e.pf - e.pa }));
+    arr.sort((a, b) => b.w - a.w || b.pf - a.pf || b.pd - a.pd || a.name.localeCompare(b.name));
+    arr.forEach((e, i) => { e.rank = (i > 0 && arr[i-1].w === e.w && arr[i-1].pf === e.pf && arr[i-1].pd === e.pd) ? arr[i-1].rank : i + 1; });
+    out[bk] = arr;
+  });
+  return out;
+}
+function renderLeaderboard(){
+  const data = buildLeaderboard(), medals = ['🥇','🥈','🥉'];
+  document.getElementById('lbWrap').innerHTML = BUCKETS.map(b => {
+    const rows = data[b.key] || [];
+    const body = rows.length ? rows.map(e => `<tr>
+        <td class="rank">${e.rank}</td><td class="nm">${e.rank <= 3 ? medals[e.rank - 1] + ' ' : ''}${esc(e.name)}</td>
+        <td class="n">${e.gp}</td><td class="n">${e.w}</td><td class="n">${e.l}</td><td class="n">${e.pf}</td>
+        <td class="n ${e.pd > 0 ? 'pos' : (e.pd < 0 ? 'neg' : '')}">${e.pd > 0 ? '+' : ''}${e.pd}</td></tr>`).join('')
+      : `<tr class="empty-row"><td colspan="7">No completed matches yet.</td></tr>`;
+    return `<div class="lb-card"><div class="lb-head"><h3><span class="tag" style="background:${b.color}"></span>${b.label}</h3>
+        <span class="c">${rows.length} player${rows.length === 1 ? '' : 's'}</span></div>
+      <table><thead><tr><th class="n">#</th><th>Player</th><th class="n">GP</th><th class="n">W</th><th class="n">L</th><th class="n">Pts</th><th class="n">+/−</th></tr></thead>
+      <tbody>${body}</tbody></table></div>`;
+  }).join('');
+}
+renderQueue(); renderLeaderboard();
+</script>
+</body>
+</html>
