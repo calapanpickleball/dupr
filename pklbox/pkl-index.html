@@ -32,8 +32,8 @@
   header.top::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;
     background:radial-gradient(circle, rgba(79,157,45,0.25) 0%, transparent 70%);}
   header.top .titles{position:relative;z-index:1;}
-  header.top h1{margin:0;font-size:clamp(19px,3vw,27px);font-weight:700;}
-  header.top .sub{margin-top:4px;font-size:13px;color:#c3cdc3;font-weight:500;}
+  header.top h1{margin:0;font-size:clamp(19px,3vw,27px);font-weight:700;line-height:1.05;}
+  header.top .sub{margin-top:0;line-height:1.15;font-size:13px;color:#c3cdc3;font-weight:500;}
   .top-actions{position:relative;z-index:1;display:flex;align-items:center;gap:14px;}
   .btn-danger-ghost{background:rgba(187,20,33,0.18);color:#ffd7da;border:1px solid rgba(187,20,33,0.5);
     padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
@@ -287,6 +287,10 @@
   .rp-note{font-size:12px;color:var(--muted);margin-bottom:10px;}
   header.top .brand-logo{height:46px;width:46px;border-radius:10px;margin-right:12px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.35);}
   header.top .session-chip{margin-left:auto;margin-right:14px;font-size:12.5px;color:rgba(255,255,255,.82);text-align:right;}
+  tr.dup-row td{background:rgba(255,102,0,.16);}
+  tr.dup-row td:first-child{box-shadow:inset 4px 0 0 var(--orange);}
+  .badge.dup{background:var(--orange);color:#fff;margin-left:6px;cursor:help;}
+  .gen-note{font-size:12px;color:var(--orange);padding:8px 12px;border-bottom:1px solid var(--border);}
 </style>
 </head>
 <body>
@@ -403,7 +407,7 @@
         <div class="combo-wrap"><input type="text" id="memberSearch" placeholder="Start typing…"><div class="combo-results" id="memberResults"></div></div></div>
     </div>
     <div id="guestSourceBlock" style="display:none;">
-      <div class="field"><label>Guest name</label><input type="text" id="guestName" placeholder="Guest full name"></div>
+      <div class="field"><label>Guest Name</label><input type="text" id="guestName" placeholder="Guest Name"></div>
       <div class="field"><label>DUPR ID </label><input type="text" id="guestDuprId" placeholder="e.g. ABC1234" required></div>
       <div class="field"><label>Current DUPR</label><input type="text" id="guestDupr" placeholder="e.g. 3.250 or NR"><div class="error-text" id="errGuestDupr"></div></div>
       <button type="button" class="btn btn-ghost btn-sm" id="btnGuestToList" style="margin-bottom:12px;">+ Add guest to list</button>
@@ -576,9 +580,10 @@
 <div class="overlay" id="sessionOverlay">
   <div class="modal">
     <h2>Start new session</h2>
-    <div class="modal-sub">Clears bucket participants, the queue, and pairing history for a fresh day. Your buckets stay. The current state is auto-saved as a snapshot first (see 🗂 Snapshots), and match logs stay archived under their own session.</div>
+    <div class="modal-sub">Starts a clean slate: clears all participants, matches, the queue and the buckets, and resets the TV settings. Match logs stay archived under their own session.</div>
     <div class="field"><label>Session name</label><input type="text" id="sessNameInput" placeholder="e.g. Saturday Open Play"></div>
     <div class="field"><label>Date</label><input type="date" id="sessDateInput"></div>
+    <label class="tv-switch" style="margin:2px 0 10px;"><input type="checkbox" id="sessSaveSnap" checked><span>Save a snapshot of the current session first (see 🗂 Snapshots)</span></label>
     <div class="error-text" id="errSession"></div>
     <div class="modal-actions"><button class="btn btn-ghost" id="btnSessionCancel">Cancel</button><button class="btn btn-primary" id="btnSessionStart">Start session</button></div>
   </div>
@@ -731,6 +736,7 @@ db.collection('pkl-queue-buckets').onSnapshot(snap => {
 
 db.collection('pkl-queue-participants').onSnapshot(snap => {
   participants = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  computeDuplicates();
   renderParticipants();
   updateMatchupPoolCounts();
   refreshGenList();
@@ -823,6 +829,33 @@ function bucketLabel(key, fallback){ const b = BUCKETS.find(x => x.key === key);
 function bucketLabelHtml(key, fallback){ return escapeHtml(bucketLabel(key, fallback)); }
 function logBucketName(l){ return bucketLabel(l.bucket, l.bucketName); }
 
+/* ---- Duplicate players (same name or same DUPR ID); flagged players are kept out of matchmaking ---- */
+function normName(n){ return (n || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+function normId(i){ return (i || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+let dupInfo = {};
+function computeDuplicates(){
+  dupInfo = {};
+  participants.forEach(p => {
+    const nk = normName(p.name), ik = normId(p.duprId);
+    const others = participants.filter(q => q.id !== p.id && ((nk && normName(q.name) === nk) || (ik && normId(q.duprId) === ik)));
+    if (others.length && !p.dupDismissed) dupInfo[p.id] = others;
+  });
+}
+function isDuplicate(p){ return !!(p && dupInfo[p.id]); }
+function dupTitle(p){ return 'Same name or DUPR ID as: ' + (dupInfo[p.id] || []).map(o => `${o.name} (${bucketLabel(o.bucket)})`).join(', '); }
+async function dismissDuplicate(pid){
+  const p = participants.find(x => x.id === pid);
+  if (!p || !dupInfo[pid]) return;
+  const group = [p, ...dupInfo[pid]];
+  if (!confirm(`Mark ${group.map(x => x.name).join(', ')} as NOT duplicates? They will become available for matches.`)) return;
+  try {
+    const batch = db.batch();
+    group.forEach(x => batch.update(db.collection('pkl-queue-participants').doc(x.id), { dupDismissed: true }));
+    await batch.commit();
+    showToast('Duplicate mark removed.');
+  } catch (err) { showToast('Could not update: ' + err.message, true); }
+}
+
 function renderParticipants(){
   const wrap = document.getElementById('bucketCards-participants');
   if (!bucketsLoaded) { wrap.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--muted);grid-column:1/-1;">Loading…</div>`; return; }
@@ -836,15 +869,17 @@ function renderParticipants(){
     const rows = list.length ? list.map(p => {
       const sk = statusKey(p, pIds);
       const movable = p.status !== 'queued';
+      const dup = isDuplicate(p);
       return `
-      <tr class="${movable ? 'draggable-row' : ''}" ${movable ? 'draggable="true"' : ''} data-pid="${p.id}">
+      <tr class="${movable ? 'draggable-row' : ''} ${dup ? 'dup-row' : ''}" ${movable ? 'draggable="true"' : ''} data-pid="${p.id}">
         <td class="stat-hover" data-refkey="${refKeyFor(p)}" data-pid="${p.id}">
-          <b>${escapeHtml(p.name)}</b>${p.sourceType==='guest' ? ' <span style="color:var(--muted);font-size:11px;">(guest)</span>' : ''}
+          <b>${escapeHtml(p.name)}</b>${p.sourceType==='guest' ? ' <span style="color:var(--muted);font-size:11px;">(guest)</span>' : ''}${dup ? ` <span class="badge dup" title="${escapeHtml(dupTitle(p))}">Duplicate</span>` : ''}
         </td>
         <td>${p.duprId ? escapeHtml(p.duprId) : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${p.duprRaw || fmtNum(p.dupr)}</td>
         <td><span class="badge ${sk}">${STATUS_LABELS[sk]}</span></td>
         <td><div class="row-actions">
+          ${dup ? `<button class="btn-icon" title="Not a duplicate (clear the mark)" onclick="dismissDuplicate('${p.id}')">✓</button>` : ''}
           <button class="btn-icon warn" title="${p.status==='resting'?'Set available':'Set resting'}" ${p.status==='queued'?'disabled':''} onclick="toggleRest('${p.id}','${p.status}')">${p.status==='resting'?'▶':'⏸'}</button>
           <button class="btn-icon danger" title="Remove" ${p.status==='queued'?'disabled':''} onclick="removeParticipant('${p.id}')">🗑</button>
         </div></td>
@@ -1359,16 +1394,18 @@ function gamesPlayed(p){
 function gamesPending(p){ return queueMatches.filter(m => QUEUE_MATCH_STATUSES.includes(m.status) && isInMatch(p.id, m)).length; }
 function refreshGenList(){
   if (!genOverlay.classList.contains('show') || !genBucket) return;
-  genList = participants.filter(p => p.bucket === genBucket).sort((x,y) => x.name.localeCompare(y.name));
+  genList = participants.filter(p => p.bucket === genBucket && !isDuplicate(p)).sort((x,y) => x.name.localeCompare(y.name));
   const ids = new Set(genList.map(p => p.id));
   genSelected = new Set([...genSelected].filter(id => ids.has(id)));
   genRender();
 }
 function genRender(){
   const list = document.getElementById('genList');
-  if (!genList.length){ list.innerHTML = `<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center;">No participants in this bucket yet.</div>`; genUpdateSummary(); return; }
+  const dupNames = participants.filter(p => p.bucket === genBucket && isDuplicate(p)).map(p => p.name);
+  const dupNote = dupNames.length ? `<div class="gen-note">Not available (duplicate, resolve first): ${escapeHtml(dupNames.join(', '))}</div>` : '';
+  if (!genList.length){ list.innerHTML = dupNote + `<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center;">No available participants in this bucket.</div>`; genUpdateSummary(); return; }
   const pIds = playingIds();
-  list.innerHTML = genList.map(p => {
+  list.innerHTML = dupNote + genList.map(p => {
     const s = playerState(p, pIds);
     return `<label class="gen-row"><input type="checkbox" data-id="${p.id}" ${genSelected.has(p.id)?'checked':''}><span class="gen-name">${escapeHtml(p.name)}<span class="gen-meta">(Played: ${gamesPlayed(p)} | Pending: ${gamesPending(p)})</span></span><span class="gen-state s-${s}">${STATUS_LABELS[s]}</span></label>`;
   }).join('');
@@ -1382,7 +1419,7 @@ function openGenerateModal(bucketKey){
   genBucket = bucketKey;
   const b = BUCKETS.find(x=>x.key===bucketKey);
   document.getElementById('genTitle').textContent = 'Generate matchups · ' + b.label;
-  genList = participants.filter(p => p.bucket === bucketKey).sort((x,y) => x.name.localeCompare(y.name));
+  genList = participants.filter(p => p.bucket === bucketKey && !isDuplicate(p)).sort((x,y) => x.name.localeCompare(y.name));
   genSelected = new Set(genList.filter(p => p.status !== 'resting').map(p => p.id));
   document.getElementById('errGen').textContent = '';
   genRender();
@@ -1890,7 +1927,7 @@ let customBucket = null, customIds = [];
 function openCustomMatchModal(bucketKey){
   const b = BUCKETS.find(x => x.key === bucketKey);
   if (!b) return;
-  const list = participants.filter(p => p.bucket === bucketKey).sort((x, y) => x.name.localeCompare(y.name));
+  const list = participants.filter(p => p.bucket === bucketKey && !isDuplicate(p)).sort((x, y) => x.name.localeCompare(y.name));
   if (list.length < b.size) { showToast(`Need at least ${b.size} participants in "${b.label}" for a custom match.`, true); return; }
   customBucket = bucketKey;
   const per = b.size / 2;
@@ -1935,7 +1972,7 @@ function openReplaceModal(matchDocId){
   document.getElementById('replaceSub').textContent = `${m.matchId} · ${bucketLabel(m.bucket)}`;
   document.getElementById('errReplace').textContent = '';
   const inMatch = new Set(matchPlayerIds(m));
-  const others = participants.filter(p => p.bucket === m.bucket && !inMatch.has(p.id)).sort((x, y) => x.name.localeCompare(y.name));
+  const others = participants.filter(p => p.bucket === m.bucket && !inMatch.has(p.id) && !isDuplicate(p)).sort((x, y) => x.name.localeCompare(y.name));
   const slot = (entry, side, idx) => `<div class="field" style="margin-bottom:10px;"><label>${side === 'team1' ? 'Team 1' : 'Team 2'} · ${escapeHtml(entry.name)}</label>
     <select id="rp-${side}-${idx}"><option value="">Keep ${escapeHtml(entry.name)}</option>${others.map(p => `<option value="${p.id}">Replace with ${escapeHtml(playerOptionLabel(p))}</option>`).join('')}</select></div>`;
   document.getElementById('replaceSlots').innerHTML = m.team1.map((e, i) => slot(e, 'team1', i)).join('') + m.team2.map((e, i) => slot(e, 'team2', i)).join('');
@@ -2346,6 +2383,7 @@ document.getElementById('btnNewSession').addEventListener('click', () => {
   document.getElementById('sessNameInput').value = '';
   document.getElementById('sessDateInput').value = new Date().toISOString().slice(0,10);
   document.getElementById('errSession').textContent = '';
+  document.getElementById('sessSaveSnap').checked = true;
   sessionOverlay.classList.add('show');
 });
 document.getElementById('btnSessionCancel').addEventListener('click', () => sessionOverlay.classList.remove('show'));
@@ -2361,24 +2399,28 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
   btn.disabled = true;
   try {
     const live = await readLiveState();
-    if (live.participants.length || live.matches.length) {
+    if (document.getElementById('sessSaveSnap').checked && (live.participants.length || live.matches.length || live.buckets.length)) {
       try { await saveSnapshot('auto', `Before starting "${name}"`, live); }
       catch (e) { throw new Error('Could not auto-save the current session, so nothing was cleared. ' + e.message); }
     }
     const prev = sessionsList.find(x => x.id === sessionState.currentSessionId) || {};
     const sessRef = await db.collection('pkl-queue-sessions').add({ name, date, eventName: name, location: prev.location || '', scoreType: prev.scoreType || 'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    const [partsSnap, matchesSnap] = await Promise.all([
+    const [partsSnap, matchesSnap, bucketsSnap] = await Promise.all([
       db.collection('pkl-queue-participants').get(),
-      db.collection('pkl-queue-matches').get()
+      db.collection('pkl-queue-matches').get(),
+      db.collection('pkl-queue-buckets').get()
     ]);
     await Promise.all(partsSnap.docs.map(d => flushElapsed({ id:d.id, ...d.data() })));
     const batch = db.batch();
     partsSnap.forEach(d => batch.delete(d.ref));
     matchesSnap.forEach(d => batch.delete(d.ref));
-    batch.set(db.collection('pkl-queue-session').doc('state'), { partnerCounts:{}, opponentCounts:{}, courtsActiveAt: null, currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date }, { merge:true });
+    bucketsSnap.forEach(d => batch.delete(d.ref));
+    batch.set(db.collection('pkl-queue-session').doc('state'), { matchCounter: 0, partnerCounts:{}, opponentCounts:{}, courtsActiveAt: null, currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date }, { merge:true });
     await batch.commit();
+    await displayRef.set({ showQueue: true, leaderboard: { show: false, buckets: [] } }, { merge: true });
+    lastOptimizeUndo = null; document.getElementById('btnUndoOptimize').style.display = 'none';
     sessionOverlay.classList.remove('show');
-    showToast(`Session "${name}" started.`);
+    showToast(`Session "${name}" started. Everything was reset.`);
   } catch (err) { showToast('Could not start session: ' + err.message, true); }
   finally { btn.disabled = false; }
 });
