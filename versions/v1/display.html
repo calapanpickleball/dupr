@@ -38,7 +38,7 @@
   header.top h1{margin:0;color:#fff;font-size:min(4.8vh,2.4vw);font-weight:800;text-align:center;letter-spacing:.2px;}
   header.top .brand.right img{height:8.2vh;border-radius:1vh;}
   .theme-toggle{position:absolute;top:8px;right:8px;width:40px;height:22px;background:rgba(255,255,255,.15);
-    border:1px solid rgba(255,255,255,.3);border-radius:14px;cursor:pointer;z-index:10;opacity:.6;}
+    border:1px solid rgba(255,255,255,.3);border-3radius:14px;cursor:pointer;z-index:10;opacity:.6;}
   .theme-toggle .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--gold);
     transition:transform .2s ease;font-size:9px;display:flex;align-items:center;justify-content:center;}
   html[data-theme="light"] .theme-toggle .knob{transform:translateX(18px);background:var(--blue);}
@@ -77,9 +77,8 @@
   .next-item{background:var(--surface);border:.2vh solid var(--border);border-left:1vh solid var(--blue);
     border-radius:1.6vh;padding:0 1.2vw;box-shadow:var(--shadow);display:flex;align-items:center;gap:1.2vw;
     min-height:0;min-width:0;overflow:hidden;}
-  .next-item.onhold{border-left-color:var(--muted);}
-  .next-item.onhold .pos,.next-item.onhold .info{opacity:.45;}
-  .next-item .hold-tag{font-family:'Baloo 2';font-weight:800;font-size:min(3.2vh,1.8vw);color:var(--gold);flex-shrink:0;white-space:nowrap;}
+  .next-item.b-fun{border-left-color:var(--orange);}
+  .next-item.b-competitive{border-left-color:var(--red);}
   .next-item.empty{border-style:dashed;border-left-style:dashed;box-shadow:none;background:transparent;opacity:.45;}
   .next-item .pos{font-family:'Baloo 2';font-weight:800;font-size:min(6vh,3.4vw);color:var(--gold);width:3.2vw;text-align:center;flex-shrink:0;}
   .next-item .info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;}
@@ -103,9 +102,6 @@
   .tv-popup .winner-name{font-family:'Baloo 2';font-weight:800;font-size:min(10vh,6vw);color:#3ecb7c;margin-top:6px;}
 
   @media (max-width: 900px){ html,body{height:auto;} body{overflow:auto;} main{grid-template-columns:1fr;} }
-  .court-bucket{font-family:'Baloo 2';font-weight:700;font-size:min(2.3vh,1.3vw);color:var(--gold);letter-spacing:0;text-transform:none;margin-left:.8vw;}
-  .next-item .side{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;flex-shrink:0;max-width:14vw;}
-  .next-item .bucket-sm{font-family:'Baloo 2';font-weight:700;font-size:min(2.4vh,1.35vw);color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;}
 </style>
 </head>
 <body>
@@ -168,6 +164,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const COURTS = 4;
+const BUCKET_LABELS = { singles:'Singles', fun:'Fun Mode', competitive:'Competitive' };
 
 /* Theme */
 const html = document.documentElement;
@@ -180,18 +177,6 @@ themeToggle.addEventListener('click', () => applyTheme(html.getAttribute('data-t
 function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 let queueMatches = [];
-let bucketsMap = {};
-/* bucket name is shown only for buckets limited to specific courts */
-function bucketTag(id){
-  const b = bucketsMap[id];
-  return b && b.courts && b.courts.length && b.courts.length < COURTS ? b.name : '';
-}
-db.collection('ccpc-queue-buckets').onSnapshot(snap => {
-  bucketsMap = {};
-  snap.docs.forEach(d => { const x = d.data(); bucketsMap[d.id] = { name: x.name || '', courts: Array.isArray(x.courts) ? x.courts.map(Number) : [] }; });
-  renderCourts();
-  renderNextList();
-}, err => console.error(err));
 
 db.collection('ccpc-queue-matches').onSnapshot(snap => {
   queueMatches = snap.docs.map(d => ({ id:d.id, ...d.data() }));
@@ -199,7 +184,6 @@ db.collection('ccpc-queue-matches').onSnapshot(snap => {
   renderNextList();
 }, err => console.error(err));
 
-function courtBucketHtml(m){ const t = bucketTag(m.bucket); return t ? `<span class="court-bucket">${escapeHtml(t)}</span>` : ''; }
 function playersHtml(team){ return team.map(p=>`<div class="p fit">${escapeHtml(p.name)}</div>`).join(''); }
 
 function renderCourts(){
@@ -223,13 +207,13 @@ function renderCourts(){
     if (m.status === 'playing'){
       el.className = 'court-card playing';
       el.innerHTML = `
-        <div class="court-num"><span>Court ${c}${courtBucketHtml(m)}</span><span class="court-status-pill playing">Playing</span></div>
+        <div class="court-num">Court ${c}<span class="court-status-pill playing">Playing</span></div>
         ${body}
         <div class="timer" data-started="${m.startedAt}">00:00</div>`;
     } else {
       el.className = 'court-card assigned';
       el.innerHTML = `
-        <div class="court-num"><span>Court ${c}${courtBucketHtml(m)}</span><span class="court-status-pill assigned">Getting ready</span></div>
+        <div class="court-num">Court ${c}<span class="court-status-pill assigned">Getting ready</span></div>
         ${body}
         <div class="ready-note">Please proceed to the court</div>`;
     }
@@ -249,7 +233,7 @@ setInterval(updateTimers, 1000);
 
 const NEXT_SLOTS = 6;
 function renderNextList(){
-  const list = queueMatches.filter(m => m.status === 'waiting' || m.status === 'onhold').sort((a,b) => a.order - b.order).slice(0, NEXT_SLOTS);
+  const list = queueMatches.filter(m => m.status === 'waiting').sort((a,b) => a.order - b.order).slice(0, NEXT_SLOTS);
   const el = document.getElementById('nextList');
   let html = '';
   for (let i=0;i<NEXT_SLOTS;i++){
@@ -259,13 +243,12 @@ function renderNextList(){
       continue;
     }
     html += `
-    <div class="next-item${m.status === 'onhold' ? ' onhold' : ''}">
+    <div class="next-item b-${m.bucket}">
       <div class="pos">${i+1}</div>
       <div class="info">
         <div class="tline fit">${escapeHtml(m.team1.map(p=>p.name).join(' & '))}</div>
         <div class="tline b fit"><span>VS</span>${escapeHtml(m.team2.map(p=>p.name).join(' & '))}</div>
       </div>
-      ${(bucketTag(m.bucket) || m.status === 'onhold') ? `<div class="side">${bucketTag(m.bucket) ? `<div class="bucket-sm">${escapeHtml(bucketTag(m.bucket))}</div>` : ''}${m.status === 'onhold' ? '<div class="hold-tag">(On Hold)</div>' : ''}</div>` : ''}
     </div>`;
   }
   el.innerHTML = html;

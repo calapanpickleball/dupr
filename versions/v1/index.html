@@ -38,27 +38,13 @@
   .btn-danger-ghost{background:rgba(187,20,33,0.18);color:#ffd7da;border:1px solid rgba(187,20,33,0.5);
     padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
   .btn-danger-ghost:hover{background:rgba(187,20,33,0.32);}
-  .btn-top{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.3);
-    padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
-  .btn-top:hover{background:rgba(255,255,255,0.22);}
-  .top-actions{flex-wrap:wrap;justify-content:flex-end;}
-  .modal.wide{max-width:760px;}
-  .snap-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);
-    border-radius:10px;background:var(--surface-2);margin-bottom:8px;}
-  .snap-title{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .snap-meta{font-size:12px;color:var(--muted);margin-top:3px;}
-  .snap-actions{display:flex;gap:6px;flex:none;}
-  .snap-sec{margin-top:16px;}
-  .snap-sec h4{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
-  .snap-line{font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;}
-  .snap-line:last-child{border-bottom:none;}
   .toggle-pill{width:56px;height:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
     border-radius:20px;position:relative;cursor:pointer;flex-shrink:0;}
   .toggle-pill .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--gold);
     transition:transform .2s ease;display:flex;align-items:center;justify-content:center;font-size:12px;}
   html[data-theme="dark"] .toggle-pill .knob{transform:translateX(26px);background:var(--blue);}
 
-  nav.tabs{display:flex;gap:6px;max-width:1800px;margin:18px auto 0;padding:0 clamp(16px,4vw,40px);flex-wrap:wrap;}
+  nav.tabs{display:flex;gap:6px;max-width:1400px;margin:18px auto 0;padding:0 clamp(16px,4vw,40px);flex-wrap:wrap;}
   nav.tabs button{background:var(--surface);border:1px solid var(--border);color:var(--muted);
     padding:10px 18px;border-radius:10px 10px 0 0;font-family:'Inter',sans-serif;font-weight:600;
     font-size:14px;cursor:pointer;border-bottom:none;position:relative;top:1px;}
@@ -66,7 +52,7 @@
     box-shadow:0 -3px 0 var(--gold) inset;}
   html[data-theme="dark"] nav.tabs button.active{color:#fff;}
 
-  main{max-width:1800px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 60px;border-top:1px solid var(--border);}
+  main{max-width:1400px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 60px;border-top:1px solid var(--border);}
   .panel{display:none;}
   .panel.active{display:block;}
 
@@ -251,34 +237,6 @@
   .logs-toolbar{display:flex;gap:10px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 
   @media (max-width:640px){ .score-row{grid-template-columns:1fr;} .court-pick-grid{grid-template-columns:1fr;} }
-
-  /* ---- buckets / queue reorder additions ---- */
-  .mode-tag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;
-    background:var(--surface-2);border:1px solid var(--border);color:var(--muted);vertical-align:middle;font-family:'Inter',sans-serif;}
-  .queue-row.drop-before{box-shadow:0 -3px 0 0 var(--gold);}
-  .queue-row.drop-after{box-shadow:0 3px 0 0 var(--gold);}
-  .btn-icon:disabled{opacity:.35;cursor:not-allowed;}
-  .participants-toolbar{display:flex;justify-content:flex-end;margin-bottom:14px;}
-  .field .court-checks{display:flex;gap:8px;flex-wrap:wrap;}
-  .field .court-checks label{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--border);border-radius:9px;
-    background:var(--surface-2);cursor:pointer;font-size:13px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--text);}
-  .field .court-checks input{width:16px;height:16px;min-width:0;margin:0;}
-  .gen-meta{font-weight:500;font-size:12.5px;color:var(--muted);margin-left:6px;white-space:nowrap;}
-  .queue-row .q-move{gap:4px;}
-  .opt-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:6px 0 4px;}
-  .opt-col h4{margin:0 0 8px;font-size:13px;color:var(--muted);}
-  .opt-list{max-height:46vh;overflow:auto;padding-right:2px;}
-  .opt-row{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--border);border-radius:9px;margin-bottom:6px;font-size:13px;background:var(--surface-2);}
-  .opt-row.moved{border-color:var(--gold);}
-  .opt-row.fixed{opacity:.7;}
-  .opt-row .opt-pos{font-family:'Baloo 2';font-weight:800;color:var(--muted);min-width:20px;text-align:center;}
-  .opt-row .opt-body{flex:1;min-width:0;}
-  .opt-row .opt-teams{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .opt-row .opt-sub{font-size:11px;color:var(--muted);}
-  .opt-move{font-weight:800;font-size:12px;white-space:nowrap;}
-  .opt-move.up{color:#2e9e5b;} .opt-move.down{color:var(--orange);}
-  .opt-metrics{background:var(--surface-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13px;margin-top:8px;}
-  @media (max-width:760px){ .opt-cols{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -289,8 +247,6 @@
     <div class="sub" id="sessionLabel">Loading session…</div>
   </div>
   <div class="top-actions">
-    <button class="btn-top" id="btnSaveSnap" title="Save a snapshot of the current session">💾 Save</button>
-    <button class="btn-top" id="btnSnapshots" title="View or restore saved snapshots">🗂 Snapshots</button>
     <button class="btn-danger-ghost" id="btnNewSession">↻ New session</button>
     <div class="toggle-pill" id="themeToggle" title="Toggle light/dark mode"><div class="knob" id="themeKnob">☀️</div></div>
   </div>
@@ -305,19 +261,13 @@
 </nav>
 
 <main>
-  <section class="panel active" id="panel-participants">
-    <div class="participants-toolbar"><button class="btn btn-primary" onclick="openBucketModal()">+ Add bucket</button></div>
-    <div class="bucket-grid" id="bucketCards-participants"></div>
-  </section>
+  <section class="panel active" id="panel-participants"><div class="bucket-grid" id="bucketCards-participants"></div></section>
   <section class="panel" id="panel-matchups"><div class="bucket-grid" id="bucketCards-matchups"></div></section>
 
   <section class="panel" id="panel-queue">
     <div class="section-title">Courts</div>
     <div class="courts-grid" id="courtsGrid"></div>
-    <div class="section-title" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">Waiting queue
-      <button class="btn btn-ghost btn-sm" id="btnOptimizeQueue" style="text-transform:none;letter-spacing:0;">✨ Optimize queue</button>
-      <button class="btn btn-ghost btn-sm" id="btnUndoOptimize" style="display:none;text-transform:none;letter-spacing:0;">↩ Undo optimize</button>
-    </div>
+    <div class="section-title">Waiting queue</div>
     <div class="queue-list" id="queueList"></div>
   </section>
 
@@ -334,12 +284,10 @@
 
   <section class="panel" id="panel-logs">
     <div class="bucket-card">
-      <div class="bucket-head"><h3>Match Logs<span id="logsSessionLabel" style="font-weight:500;color:var(--muted);font-size:15px;"></span></h3><span class="count" id="logsCount">0 matches</span></div>
+      <div class="bucket-head"><h3>Match Logs</h3><span class="count" id="logsCount">0 matches</span></div>
       <div class="logs-toolbar">
-        <div class="field" style="margin:0;min-width:180px;"><label>Bucket</label>
-          <select id="logBucketFilter"><option value="">All buckets</option></select></div>
-        <div class="field" style="margin:0;min-width:220px;"><label>Search player</label>
-          <input type="text" id="logSearch" placeholder="Type a name…"></div>
+        <div class="field" style="margin:0;min-width:220px;"><label>Filter by session</label>
+          <select id="logSessionFilter"><option value="">All sessions</option></select></div>
         <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
           <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
             <button class="btn btn-ghost btn-sm" id="btnDuprSettings">⚙ DUPR settings</button>
@@ -350,28 +298,12 @@
       </div>
       <table>
         <thead><tr><th>Match</th><th>Bucket</th><th>Team 1</th><th>Team 2</th><th>Score</th><th>Winner</th>
-          <th>Court</th><th>Duration</th><th>Actions</th></tr></thead>
-        <tbody id="logsBody"><tr class="empty-row"><td colspan="9">No matches logged yet.</td></tr></tbody>
+          <th>Court</th><th>Duration</th><th>Session</th><th>Actions</th></tr></thead>
+        <tbody id="logsBody"><tr class="empty-row"><td colspan="10">No matches logged yet.</td></tr></tbody>
       </table>
     </div>
   </section>
 </main>
-
-<!-- Add / Edit Bucket Modal -->
-<div class="overlay" id="bucketOverlay">
-  <div class="modal">
-    <h2 id="bucketModalTitle">Add bucket</h2>
-    <div class="modal-sub" id="bucketModalSub">Give the bucket a name and choose its mode.</div>
-    <div class="field"><label for="bucketName">Bucket name</label><input type="text" id="bucketName" placeholder="e.g. Beginners, Open Singles"></div>
-    <div class="field"><label for="bucketMode">Mode</label>
-      <select id="bucketMode"><option value="singles">Singles (1 vs 1)</option><option value="doubles">Doubles (2 vs 2)</option></select>
-      <div class="helper" id="bucketModeHelper">The mode can't be changed after the bucket is created.</div></div>
-    <div class="field"><label>Courts</label><div class="court-checks" id="bucketCourts"></div>
-      <div class="helper">Matches from this bucket can only be put on the checked courts.</div></div>
-    <div class="error-text" id="errBucket"></div>
-    <div class="modal-actions"><button class="btn btn-ghost" id="btnBucketCancel">Cancel</button><button class="btn btn-primary" id="btnBucketSave">Save bucket</button></div>
-  </div>
-</div>
 
 <!-- Add Participant Modal -->
 <div class="overlay" id="addOverlay">
@@ -388,7 +320,7 @@
     </div>
     <div id="guestSourceBlock" style="display:none;">
       <div class="field"><label>Guest name</label><input type="text" id="guestName" placeholder="Guest full name"></div>
-      <div class="field"><label>DUPR ID </label><input type="text" id="guestDuprId" placeholder="e.g. ABC1234" required></div>
+      <div class="field"><label>DUPR ID <span style="text-transform:none;font-weight:500;">(optional)</span></label><input type="text" id="guestDuprId" placeholder="e.g. ABC1234"></div>
       <div class="field"><label>Current DUPR</label><input type="text" id="guestDupr" placeholder="e.g. 3.250 or NR"><div class="error-text" id="errGuestDupr"></div></div>
       <button type="button" class="btn btn-ghost btn-sm" id="btnGuestToList" style="margin-bottom:12px;">+ Add guest to list</button>
     </div>
@@ -413,20 +345,6 @@
     <div class="gen-summary" id="genSummary"></div>
     <div class="error-text" id="errGen"></div>
     <div class="modal-actions"><button class="btn btn-ghost" id="btnGenCancel">Cancel</button><button class="btn btn-primary" id="btnGenConfirm">Generate</button></div>
-  </div>
-</div>
-
-<!-- Optimize Queue Preview Modal -->
-<div class="overlay" id="optOverlay">
-  <div class="modal wide">
-    <h2>Optimize queue</h2>
-    <div class="modal-sub" id="optSub"></div>
-    <div class="opt-cols">
-      <div class="opt-col"><h4>Current order</h4><div class="opt-list" id="optBefore"></div></div>
-      <div class="opt-col"><h4>Suggested order</h4><div class="opt-list" id="optAfter"></div></div>
-    </div>
-    <div class="opt-metrics" id="optMetrics"></div>
-    <div class="modal-actions"><button class="btn btn-ghost" id="btnOptCancel">Cancel</button><button class="btn btn-primary" id="btnOptApply">Apply new order</button></div>
   </div>
 </div>
 
@@ -501,42 +419,11 @@
   </div>
 </div>
 
-<!-- Save Snapshot Modal -->
-<div class="overlay" id="saveSnapOverlay">
-  <div class="modal">
-    <h2>Save snapshot</h2>
-    <div class="modal-sub" id="saveSnapSub">Saves the current participants, queue and pairing history so you can view or restore them later.</div>
-    <div class="field"><label>Label (optional)</label><input type="text" id="snapLabelInput" placeholder="e.g. Before finals"></div>
-    <div class="error-text" id="errSaveSnap"></div>
-    <div class="modal-actions"><button class="btn btn-ghost" id="btnSaveSnapCancel">Cancel</button><button class="btn btn-primary" id="btnSaveSnapConfirm">Save snapshot</button></div>
-  </div>
-</div>
-
-<!-- Snapshots List Modal -->
-<div class="overlay" id="snapListOverlay">
-  <div class="modal wide">
-    <h2>Saved snapshots</h2>
-    <div class="modal-sub">Auto-saved before every New session and every Restore. Newest first.</div>
-    <div id="snapList"></div>
-    <div class="modal-actions"><button class="btn btn-ghost" id="btnSnapListClose">Close</button></div>
-  </div>
-</div>
-
-<!-- Snapshot View Modal -->
-<div class="overlay" id="snapViewOverlay">
-  <div class="modal wide">
-    <h2 id="snapViewTitle">Snapshot</h2>
-    <div class="modal-sub" id="snapViewSub"></div>
-    <div id="snapViewBody"></div>
-    <div class="modal-actions"><button class="btn btn-ghost" id="btnSnapViewClose">Close</button><button class="btn btn-primary" id="btnSnapViewRestore">Restore this snapshot</button></div>
-  </div>
-</div>
-
 <!-- New Session Modal -->
 <div class="overlay" id="sessionOverlay">
   <div class="modal">
     <h2>Start new session</h2>
-    <div class="modal-sub">Clears bucket participants, the queue, and pairing history for a fresh day. Your buckets stay. The current state is auto-saved as a snapshot first (see 🗂 Snapshots), and match logs stay archived under their own session.</div>
+    <div class="modal-sub">Clears bucket participants, the queue, and pairing history for a fresh day. Match logs stay archived under their own session — nothing is deleted.</div>
     <div class="field"><label>Session name</label><input type="text" id="sessNameInput" placeholder="e.g. Saturday Open Play"></div>
     <div class="field"><label>Date</label><input type="date" id="sessDateInput"></div>
     <div class="error-text" id="errSession"></div>
@@ -564,33 +451,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const COURTS = 4;
-const BUCKET_COLOR = 'var(--blue)';
-let BUCKETS = [];            // live from Firestore: { key:docId, label:name, mode:'singles'|'doubles', size:2|4, color }
-let bucketsLoaded = false;
-const LEGACY_BUCKET_LABELS = { singles:'Singles', fun:'Fun Mode (Low)', competitive:'Competitive Mode (High)' };
-function bucketCourts(key){
-  const b = BUCKETS.find(x => x.key === key);
-  return b && b.courts && b.courts.length ? b.courts : Array.from({ length: COURTS }, (_, i) => i + 1);
-}
-function bucketAllowsCourt(key, court){ return bucketCourts(key).includes(Number(court)); }
-function bucketHasSpecificCourts(b){ return !!(b && b.courts && b.courts.length && b.courts.length < COURTS); }
-function freeCourtsFor(key){
-  const busy = new Set(queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status)).map(m => m.court));
-  return bucketCourts(key).filter(c => !busy.has(c)).length;
-}
-function bucketSize(key){ const b = BUCKETS.find(x => x.key === key); return b ? b.size : 4; }
-function modeTagHtml(b){
-  if (!b || !b.mode) return '';
-  let h = `<span class="mode-tag">${b.mode === 'singles' ? 'Singles' : 'Doubles'}</span>`;
-  if (bucketHasSpecificCourts(b)) h += `<span class="mode-tag">Court${b.courts.length===1?'':'s'} ${b.courts.join(', ')}</span>`;
-  return h;
-}
-let lastQueueOrder = 0;
-function nextQueueOrder(){
-  const mx = Math.max(Date.now(), lastQueueOrder, ...queueMatches.map(m => Number(m.order) || 0));
-  lastQueueOrder = mx + 1;
-  return lastQueueOrder;
-}
+const BUCKETS = [
+  { key:'singles', label:'Singles', color:'#3992b9', size:2 },
+  { key:'fun', label:'Fun Mode (Low)', color:'#ff6600', size:4 },
+  { key:'competitive', label:'Competitive Mode (High)', color:'#bb1421', size:4 }
+];
 const COURT_BUSY_STATUSES = ['assigned','playing'];
 const QUEUE_MATCH_STATUSES = ['waiting','onhold','assigned','playing'];
 
@@ -658,29 +523,10 @@ let sessionEnsureAttempted = false;
 
 db.collection('ccpc-dupr').onSnapshot(snap => { allMembers = snap.docs.map(d => ({ id:d.id, ...d.data() })); });
 
-db.collection('ccpc-queue-buckets').onSnapshot(snap => {
-  BUCKETS = snap.docs.map(d => {
-    const x = d.data(), mode = x.mode === 'singles' ? 'singles' : 'doubles';
-    return { key:d.id, label:x.name || 'Bucket', mode, size: mode === 'singles' ? 2 : 4, color: BUCKET_COLOR, createdAtMs: x.createdAtMs || 0,
-      courts: (Array.isArray(x.courts) ? x.courts.map(Number).filter(c => c >= 1 && c <= COURTS) : []).sort((a,b) => a-b) };
-  }).sort((a,b) => a.createdAtMs - b.createdAtMs);
-  bucketsLoaded = true;
-  Object.keys(suggestionState).forEach(k => { if (!BUCKETS.some(b => b.key === k)) delete suggestionState[k]; });
-  renderParticipants();
-  renderMatchupBuckets();
-  renderQueueList();
-  renderCourts();
-  renderLogBucketFilter();
-  renderLogs();
-  renderLeaderboard();
-  refreshGenList();
-}, err => showToast('Buckets sync error: ' + err.message, true));
-
 db.collection('ccpc-queue-participants').onSnapshot(snap => {
   participants = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderParticipants();
   updateMatchupPoolCounts();
-  refreshGenList();
 }, err => showToast('Participants sync error: ' + err.message, true));
 
 db.collection('ccpc-queue-matches').onSnapshot(snap => {
@@ -688,14 +534,12 @@ db.collection('ccpc-queue-matches').onSnapshot(snap => {
   renderCourts();
   renderQueueList();
   renderParticipants();
-  refreshGenList();
 }, err => showToast('Queue sync error: ' + err.message, true));
 
 db.collection('ccpc-queue-logs').orderBy('completedAt','desc').limit(2000).onSnapshot(snap => {
   logs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderLogs();
   renderLeaderboard();
-  refreshGenList();
 }, err => showToast('Logs sync error: ' + err.message, true));
 
 db.collection('ccpc-queue-stats').onSnapshot(snap => { statsCache = {}; snap.docs.forEach(d => { statsCache[d.id] = d.data(); }); });
@@ -723,7 +567,6 @@ async function ensureDefaultSession(){
   } catch(err){ /* best effort */ }
 }
 function updateSessionLabel(){
-  if (typeof renderLogs === 'function') renderLogs();
   if (typeof renderLeaderboard === 'function') renderLeaderboard();
   if (typeof updateExportTargetLabel === 'function') updateExportTargetLabel();
   const el = document.getElementById('sessionLabel');
@@ -757,17 +600,10 @@ async function flushElapsed(p){
 function participantOf(entry){ return participants.find(x => x.id === (entry.participantId || entry.id)); }
 
 /* ================= PARTICIPANTS ================= */
-function bucketLabel(key, fallback){ const b = BUCKETS.find(x => x.key === key); return b ? b.label : (fallback || LEGACY_BUCKET_LABELS[key] || 'Removed bucket'); }
-function bucketLabelHtml(key, fallback){ return escapeHtml(bucketLabel(key, fallback)); }
-function logBucketName(l){ return bucketLabel(l.bucket, l.bucketName); }
+function bucketLabel(key){ return BUCKETS.find(b=>b.key===key).label; }
 
 function renderParticipants(){
   const wrap = document.getElementById('bucketCards-participants');
-  if (!bucketsLoaded) { wrap.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--muted);grid-column:1/-1;">Loading…</div>`; return; }
-  if (!BUCKETS.length) {
-    wrap.innerHTML = `<div class="bucket-card" style="grid-column:1/-1;"><div style="padding:36px 20px;text-align:center;color:var(--muted);"><div style="font-size:34px;margin-bottom:8px;">🏓</div>No buckets yet. Add one to start adding participants.<br><button class="btn btn-primary" style="margin-top:14px;" onclick="openBucketModal()">+ Add bucket</button></div></div>`;
-    return;
-  }
   const pIds = playingIds();
   wrap.innerHTML = BUCKETS.map(b => {
     const list = participants.filter(p => p.bucket === b.key).sort((x,y) => x.name.localeCompare(y.name));
@@ -790,66 +626,13 @@ function renderParticipants(){
     return `
     <div class="bucket-card" data-bucket="${b.key}">
       <div class="bucket-head">
-        <h3><span class="bucket-tag" style="background:${b.color}"></span>${escapeHtml(b.label)}${modeTagHtml(b)}</h3>
-        <div style="display:flex;align-items:center;gap:10px;"><span class="count">${list.length} player${list.length===1?'':'s'}</span>
-          <button class="btn-icon" title="Edit bucket" onclick="openBucketModal('${b.key}')">✎</button>
-          <button class="btn-icon danger" title="Delete bucket (must be empty)" onclick="deleteBucket('${b.key}')">🗑</button>
+        <h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3>
+        <div style="display:flex;align-items:center;gap:12px;"><span class="count">${list.length} player${list.length===1?'':'s'}</span>
           <button class="btn btn-primary btn-sm" onclick="openAddModal('${b.key}')">+ Add</button></div>
       </div>
       <table><thead><tr><th>Name</th><th>DUPR ID</th><th>DUPR</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>
     </div>`;
   }).join('');
-}
-
-/* ================= BUCKETS (add / rename / delete) ================= */
-const bucketOverlay = document.getElementById('bucketOverlay');
-let editBucketId = null;
-function openBucketModal(id){
-  editBucketId = id || null;
-  const b = id ? BUCKETS.find(x => x.key === id) : null;
-  document.getElementById('bucketModalTitle').textContent = b ? 'Edit bucket' : 'Add bucket';
-  document.getElementById('bucketModalSub').textContent = b ? 'You can change the name and courts. The mode stays fixed.' : 'Give the bucket a name and choose its mode.';
-  document.getElementById('bucketName').value = b ? b.label : '';
-  const modeSel = document.getElementById('bucketMode');
-  modeSel.value = b ? b.mode : 'doubles';
-  modeSel.disabled = !!b;
-  document.getElementById('bucketModeHelper').style.display = b ? 'block' : 'none';
-  const allowed = b ? bucketCourts(b.key) : Array.from({ length: COURTS }, (_, i) => i + 1);
-  document.getElementById('bucketCourts').innerHTML = Array.from({ length: COURTS }, (_, i) => i + 1).map(c =>
-    `<label><input type="checkbox" value="${c}" ${allowed.includes(c) ? 'checked' : ''}>Court ${c}</label>`).join('');
-  document.getElementById('errBucket').textContent = '';
-  bucketOverlay.classList.add('show');
-  document.getElementById('bucketName').focus();
-}
-document.getElementById('btnBucketCancel').addEventListener('click', () => bucketOverlay.classList.remove('show'));
-bucketOverlay.addEventListener('click', e => { if (e.target === bucketOverlay) bucketOverlay.classList.remove('show'); });
-document.getElementById('bucketName').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btnBucketSave').click(); });
-document.getElementById('btnBucketSave').addEventListener('click', async () => {
-  const errEl = document.getElementById('errBucket');
-  errEl.textContent = '';
-  const name = document.getElementById('bucketName').value.trim();
-  const mode = document.getElementById('bucketMode').value === 'singles' ? 'singles' : 'doubles';
-  const courts = [...document.querySelectorAll('#bucketCourts input:checked')].map(i => Number(i.value));
-  if (!name) { errEl.textContent = 'Enter a bucket name.'; return; }
-  if (!courts.length) { errEl.textContent = 'Select at least one court.'; return; }
-  if (BUCKETS.some(b => b.key !== editBucketId && b.label.trim().toLowerCase() === name.toLowerCase())) { errEl.textContent = 'A bucket with this name already exists.'; return; }
-  const btn = document.getElementById('btnBucketSave');
-  btn.disabled = true;
-  try {
-    if (editBucketId) { await db.collection('ccpc-queue-buckets').doc(editBucketId).update({ name, courts }); showToast('Bucket updated.'); }
-    else { await db.collection('ccpc-queue-buckets').add({ name, mode, courts, createdAtMs: Date.now(), createdAt: firebase.firestore.FieldValue.serverTimestamp() }); showToast('Bucket added.'); }
-    bucketOverlay.classList.remove('show');
-  } catch (err) { errEl.textContent = 'Could not save: ' + err.message; }
-  finally { btn.disabled = false; }
-});
-async function deleteBucket(id){
-  const b = BUCKETS.find(x => x.key === id);
-  if (!b) return;
-  const count = participants.filter(p => p.bucket === id).length;
-  if (count > 0) { showToast(`Remove the ${count} participant${count===1?'':'s'} from "${b.label}" first (or move them to another bucket).`, true); return; }
-  if (!confirm(`Delete the bucket "${b.label}"?`)) return;
-  try { await db.collection('ccpc-queue-buckets').doc(id).delete(); showToast('Bucket deleted.'); }
-  catch (err) { showToast('Delete failed: ' + err.message, true); }
 }
 
 /* ---- drag a participant to another bucket (event delegation; container persists across re-renders) ---- */
@@ -1072,8 +855,7 @@ function partnerCount(id1, id2){ return (sessionState.partnerCounts || {})[pairK
 function opponentCount(id1, id2){ return (sessionState.opponentCounts || {})[pairKey(id1,id2)] || 0; }
 
 /* ================= SUGGESTION ENGINE ================= */
-let suggestionState = {};
-function sugg(k){ return suggestionState[k] || (suggestionState[k] = { rounds:[] }); }
+let suggestionState = { singles:{rounds:[]}, fun:{rounds:[]}, competitive:{rounds:[]} };
 function shuffle(arr){ const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
 /* Player state (uses the app's own statusKey: active / queued / playing / resting) */
@@ -1147,7 +929,7 @@ function planRounds(selected, g, roundCount){
   return bestPlan.rounds;
 }
 function generateSuggestions(bucketKey, selected, roundCount){
-  const g = bucketSize(bucketKey);
+  const g = BUCKETS.find(b=>b.key===bucketKey).size;
   const rounds = planRounds(selected, g, roundCount);
   suggestionState[bucketKey] = { rounds };
   renderSuggestions(bucketKey);
@@ -1181,7 +963,7 @@ function findLoc(rd, participantId){
 function getAt(rd, loc){ return loc.type==='match' ? rd.matches[loc.mi][loc.side][loc.si] : rd.bench[loc.bi]; }
 function setAt(rd, loc, p){ if (loc.type==='match') rd.matches[loc.mi][loc.side][loc.si] = p; else rd.bench[loc.bi] = p; }
 function swapSlot(bucketKey, ri, selfLoc, newId){
-  const rd = sugg(bucketKey).rounds[ri];
+  const rd = suggestionState[bucketKey].rounds[ri];
   const oldP = getAt(rd, selfLoc);
   const otherLoc = findLoc(rd, newId);
   if (!otherLoc) return;
@@ -1190,15 +972,15 @@ function swapSlot(bucketKey, ri, selfLoc, newId){
   renderSuggestions(bucketKey);
 }
 function stateSuffix(p){ const s = playerState(p); return s==='playing' ? ' · playing' : s==='queued' ? ' · on queue' : s==='resting' ? ' · resting' : ''; }
-function allRoundParticipants(bucketKey){ const st = sugg(bucketKey); return st ? st.rounds.flatMap(roundParticipants) : []; }
+function allRoundParticipants(bucketKey){ const st = suggestionState[bucketKey]; return st ? st.rounds.flatMap(roundParticipants) : []; }
 function slotSelectHtml(bucketKey, ri, loc, current){
-  const rd = sugg(bucketKey).rounds[ri];
+  const rd = suggestionState[bucketKey].rounds[ri];
   const options = roundParticipants(rd).map(p => `<option value="${p.id}" ${p.id===current.id?'selected':''}>${escapeHtml(p.name)}${stateSuffix(p)}</option>`).join('');
   const locStr = JSON.stringify(loc).replace(/"/g,'&quot;');
   return `<select data-loc="${locStr}" onchange="swapSlot('${bucketKey}', ${ri}, JSON.parse(this.dataset.loc), this.value)">${options}</select>`;
 }
 function renderSuggestions(bucketKey){
-  const st = sugg(bucketKey);
+  const st = suggestionState[bucketKey];
   const container = document.getElementById('suggBody-' + bucketKey);
   if (!container) return;
   if (!st.rounds.length){ container.innerHTML = `<div style="padding:8px 0;color:var(--muted);font-size:13px;">No suggestions yet — click "Generate matchups".</div>`; return; }
@@ -1230,7 +1012,7 @@ function renderSuggestions(bucketKey){
 const genOverlay = document.getElementById('genOverlay');
 let genBucket = null, genList = [], genSelected = new Set();
 function genUpdateSummary(){
-  const g = bucketSize(genBucket);
+  const g = BUCKETS.find(b=>b.key===genBucket).size;
   const n = genSelected.size;
   const perRound = Math.floor(n / g);
   const sit = n - perRound * g;
@@ -1238,25 +1020,13 @@ function genUpdateSummary(){
   el.textContent = n < g ? `Need at least ${g} players (selected ${n}).` : `${n} selected → ${perRound} match${perRound===1?'':'es'} per round` + (sit ? `, ${sit} sit out each round (rotated fairly)` : '') + '.';
   document.getElementById('btnGenConfirm').disabled = n < g;
 }
-function gamesPlayed(p){
-  const k = refKeyFor(p);
-  return sessionLogs().filter(l => [...(l.team1||[]), ...(l.team2||[])].some(x => refKeyFor(x) === k)).length;
-}
-function gamesPending(p){ return queueMatches.filter(m => QUEUE_MATCH_STATUSES.includes(m.status) && isInMatch(p.id, m)).length; }
-function refreshGenList(){
-  if (!genOverlay.classList.contains('show') || !genBucket) return;
-  genList = participants.filter(p => p.bucket === genBucket).sort((x,y) => x.name.localeCompare(y.name));
-  const ids = new Set(genList.map(p => p.id));
-  genSelected = new Set([...genSelected].filter(id => ids.has(id)));
-  genRender();
-}
 function genRender(){
   const list = document.getElementById('genList');
   if (!genList.length){ list.innerHTML = `<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center;">No participants in this bucket yet.</div>`; genUpdateSummary(); return; }
   const pIds = playingIds();
   list.innerHTML = genList.map(p => {
     const s = playerState(p, pIds);
-    return `<label class="gen-row"><input type="checkbox" data-id="${p.id}" ${genSelected.has(p.id)?'checked':''}><span class="gen-name">${escapeHtml(p.name)}<span class="gen-meta">(Played: ${gamesPlayed(p)} | Pending: ${gamesPending(p)})</span></span><span class="gen-state s-${s}">${STATUS_LABELS[s]}</span></label>`;
+    return `<label class="gen-row"><input type="checkbox" data-id="${p.id}" ${genSelected.has(p.id)?'checked':''}><span class="gen-name">${escapeHtml(p.name)}</span><span class="gen-state s-${s}">${STATUS_LABELS[s]}</span></label>`;
   }).join('');
   list.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => {
     if (cb.checked) genSelected.add(cb.dataset.id); else genSelected.delete(cb.dataset.id);
@@ -1279,7 +1049,7 @@ document.getElementById('genNone').onclick = () => { genSelected = new Set(); ge
 document.getElementById('genAvail').onclick = () => { genSelected = new Set(genList.filter(p=>p.status==='active').map(p=>p.id)); genRender(); };
 document.getElementById('btnGenCancel').onclick = () => genOverlay.classList.remove('show');
 document.getElementById('btnGenConfirm').onclick = () => {
-  const g = bucketSize(genBucket);
+  const g = BUCKETS.find(b=>b.key===genBucket).size;
   const selected = genList.filter(p => genSelected.has(p.id));
   const rounds = Math.max(1, Math.min(30, parseInt(document.getElementById('genRounds').value, 10) || 1));
   if (selected.length < g){ document.getElementById('errGen').textContent = `Select at least ${g} players.`; return; }
@@ -1317,13 +1087,13 @@ async function commitMatchToQueue(bucketKey, team1, team2){
   [...team1, ...team2].forEach(p => { batch.update(db.collection('ccpc-queue-participants').doc(p.id), { status:'queued', statusSince: nowTs }); });
   const matchRef = db.collection('ccpc-queue-matches').doc();
   batch.set(matchRef, { matchId, bucket: bucketKey, team1: snapshotArr(team1), team2: snapshotArr(team2),
-    status:'waiting', court:null, startedAt:null, order: nextQueueOrder(), createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    status:'waiting', court:null, startedAt:null, order: Date.now(), createdAt: firebase.firestore.FieldValue.serverTimestamp() });
   await batch.commit();
   [...team1, ...team2].forEach(p => { const lp = participantOf(p); if (lp) { lp.status = 'queued'; lp.statusSince = nowTs; } }); // keep local clock in sync for back-to-back commits
   return matchId;
 }
 async function addSuggestionToQueue(bucketKey, ri, mi){
-  const m = sugg(bucketKey).rounds[ri]?.matches[mi];
+  const m = suggestionState[bucketKey].rounds[ri]?.matches[mi];
   if (!m || m.added) return;
   try {
     const matchId = await commitMatchToQueue(bucketKey, m.team1, m.team2);
@@ -1333,7 +1103,7 @@ async function addSuggestionToQueue(bucketKey, ri, mi){
   } catch (err) { showToast('Could not add match: ' + err.message, true); renderSuggestions(bucketKey); }
 }
 async function addRoundToQueue(bucketKey, ri){
-  const rd = sugg(bucketKey).rounds[ri];
+  const rd = suggestionState[bucketKey].rounds[ri];
   if (!rd) return;
   let ok = 0;
   for (const m of rd.matches){
@@ -1345,7 +1115,7 @@ async function addRoundToQueue(bucketKey, ri){
   if (ok) showToast(`Round ${ri+1}: ${ok} match${ok===1?'':'es'} added to queue.`);
 }
 async function addAllSuggestions(bucketKey){
-  const rounds = sugg(bucketKey).rounds;
+  const rounds = suggestionState[bucketKey].rounds;
   let ok = 0;
   for (const rd of rounds){
     for (const m of rd.matches){
@@ -1361,11 +1131,9 @@ function discardSuggestions(bucketKey){ suggestionState[bucketKey] = { rounds:[]
 
 function renderMatchupBuckets(){
   const wrap = document.getElementById('bucketCards-matchups');
-  if (!bucketsLoaded) { wrap.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--muted);grid-column:1/-1;">Loading…</div>`; return; }
-  if (!BUCKETS.length) { wrap.innerHTML = `<div class="bucket-card" style="grid-column:1/-1;"><div style="padding:28px 20px;text-align:center;color:var(--muted);">No buckets yet. Add buckets in the Participants tab and they will show up here.</div></div>`; return; }
   wrap.innerHTML = BUCKETS.map(b => `
     <div class="bucket-card">
-      <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${escapeHtml(b.label)}${modeTagHtml(b)}</h3><span class="count" id="poolCount-${b.key}"></span></div>
+      <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3><span class="count" id="poolCount-${b.key}"></span></div>
       <div class="sugg-toolbar">
         <button class="btn btn-primary btn-sm" onclick="openGenerateModal('${b.key}')">🔀 Generate matchups</button>
         <button class="btn btn-ghost btn-sm" onclick="this.disabled=true; addAllSuggestions('${b.key}').finally(()=>{this.disabled=false;})">Add all to queue</button>
@@ -1401,7 +1169,7 @@ function renderCourts(){
       const t1=m.team1.map(p=>p.name).join(' & '), t2=m.team2.map(p=>p.name).join(' & ');
       html += `<div class="court-card assigned" data-court="${c}">
         <div class="court-title"><h3>Court ${c}</h3><span class="court-status assigned">Not started</span></div>
-        <div class="court-match"><div class="mid">${m.matchId} · ${bucketLabelHtml(m.bucket)}</div>
+        <div class="court-match"><div class="mid">${m.matchId} · ${bucketLabel(m.bucket)}</div>
           <div class="teams">${escapeHtml(t1)} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(t2)}</div></div>
         <div class="row-actions" style="margin-bottom:8px;">
           <button class="btn btn-primary btn-sm" onclick="startGame('${m.id}')">▶ Start game</button>
@@ -1413,7 +1181,7 @@ function renderCourts(){
       const t1=m.team1.map(p=>p.name).join(' & '), t2=m.team2.map(p=>p.name).join(' & ');
       html += `<div class="court-card busy" data-court="${c}">
         <div class="court-title"><h3>Court ${c}</h3><span class="court-status busy">In progress</span></div>
-        <div class="court-match"><div class="mid">${m.matchId} · ${bucketLabelHtml(m.bucket)}</div>
+        <div class="court-match"><div class="mid">${m.matchId} · ${bucketLabel(m.bucket)}</div>
           <div class="teams">${escapeHtml(t1)} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(t2)}</div></div>
         <div class="court-timer timer" data-started="${m.startedAt}">00:00</div>
         <div class="row-actions">
@@ -1428,11 +1196,7 @@ function renderCourts(){
 }
 function attachCourtDropZones(){
   document.querySelectorAll('.court-card[data-free="1"]').forEach(card => {
-    card.addEventListener('dragover', e => {
-      const dm = draggingQueueId ? queueMatches.find(x => x.id === draggingQueueId) : null;
-      if (dm && !bucketAllowsCourt(dm.bucket, card.dataset.court)) { card.style.borderColor='var(--red)'; return; }
-      e.preventDefault(); card.style.borderColor='var(--gold)';
-    });
+    card.addEventListener('dragover', e => { e.preventDefault(); card.style.borderColor='var(--gold)'; });
     card.addEventListener('dragleave', () => { card.style.borderColor=''; });
     card.addEventListener('drop', e => {
       e.preventDefault(); card.style.borderColor='';
@@ -1452,219 +1216,45 @@ setInterval(() => {
 function renderQueueList(){
   const list = queueMatches.filter(m => m.status==='waiting' || m.status==='onhold').sort((a,b) => a.order - b.order);
   const el = document.getElementById('queueList');
+  const freeCourts = COURTS - queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status)).length;
   if (!list.length) { el.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--muted);">Queue is empty. Add matches from Match Suggestions.</div>`; return; }
   el.innerHTML = list.map((m, i) => `
     <div class="queue-row ${m.status==='onhold'?'onhold':''}" draggable="true" data-match-id="${m.id}">
       <div class="drag-handle" title="Drag to reorder or assign to a court">⠿</div>
-      <div class="row-actions q-move">
-        <button class="btn-icon" title="Move up" ${i===0?'disabled':''} onclick="moveQueueMatch('${m.id}',-1)">▲</button>
-        <button class="btn-icon" title="Move down" ${i===list.length-1?'disabled':''} onclick="moveQueueMatch('${m.id}',1)">▼</button>
-      </div>
       <div class="qid">${m.matchId}</div>
       <div class="qteams">${escapeHtml(m.team1.map(p=>p.name).join(' & '))}
         <span style="color:var(--muted);font-weight:400;"> vs </span>${escapeHtml(m.team2.map(p=>p.name).join(' & '))}
         ${m.status==='onhold' ? '<span class="badge hold" style="margin-left:8px;">On hold</span>' : ''}</div>
-      <div class="qmeta">${bucketLabelHtml(m.bucket)}</div>
+      <div class="qmeta">${bucketLabel(m.bucket)}</div>
       <div class="row-actions">
         <button class="btn-icon" title="Edit" onclick="openEditQueueModal('${m.id}')">✎</button>
         <button class="btn-icon warn" title="${m.status==='onhold'?'Resume':'Hold'}" onclick="${m.status==='onhold'?`resumeMatch('${m.id}')`:`holdMatch('${m.id}')`}">${m.status==='onhold'?'▶':'⏸'}</button>
         <button class="btn-icon danger" title="Delete" onclick="deleteQueueMatch('${m.id}')">🗑</button>
       </div>
-      <button class="btn btn-primary btn-sm" ${m.status==='onhold'||freeCourtsFor(m.bucket)<=0?'disabled':''} onclick="openCourtModal('${m.id}')">Add to court</button>
+      <button class="btn btn-primary btn-sm" ${m.status==='onhold'||freeCourts<=0?'disabled':''} onclick="openCourtModal('${m.id}')">Add to court</button>
     </div>
   `).join('');
   attachQueueDrag();
 }
-let draggingQueueId = null;
-function queueOrderedList(){ return queueMatches.filter(m => m.status==='waiting' || m.status==='onhold').sort((a,b) => a.order - b.order); }
-function clearQueueDropMarks(){ document.querySelectorAll('.queue-row.drop-before,.queue-row.drop-after').forEach(r => r.classList.remove('drop-before','drop-after')); }
 function attachQueueDrag(){
   document.querySelectorAll('.queue-row[draggable="true"]').forEach(row => {
-    row.addEventListener('dragstart', e => {
-      draggingQueueId = row.dataset.matchId;
-      e.dataTransfer.setData('text/plain', JSON.stringify({type:'queue', id: row.dataset.matchId}));
-      e.dataTransfer.effectAllowed = 'move';
-      row.style.opacity = '0.5';
-    });
-    row.addEventListener('dragend', () => { row.style.opacity = ''; draggingQueueId = null; clearQueueDropMarks(); });
-    row.addEventListener('dragover', e => {
-      if (!draggingQueueId || draggingQueueId === row.dataset.matchId) return;
-      e.preventDefault();
-      const r = row.getBoundingClientRect();
-      const after = e.clientY > r.top + r.height / 2;
-      clearQueueDropMarks();
-      row.classList.add(after ? 'drop-after' : 'drop-before');
-    });
-    row.addEventListener('dragleave', e => { if (!row.contains(e.relatedTarget)) row.classList.remove('drop-before','drop-after'); });
+    row.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', JSON.stringify({type:'queue', id: row.dataset.matchId})); row.style.opacity='0.5'; });
+    row.addEventListener('dragend', () => { row.style.opacity=''; });
+    row.addEventListener('dragover', e => e.preventDefault());
     row.addEventListener('drop', e => {
-      if (!draggingQueueId || draggingQueueId === row.dataset.matchId) return;
       e.preventDefault();
-      const after = row.classList.contains('drop-after');
-      const dragId = draggingQueueId;
-      clearQueueDropMarks();
-      const others = queueOrderedList().filter(m => m.id !== dragId);
-      const idx = others.findIndex(m => m.id === row.dataset.matchId);
-      if (idx < 0) return;
-      reorderQueueMatch(dragId, after ? idx + 1 : idx);
+      try { const data = JSON.parse(e.dataTransfer.getData('text/plain')); if (data.type==='queue' && data.id !== row.dataset.matchId) swapQueueOrder(data.id, row.dataset.matchId); } catch(err){}
     });
   });
 }
-function moveQueueMatch(id, dir){
-  const i = queueOrderedList().findIndex(m => m.id === id);
-  if (i < 0) return;
-  reorderQueueMatch(id, i + dir);
+async function swapQueueOrder(idA, idB){
+  const a = queueMatches.find(x=>x.id===idA), b = queueMatches.find(x=>x.id===idB);
+  if (!a || !b) return;
+  const batch = db.batch();
+  batch.update(db.collection('ccpc-queue-matches').doc(a.id), { order: b.order });
+  batch.update(db.collection('ccpc-queue-matches').doc(b.id), { order: a.order });
+  await batch.commit();
 }
-/* Insert (not swap): newIndex is the final position among the other queued matches. */
-async function reorderQueueMatch(id, newIndex){
-  const list = queueOrderedList();
-  const curIndex = list.findIndex(m => m.id === id);
-  if (curIndex < 0) return;
-  const others = list.filter(m => m.id !== id);
-  newIndex = Math.max(0, Math.min(others.length, newIndex));
-  if (newIndex === curIndex) return;
-  const prev = others[newIndex - 1], next = others[newIndex];
-  const col = db.collection('ccpc-queue-matches');
-  try {
-    if (!prev && !next) return;
-    if (!prev) await col.doc(id).update({ order: next.order - 1000 });
-    else if (!next) await col.doc(id).update({ order: nextQueueOrder() });
-    else if (next.order - prev.order > 0.001) await col.doc(id).update({ order: (prev.order + next.order) / 2 });
-    else {
-      const seq = others.slice(); seq.splice(newIndex, 0, list[curIndex]);
-      const base = Math.min(...list.map(m => m.order));
-      const batch = db.batch();
-      seq.forEach((m, i) => batch.update(col.doc(m.id), { order: base + i * 1000 }));
-      await batch.commit();
-    }
-  } catch (err) { showToast('Could not move match: ' + err.message, true); }
-}
-/* ---- Optimize queue (preview first; first 4 locked; On Hold stays put) ---- */
-const OPT_LOCK = 4;
-const OPT_CONSEC = { 1:100, 2:40, 3:12, 4:4, 5:1 };   // penalty per shared player, by how many games apart
-const OPT_SAME_BUCKET = 20, OPT_SAME_BUCKET_RUN = 10;
-function matchPlayerIds(m){ return [...m.team1, ...m.team2].map(p => p.participantId); }
-function planOptimizedQueue(list){
-  const n = list.length, result = new Array(n).fill(null);
-  const origIdx = new Map(list.map((m, i) => [m.id, i]));
-  const movable = [];
-  list.forEach((m, i) => { if (i < OPT_LOCK || m.status === 'onhold') result[i] = m; else movable.push(m); });
-  const onCourt = queueMatches.filter(m => COURT_BUSY_STATUSES.includes(m.status));
-  const courtPlayers = new Set(onCourt.flatMap(matchPlayerIds));
-  const busy = new Set(onCourt.map(m => m.court));
-  const freeSet = new Set(Array.from({ length: COURTS }, (_, i) => i + 1).filter(c => !busy.has(c)));
-  const canClaim = b => bucketCourts(b).some(c => freeSet.has(c));
-  const claim = b => { const c = bucketCourts(b).find(x => freeSet.has(x)); if (c !== undefined) freeSet.delete(c); };
-  result.forEach(m => { if (m && m.status === 'waiting') claim(m.bucket); });   // locked matches take free courts first
-  const now = Date.now();
-  const waitMin = m => {
-    const ws = matchPlayerIds(m).map(id => { const p = participants.find(x => x.id === id); return p && p.statusSince ? (now - p.statusSince) / 60000 : 0; });
-    return ws.reduce((a, b) => a + b, 0) / Math.max(1, ws.length);
-  };
-  const waits = new Map(movable.map(m => [m.id, waitMin(m)]));
-  const remaining = {};
-  movable.forEach(m => { remaining[m.bucket] = (remaining[m.bucket] || 0) + 1; });
-  const pool = movable.slice();
-  const prevPlayable = idx => { const out = []; for (let j = idx - 1; j >= 0 && out.length < 5; j--) if (result[j] && result[j].status !== 'onhold') out.push(result[j]); return out; };
-  for (let idx = 0; idx < n; idx++) {
-    if (result[idx]) continue;
-    const prev = prevPlayable(idx), prevIds = prev.map(matchPlayerIds);
-    let best = null, bestCost = Infinity;
-    pool.forEach(c => {
-      const pids = matchPlayerIds(c);
-      let cost = 0;
-      prevIds.forEach((ids, k) => { cost += pids.filter(id => ids.includes(id)).length * (OPT_CONSEC[k + 1] || 0); });
-      if (OPT_CONSEC[prev.length + 1] && prev.length < 5) cost += pids.filter(id => courtPlayers.has(id)).length * OPT_CONSEC[prev.length + 1];
-      if (prev[0] && prev[0].bucket === c.bucket) { cost += OPT_SAME_BUCKET; if (prev[1] && prev[1].bucket === c.bucket) cost += OPT_SAME_BUCKET_RUN; }
-      cost -= 8 * ((remaining[c.bucket] || 0) / pool.length);
-      cost -= Math.min(30, 1.5 * (waits.get(c.id) || 0));
-      cost += 2 * Math.max(0, idx - origIdx.get(c.id));
-      if (canClaim(c.bucket)) cost -= 10;
-      if (cost < bestCost - 1e-9 || (Math.abs(cost - bestCost) <= 1e-9 && best && origIdx.get(c.id) < origIdx.get(best.id))) { best = c; bestCost = cost; }
-    });
-    result[idx] = best;
-    pool.splice(pool.indexOf(best), 1);
-    remaining[best.bucket]--;
-    claim(best.bucket);
-  }
-  return result;
-}
-function queueQuality(seq){
-  const play = seq.filter(m => m.status !== 'onhold');
-  let b2b = 0, sameBucket = 0;
-  play.forEach((m, i) => {
-    if (i > 0 && play[i - 1].bucket === m.bucket) sameBucket++;
-    const ids = matchPlayerIds(m);
-    for (let d = 1; d <= 2; d++) { const pr = play[i - d]; if (pr) { const pi = matchPlayerIds(pr); b2b += ids.filter(id => pi.includes(id)).length; } }
-  });
-  return { b2b, sameBucket };
-}
-const optOverlay = document.getElementById('optOverlay');
-let optPlan = null, lastOptimizeUndo = null;
-function optRowHtml(m, i, beforeIdx, isAfter){
-  const hold = m.status === 'onhold', locked = i < OPT_LOCK;
-  let tag = '';
-  if (hold) tag = '<span class="badge hold">On hold</span>';
-  else if (locked) tag = '<span title="Locked">🔒</span>';
-  else if (isAfter) { const d = beforeIdx.get(m.id) - i; if (d > 0) tag = `<span class="opt-move up">▲ ${d}</span>`; else if (d < 0) tag = `<span class="opt-move down">▼ ${-d}</span>`; }
-  const moved = isAfter && !hold && !locked && beforeIdx.get(m.id) !== i;
-  return `<div class="opt-row ${moved ? 'moved' : ''} ${(hold || locked) ? 'fixed' : ''}">
-    <div class="opt-pos">${i + 1}</div>
-    <div class="opt-body"><div class="opt-teams">${escapeHtml(m.team1.map(p => p.name).join(' & '))} <span style="color:var(--muted);font-weight:400;">vs</span> ${escapeHtml(m.team2.map(p => p.name).join(' & '))}</div>
-      <div class="opt-sub">${m.matchId} · ${bucketLabelHtml(m.bucket)}</div></div>${tag}</div>`;
-}
-function openOptimizeModal(){
-  const list = queueOrderedList();
-  const movableCount = list.filter((m, i) => i >= OPT_LOCK && m.status === 'waiting').length;
-  if (movableCount < 2) { optOverlay.classList.remove('show'); showToast(`Nothing to optimize yet. The first ${OPT_LOCK} matches are locked and at least 2 more are needed.`, true); return; }
-  const after = planOptimizedQueue(list);
-  if (!after.some((m, i) => m.id !== list[i].id)) { optOverlay.classList.remove('show'); showToast('The queue is already well arranged.'); return; }
-  optPlan = { after, signature: list.map(m => m.id).join('|'), orders: list.map(m => m.order) };
-  const beforeIdx = new Map(list.map((m, i) => [m.id, i]));
-  document.getElementById('optSub').textContent = `First ${OPT_LOCK} matches and On Hold matches stay where they are. Nothing changes until you apply.`;
-  document.getElementById('optBefore').innerHTML = list.map((m, i) => optRowHtml(m, i, beforeIdx, false)).join('');
-  document.getElementById('optAfter').innerHTML = after.map((m, i) => optRowHtml(m, i, beforeIdx, true)).join('');
-  const q0 = queueQuality(list), q1 = queueQuality(after);
-  document.getElementById('optMetrics').innerHTML =
-    `Back-to-back games (same player within 2 games): <b>${q0.b2b} → ${q1.b2b}</b><br>Same-bucket matches next to each other: <b>${q0.sameBucket} → ${q1.sameBucket}</b>`;
-  optOverlay.classList.add('show');
-}
-document.getElementById('btnOptimizeQueue').addEventListener('click', openOptimizeModal);
-document.getElementById('btnOptCancel').addEventListener('click', () => optOverlay.classList.remove('show'));
-optOverlay.addEventListener('click', e => { if (e.target === optOverlay) optOverlay.classList.remove('show'); });
-document.getElementById('btnOptApply').addEventListener('click', async () => {
-  if (!optPlan) return;
-  const cur = queueOrderedList();
-  if (cur.map(m => m.id).join('|') !== optPlan.signature) { showToast('The queue changed while you were reviewing. Here is a fresh preview.', true); openOptimizeModal(); return; }
-  const btn = document.getElementById('btnOptApply');
-  btn.disabled = true;
-  try {
-    const batch = db.batch(), undo = [];
-    optPlan.after.forEach((m, i) => {
-      const newOrder = optPlan.orders[i];
-      if (m.order !== newOrder) { undo.push({ id: m.id, order: m.order }); batch.update(db.collection('ccpc-queue-matches').doc(m.id), { order: newOrder }); }
-    });
-    await batch.commit();
-    lastOptimizeUndo = undo;
-    document.getElementById('btnUndoOptimize').style.display = '';
-    optOverlay.classList.remove('show');
-    showToast(`Queue optimized (${undo.length} match${undo.length === 1 ? '' : 'es'} moved).`);
-  } catch (err) { showToast('Could not optimize: ' + err.message, true); }
-  finally { btn.disabled = false; }
-});
-document.getElementById('btnUndoOptimize').addEventListener('click', async () => {
-  const undo = lastOptimizeUndo;
-  const btn = document.getElementById('btnUndoOptimize');
-  if (!undo) { btn.style.display = 'none'; return; }
-  const live = new Map(queueMatches.map(m => [m.id, m]));
-  try {
-    const batch = db.batch(); let n = 0;
-    undo.forEach(u => { const m = live.get(u.id); if (m && (m.status === 'waiting' || m.status === 'onhold')) { batch.update(db.collection('ccpc-queue-matches').doc(u.id), { order: u.order }); n++; } });
-    if (n) await batch.commit();
-    lastOptimizeUndo = null; btn.style.display = 'none';
-    showToast(n ? 'Previous queue order restored.' : 'Nothing to undo.');
-  } catch (err) { showToast('Could not undo: ' + err.message, true); }
-});
-
 async function holdMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'onhold' }); } catch(err){ showToast(err.message, true); } }
 async function resumeMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'waiting' }); } catch(err){ showToast(err.message, true); } }
 async function deleteQueueMatch(id){
@@ -1689,12 +1279,10 @@ function openCourtModal(matchDocId){
   grid.innerHTML = '';
   for (let c=1;c<=COURTS;c++){
     const isBusy = occupied.some(m=>m.court===c);
-    const pm = queueMatches.find(x => x.id === matchDocId);
-    const allowed = !pm || bucketAllowsCourt(pm.bucket, c);
     const btn = document.createElement('button');
     btn.className = 'court-pick-btn';
-    btn.textContent = `Court ${c}` + (isBusy ? ' (busy)' : (!allowed ? ' (not for this bucket)' : ''));
-    btn.disabled = isBusy || !allowed;
+    btn.textContent = `Court ${c}` + (isBusy ? ' (busy)' : '');
+    btn.disabled = isBusy;
     btn.addEventListener('click', () => { btn.disabled = true; assignToCourt(matchDocId, c); });
     grid.appendChild(btn);
   }
@@ -1704,7 +1292,6 @@ document.getElementById('btnCourtCancel').addEventListener('click', () => courtO
 courtOverlay.addEventListener('click', e => { if (e.target===courtOverlay) courtOverlay.classList.remove('show'); });
 async function assignToCourt(matchDocId, court){
   const m = queueMatches.find(x=>x.id===matchDocId);
-  if (m && !bucketAllowsCourt(m.bucket, court)) { showToast(`${bucketLabel(m.bucket)} can't use Court ${court}.`, true); courtOverlay.classList.remove('show'); return; }
   if (m) {
     const busy = [...m.team1, ...m.team2].filter(p => queueMatches.some(x => x.id !== m.id && COURT_BUSY_STATUSES.includes(x.status) && isInMatch(p.participantId, x)));
     if (busy.length && !confirm(`${busy.map(p => p.name).join(', ')} ${busy.length===1?'is':'are'} still on a court in another match. Assign anyway?`)) return;
@@ -1733,7 +1320,7 @@ async function startGame(matchDocId){
   finally { startingGames.delete(matchDocId); }
 }
 async function backToQueue(matchDocId){
-  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'waiting', court:null, startedAt:null, order: nextQueueOrder() }); showToast('Moved back to queue.'); }
+  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'waiting', court:null, startedAt:null, order: Date.now() }); showToast('Moved back to queue.'); }
   catch(err){ showToast('Could not move to queue: ' + err.message, true); }
 }
 async function resetTimer(matchDocId){
@@ -1886,7 +1473,7 @@ document.getElementById('btnEndConfirm').addEventListener('click', async () => {
     const batch = db.batch();
     const logRef = db.collection('ccpc-queue-logs').doc();
     batch.set(logRef, {
-      matchId: m.matchId, bucket: m.bucket, bucketName: bucketLabel(m.bucket), team1: m.team1, team2: m.team2,
+      matchId: m.matchId, bucket: m.bucket, team1: m.team1, team2: m.team2,
       winner, score1, score2, court: m.court,
       startedAt: m.startedAt || null, endedAt, durationSeconds: duration,
       sessionId: sessionState.currentSessionId || null, sessionName: sessionState.currentSessionName || '', sessionDate: sessionState.currentSessionDate || '',
@@ -1908,40 +1495,29 @@ document.getElementById('btnEndConfirm').addEventListener('click', async () => {
 
 /* ================= LOGS ================= */
 function renderSessionFilterOptions(){
+  const sel = document.getElementById('logSessionFilter');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">All sessions</option>` + sessionsList.map(s => `<option value="${s.id}">${escapeHtml(s.name)} · ${s.date}</option>`).join('');
+  sel.value = cur;
   const lb = document.getElementById('lbSessionFilter');
   if (lb) { const lcur = lb.value; lb.innerHTML = `<option value="">Current session</option>` + sessionsList.map(x => `<option value="${x.id}">${escapeHtml(x.name)} · ${x.date}</option>`).join(''); lb.value = lcur; }
   updateExportTargetLabel();
 }
-function renderLogBucketFilter(){
-  const sel = document.getElementById('logBucketFilter');
-  if (!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = `<option value="">All buckets</option>` + BUCKETS.map(b => `<option value="${b.key}">${escapeHtml(b.label)}</option>`).join('');
-  sel.value = BUCKETS.some(b => b.key === cur) ? cur : '';
-}
-['logBucketFilter','logSearch'].forEach(id => document.getElementById(id).addEventListener('input', renderLogs));
+document.getElementById('logSessionFilter').addEventListener('change', e => { logFilterSessionId = e.target.value; renderLogs(); updateExportTargetLabel(); });
 function renderLogs(){
-  const sid = sessionState.currentSessionId || null;
-  const sessLogs = logs.filter(l => (l.sessionId || null) === sid);
-  const bucketSel = document.getElementById('logBucketFilter').value;
-  const q = document.getElementById('logSearch').value.trim().toLowerCase();
-  const filtered = sessLogs.filter(l => {
-    if (bucketSel && l.bucket !== bucketSel) return false;
-    if (q && ![...(l.team1 || []), ...(l.team2 || [])].some(p => (p.name || '').toLowerCase().includes(q))) return false;
-    return true;
-  });
-  document.getElementById('logsCount').textContent = `${filtered.length} match${filtered.length===1?'':'es'}` + (filtered.length !== sessLogs.length ? ` (of ${sessLogs.length})` : '');
-  document.getElementById('logsSessionLabel').textContent = sessionState.currentSessionName ? ` · ${sessionState.currentSessionName}` : '';
+  const filtered = logFilterSessionId ? logs.filter(l => l.sessionId === logFilterSessionId) : logs;
+  document.getElementById('logsCount').textContent = `${filtered.length} match${filtered.length===1?'':'es'}`;
   const body = document.getElementById('logsBody');
-  if (!filtered.length) { body.innerHTML = `<tr class="empty-row"><td colspan="9">${sessLogs.length ? 'No matches found.' : 'No matches logged yet.'}</td></tr>`; return; }
+  if (!filtered.length) { body.innerHTML = `<tr class="empty-row"><td colspan="10">No matches logged yet.</td></tr>`; return; }
   body.innerHTML = filtered.map(l => {
     const t1 = l.team1.map(p=>p.name).join(' & '), t2 = l.team2.map(p=>p.name).join(' & ');
     const winnerName = l.winner === 'team1' ? t1 : t2;
     const mins = Math.floor((l.durationSeconds||0)/60), secs = (l.durationSeconds||0)%60;
     return `<tr>
-      <td>${l.matchId}</td><td>${escapeHtml(logBucketName(l))}</td><td>${escapeHtml(t1)}</td><td>${escapeHtml(t2)}</td>
+      <td>${l.matchId}</td><td>${bucketLabel(l.bucket)}</td><td>${escapeHtml(t1)}</td><td>${escapeHtml(t2)}</td>
       <td>${l.score1} – ${l.score2}</td><td>${escapeHtml(winnerName)}</td><td>Court ${l.court}</td>
-      <td>${mins}m ${secs}s</td>
+      <td>${mins}m ${secs}s</td><td>${escapeHtml(l.sessionName||'—')}</td>
       <td><div class="row-actions">
         <button class="btn-icon" title="Edit result" onclick="openLogEditModal('${l.id}')">✎</button>
         <button class="btn-icon danger" title="Delete" onclick="deleteLog('${l.id}')">🗑</button>
@@ -1957,7 +1533,7 @@ function openLogEditModal(logId){
   logEditId = logId;
   logEditNames.t1 = l.team1.map(p=>p.name).join(' & ');
   logEditNames.t2 = l.team2.map(p=>p.name).join(' & ');
-  document.getElementById('logEditSub').textContent = `${l.matchId} · ${logBucketName(l)}`;
+  document.getElementById('logEditSub').textContent = `${l.matchId} · ${bucketLabel(l.bucket)}`;
   document.getElementById('logScore1Label').textContent = logEditNames.t1 + ' score';
   document.getElementById('logScore2Label').textContent = logEditNames.t2 + ' score';
   document.getElementById('logScore1Input').value = l.score1;
@@ -2009,11 +1585,6 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
   const btn = document.getElementById('btnSessionStart');
   btn.disabled = true;
   try {
-    const live = await readLiveState();
-    if (live.participants.length || live.matches.length) {
-      try { await saveSnapshot('auto', `Before starting "${name}"`, live); }
-      catch (e) { throw new Error('Could not auto-save the current session, so nothing was cleared. ' + e.message); }
-    }
     const prev = sessionsList.find(x => x.id === sessionState.currentSessionId) || {};
     const sessRef = await db.collection('ccpc-queue-sessions').add({ name, date, eventName: name, location: prev.location || '', scoreType: prev.scoreType || 'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
     const [partsSnap, matchesSnap] = await Promise.all([
@@ -2031,211 +1602,6 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
   } catch (err) { showToast('Could not start session: ' + err.message, true); }
   finally { btn.disabled = false; }
 });
-
-
-/* ================= SNAPSHOTS (save / view / restore a session) ================= */
-const SNAP_COL = 'ccpc-queue-snapshots';
-let snapshotsList = [], snapBusy = false, snapViewId = null;
-db.collection(SNAP_COL).orderBy('savedAtMs','desc').limit(60).onSnapshot(snap => {
-  snapshotsList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-  renderSnapshotsList();
-}, err => showToast('Snapshots sync error: ' + err.message, true));
-
-async function readLiveState(){
-  const [pSnap, mSnap, sSnap, bSnap] = await Promise.all([
-    db.collection('ccpc-queue-participants').get(),
-    db.collection('ccpc-queue-matches').get(),
-    db.collection('ccpc-queue-session').doc('state').get(),
-    db.collection('ccpc-queue-buckets').get()
-  ]);
-  return {
-    buckets: bSnap.docs.map(d => ({ id:d.id, ...d.data() })),
-    participants: pSnap.docs.map(d => ({ id:d.id, ...d.data() })),
-    matches: mSnap.docs.map(d => ({ id:d.id, ...d.data() })),
-    state: sSnap.exists ? sSnap.data() : {}
-  };
-}
-async function saveSnapshot(kind, label, live){
-  live = live || await readLiveState();
-  const st = live.state || {};
-  const ref = await db.collection(SNAP_COL).add({
-    kind, label: label || '',
-    savedAtMs: Date.now(), savedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    sessionId: st.currentSessionId || null, sessionName: st.currentSessionName || '', sessionDate: st.currentSessionDate || '',
-    participants: live.participants, matches: live.matches, buckets: live.buckets || [],
-    partnerCounts: st.partnerCounts || {}, opponentCounts: st.opponentCounts || {}, matchCounter: st.matchCounter || 0
-  });
-  return ref.id;
-}
-function fmtSnapTime(ms){ try { return new Date(ms).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }); } catch(e){ return ''; } }
-function snapNames(team){ return (team || []).map(p => escapeHtml(p.name)).join(' &amp; '); }
-
-/* --- manual save --- */
-const saveSnapOverlay = document.getElementById('saveSnapOverlay');
-document.getElementById('btnSaveSnap').addEventListener('click', () => {
-  document.getElementById('snapLabelInput').value = '';
-  document.getElementById('errSaveSnap').textContent = '';
-  document.getElementById('saveSnapSub').textContent = `Saves the current participants, queue and pairing history of "${sessionState.currentSessionName || 'this session'}" so you can view or restore them later.`;
-  saveSnapOverlay.classList.add('show');
-  document.getElementById('snapLabelInput').focus();
-});
-document.getElementById('btnSaveSnapCancel').addEventListener('click', () => saveSnapOverlay.classList.remove('show'));
-saveSnapOverlay.addEventListener('click', e => { if (e.target === saveSnapOverlay) saveSnapOverlay.classList.remove('show'); });
-document.getElementById('btnSaveSnapConfirm').addEventListener('click', async () => {
-  const btn = document.getElementById('btnSaveSnapConfirm'), err = document.getElementById('errSaveSnap');
-  err.textContent = ''; btn.disabled = true;
-  try {
-    await saveSnapshot('manual', document.getElementById('snapLabelInput').value.trim());
-    saveSnapOverlay.classList.remove('show');
-    showToast('Snapshot saved.');
-  } catch (e) { err.textContent = 'Could not save: ' + e.message; }
-  finally { btn.disabled = false; }
-});
-
-/* --- list --- */
-const snapListOverlay = document.getElementById('snapListOverlay');
-document.getElementById('btnSnapshots').addEventListener('click', () => { renderSnapshotsList(); snapListOverlay.classList.add('show'); });
-document.getElementById('btnSnapListClose').addEventListener('click', () => snapListOverlay.classList.remove('show'));
-snapListOverlay.addEventListener('click', e => { if (e.target === snapListOverlay) snapListOverlay.classList.remove('show'); });
-function renderSnapshotsList(){
-  const el = document.getElementById('snapList');
-  if (!el) return;
-  if (!snapshotsList.length) { el.innerHTML = `<div style="padding:18px;text-align:center;color:var(--muted);font-size:13px;">No snapshots yet. Use 💾 Save, or start a new session and one is saved automatically.</div>`; return; }
-  el.innerHTML = snapshotsList.map(s => {
-    const auto = s.kind === 'auto';
-    return `<div class="snap-item">
-      <div><div class="snap-title">${escapeHtml(s.label || s.sessionName || 'Snapshot')}
-        <span class="badge" style="background:${auto ? '#6b7f8c' : '#2e9e5b'};">${auto ? 'Auto' : 'Manual'}</span></div>
-        <div class="snap-meta">${escapeHtml(s.sessionName || '')}${s.sessionDate ? ' · ' + escapeHtml(s.sessionDate) : ''} · saved ${fmtSnapTime(s.savedAtMs)} · ${(s.participants||[]).length} players · ${(s.matches||[]).length} in queue</div></div>
-      <div class="snap-actions">
-        <button class="btn btn-ghost btn-sm" onclick="openSnapshotView('${s.id}')">View</button>
-        <button class="btn btn-primary btn-sm" onclick="restoreSnapshot('${s.id}')">Restore</button>
-        <button class="btn btn-ghost btn-sm" title="Delete snapshot" onclick="deleteSnapshot('${s.id}')">✕</button>
-      </div></div>`;
-  }).join('');
-}
-async function deleteSnapshot(id){
-  const s = snapshotsList.find(x => x.id === id);
-  if (!s || !confirm(`Delete snapshot "${s.label || s.sessionName || 'Snapshot'}"? This can't be undone.`)) return;
-  try { await db.collection(SNAP_COL).doc(id).delete(); showToast('Snapshot deleted.'); }
-  catch (e) { showToast('Delete failed: ' + e.message, true); }
-}
-
-/* --- view (read-only) --- */
-const snapViewOverlay = document.getElementById('snapViewOverlay');
-document.getElementById('btnSnapViewClose').addEventListener('click', () => snapViewOverlay.classList.remove('show'));
-snapViewOverlay.addEventListener('click', e => { if (e.target === snapViewOverlay) snapViewOverlay.classList.remove('show'); });
-document.getElementById('btnSnapViewRestore').addEventListener('click', () => { if (snapViewId) restoreSnapshot(snapViewId); });
-function openSnapshotView(id){
-  const s = snapshotsList.find(x => x.id === id);
-  if (!s) return;
-  snapViewId = id;
-  document.getElementById('snapViewTitle').textContent = s.label || s.sessionName || 'Snapshot';
-  document.getElementById('snapViewSub').textContent = `${s.sessionName || ''}${s.sessionDate ? ' · ' + s.sessionDate : ''} · saved ${fmtSnapTime(s.savedAtMs)} · ${s.kind === 'auto' ? 'auto-saved' : 'manual'} · read-only preview`;
-  const parts = s.participants || [], ms = (s.matches || []).slice().sort((a,b) => (a.order||0) - (b.order||0));
-  const sb = (s.buckets && s.buckets.length) ? s.buckets.map(x => ({ key:x.id, label:x.name })) : BUCKETS.map(x => ({ key:x.key, label:x.label }));
-  const sbLabel = k => (sb.find(x => x.key === k) || {}).label || bucketLabel(k);
-  const playingSet = new Set();
-  ms.forEach(m => { if (m.status === 'playing') [...m.team1, ...m.team2].forEach(p => playingSet.add(p.participantId)); });
-  const stLabel = p => p.status === 'resting' ? 'Resting' : (p.status === 'queued' ? (playingSet.has(p.id) ? 'Playing' : 'On queue') : 'Available');
-  const partsHtml = sb.map(b => {
-    const list = parts.filter(p => p.bucket === b.key).sort((x,y) => (x.name||'').localeCompare(y.name||''));
-    return `<div class="snap-sec"><h4>${escapeHtml(b.label)} (${list.length})</h4>` + (list.length
-      ? list.map(p => `<div class="snap-line"><span>${escapeHtml(p.name)}</span><span style="color:var(--muted);">${escapeHtml(String(p.duprRaw ?? p.dupr ?? ''))} · ${stLabel(p)}</span></div>`).join('')
-      : `<div class="snap-line" style="color:var(--muted);">No one.</div>`) + `</div>`;
-  }).join('');
-  const matchHtml = ms.length ? ms.map(m => `<div class="snap-line"><span><b>${escapeHtml(m.matchId || '')}</b> · ${snapNames(m.team1)} vs ${snapNames(m.team2)}</span><span style="color:var(--muted);">${escapeHtml(sbLabel(m.bucket))} · ${m.status}${m.court ? ' · Court ' + m.court : ''}</span></div>`).join('')
-    : `<div class="snap-line" style="color:var(--muted);">Nothing in the queue.</div>`;
-  const pc = Object.keys(s.partnerCounts || {}).length, oc = Object.keys(s.opponentCounts || {}).length;
-  let lbHtml = '';
-  if (s.sessionId) {
-    const data = buildLeaderboard(s.sessionId);
-    const done = logs.filter(l => l.sessionId === s.sessionId).length;
-    lbHtml = `<div class="snap-sec"><h4>Completed matches in this session: ${done}</h4>` + lbBuckets(s.sessionId).map(b => {
-      const top = (data[b.key] || []).slice(0, 3);
-      return top.length ? `<div class="snap-line"><span><b>${escapeHtml(b.label)}</b></span><span>${top.map((e,i) => `${i+1}. ${escapeHtml(e.name)} (${e.w}W)`).join(' · ')}</span></div>` : '';
-    }).join('') + `</div>`;
-  }
-  document.getElementById('snapViewBody').innerHTML =
-    `<div class="snap-sec"><h4>Queue (${ms.length})</h4>${matchHtml}</div>` + partsHtml +
-    `<div class="snap-sec"><h4>Pairing history</h4><div class="snap-line"><span>${pc} partner pair${pc===1?'':'s'} and ${oc} opponent pair${oc===1?'':'s'} tracked</span></div></div>` + lbHtml;
-  snapViewOverlay.classList.add('show');
-}
-
-/* --- restore --- */
-async function restoreSnapshot(id){
-  const s = snapshotsList.find(x => x.id === id);
-  if (!s || snapBusy) return;
-  const np = (s.participants || []).length, nm = (s.matches || []).length;
-  const msg = `Restore "${s.label || s.sessionName || 'Snapshot'}"?\n\n` +
-    `• Replaces the current participants and queue with the snapshot (${np} players, ${nm} queued matches).\n` +
-    `• Switches back to session "${s.sessionName || '—'}".\n` +
-    `• Matches that were on a court go back to the waiting queue, and all timers restart now.\n` +
-    `• The current state is auto-saved first, so you can undo this.`;
-  if (!confirm(msg)) return;
-  snapBusy = true;
-  try {
-    const live = await readLiveState();
-    if (live.participants.length || live.matches.length) {
-      try { await saveSnapshot('auto', `Before restoring "${s.label || s.sessionName || 'Snapshot'}"`, live); }
-      catch (e) { throw new Error('Could not auto-save the current state first, so nothing was changed. ' + e.message); }
-    }
-    await Promise.all(live.participants.map(flushElapsed));   // close out current timers
-
-    // make sure the session record exists
-    if (s.sessionId && !sessionsList.find(x => x.id === s.sessionId)) {
-      await db.collection('ccpc-queue-sessions').doc(s.sessionId).set({ name: s.sessionName || 'Restored session', date: s.sessionDate || '', eventName: s.sessionName || 'Restored session', location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    }
-
-    const now = Date.now();
-    const haveB = new Set((live.buckets || []).map(x => x.id));
-    const restoreOps = [];
-    (s.buckets || []).forEach(bk => { if (!haveB.has(bk.id)) { const { id, ...data } = bk; haveB.add(id); restoreOps.push(b => b.set(db.collection('ccpc-queue-buckets').doc(id), data)); } });
-    const legacyDefs = { singles:{ name:'Singles', mode:'singles' }, fun:{ name:'Fun Mode (Low)', mode:'doubles' }, competitive:{ name:'Competitive Mode (High)', mode:'doubles' } };
-    new Set([...(s.participants || []).map(p => p.bucket), ...(s.matches || []).map(m => m.bucket)]).forEach(k => {
-      if (!haveB.has(k) && legacyDefs[k]) { haveB.add(k); restoreOps.push(b => b.set(db.collection('ccpc-queue-buckets').doc(k), { ...legacyDefs[k], createdAtMs: now, createdAt: firebase.firestore.FieldValue.serverTimestamp() })); }
-    });
-    const keepP = new Set((s.participants || []).map(p => p.id)), keepM = new Set((s.matches || []).map(m => m.id));
-    const ops = [...restoreOps];
-    live.participants.filter(p => !keepP.has(p.id)).forEach(p => ops.push(b => b.delete(db.collection('ccpc-queue-participants').doc(p.id))));
-    live.matches.filter(m => !keepM.has(m.id)).forEach(m => ops.push(b => b.delete(db.collection('ccpc-queue-matches').doc(m.id))));
-    (s.participants || []).forEach(p => { const { id, ...data } = p; ops.push(b => b.set(db.collection('ccpc-queue-participants').doc(id), { ...data, statusSince: now })); });
-    (s.matches || []).forEach(m => {
-      const { id, ...data } = m;
-      const onCourt = COURT_BUSY_STATUSES.includes(data.status);
-      ops.push(b => b.set(db.collection('ccpc-queue-matches').doc(id), onCourt ? { ...data, status:'waiting', court:null, startedAt:null } : data));
-    });
-    for (let i = 0; i < ops.length; i += 400) {
-      const batch = db.batch();
-      ops.slice(i, i + 400).forEach(fn => fn(batch));
-      await batch.commit();
-    }
-
-    // pairing history: snapshot counts merged with what logs + restored queue actually contain (max of both)
-    const P = { ...(s.partnerCounts || {}) }, O = { ...(s.opponentCounts || {}) };
-    const rP = {}, rO = {};
-    const inc = (obj, a, b) => { const k = pairKey(a, b); obj[k] = (obj[k] || 0) + 1; };
-    const addTeams = (t1, t2) => {
-      if (t1.length === 2) inc(rP, t1[0].participantId, t1[1].participantId);
-      if (t2.length === 2) inc(rP, t2[0].participantId, t2[1].participantId);
-      t1.forEach(p => t2.forEach(q => inc(rO, p.participantId, q.participantId)));
-    };
-    if (s.sessionId) logs.filter(l => l.sessionId === s.sessionId).forEach(l => addTeams(l.team1 || [], l.team2 || []));
-    (s.matches || []).forEach(m => addTeams(m.team1 || [], m.team2 || []));
-    Object.keys(rP).forEach(k => { P[k] = Math.max(P[k] || 0, rP[k]); });
-    Object.keys(rO).forEach(k => { O[k] = Math.max(O[k] || 0, rO[k]); });
-    await db.collection('ccpc-queue-session').doc('state').set({
-      partnerCounts: P, opponentCounts: O,
-      currentSessionId: s.sessionId || null, currentSessionName: s.sessionName || '', currentSessionDate: s.sessionDate || '',
-      matchCounter: Math.max((live.state && live.state.matchCounter) || 0, s.matchCounter || 0)
-    }, { mergeFields: ['partnerCounts','opponentCounts','currentSessionId','currentSessionName','currentSessionDate','matchCounter'] });
-
-    BUCKETS.forEach(b => discardSuggestions(b.key));
-    snapViewOverlay.classList.remove('show'); snapListOverlay.classList.remove('show');
-    showToast(`Restored "${s.label || s.sessionName || 'snapshot'}".`);
-  } catch (e) { showToast('Restore failed: ' + e.message, true); }
-  finally { snapBusy = false; }
-}
 
 
 /* ================= LEADERBOARD (per session, per bucket) ================= */
@@ -2263,22 +1629,13 @@ function buildLeaderboard(sessionId){
   });
   return out;
 }
-function lbBuckets(sessionId){
-  const list = BUCKETS.slice(), seen = new Set(list.map(b => b.key));
-  logs.filter(l => l.sessionId === sessionId).forEach(l => {
-    if (!seen.has(l.bucket)) { seen.add(l.bucket); list.push({ key:l.bucket, label: bucketLabel(l.bucket, l.bucketName), mode:null, color:BUCKET_COLOR }); }
-  });
-  return list;
-}
 function renderLeaderboard(){
   const grid = document.getElementById('lbGrid');
   if (!grid) return;
   const sid = lbSessionSel || sessionState.currentSessionId;
   const data = buildLeaderboard(sid);
   const medals = ['🥇','🥈','🥉'];
-  const lbList = lbBuckets(sid);
-  if (!lbList.length) { grid.innerHTML = `<div class="bucket-card" style="grid-column:1/-1;"><div style="padding:28px 20px;text-align:center;color:var(--muted);">No buckets yet.</div></div>`; return; }
-  grid.innerHTML = lbList.map(b => {
+  grid.innerHTML = BUCKETS.map(b => {
     const rows = data[b.key] || [];
     const body = rows.length ? rows.map(e => `
       <tr><td class="rank">${e.rank}</td>
@@ -2288,7 +1645,7 @@ function renderLeaderboard(){
       : `<tr class="empty-row"><td colspan="7">No completed matches yet.</td></tr>`;
     return `
     <div class="bucket-card">
-      <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${escapeHtml(b.label)}${modeTagHtml(b)}</h3>
+      <div class="bucket-head"><h3><span class="bucket-tag" style="background:${b.color}"></span>${b.label}</h3>
         <span class="count">${rows.length} player${rows.length===1?'':'s'}</span></div>
       <table class="lb-table"><thead><tr><th class="num">#</th><th>Player</th><th class="num">GP</th><th class="num">W</th><th class="num">L</th><th class="num">Pts</th><th class="num">+/−</th></tr></thead>
       <tbody>${body}</tbody></table>
@@ -2337,7 +1694,7 @@ function buildDuprCsv(sess){
       return [p.name, p.duprId || '', ''];
     };
     const a1 = cell(l.team1,0), a2 = cell(l.team1,1), b1 = cell(l.team2,0), b2 = cell(l.team2,1);
-    const row = [(l.team1 || []).length === 1 ? 'S' : 'D', event, sess.date, ...a1, ...a2, ...b1, ...b2,
+    const row = [l.bucket === 'singles' ? 'S' : 'D', event, sess.date, ...a1, ...a2, ...b1, ...b2,
       l.score1, l.score2, '', '', '', '', '', '', '', '', location, scoreType];
     return row.map(csvCell).join(',');
   });

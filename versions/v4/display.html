@@ -106,6 +106,35 @@
   .court-bucket{font-family:'Baloo 2';font-weight:700;font-size:min(2.3vh,1.3vw);color:var(--gold);letter-spacing:0;text-transform:none;margin-left:.8vw;}
   .next-item .side{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;flex-shrink:0;max-width:14vw;}
   .next-item .bucket-sm{font-family:'Baloo 2';font-weight:700;font-size:min(2.4vh,1.35vw);color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;}
+  .players .team{display:flex;flex-direction:column;min-width:0;}
+  /* queue hidden: courts take the whole screen (still 2 x 2), bigger type, team names side by side */
+  body.no-queue main{grid-template-columns:1fr 1fr;}
+  body.no-queue .center-col{display:none;}
+  body.no-queue .court-num{font-size:min(5.2vh,3vw);}
+  body.no-queue .court-status-pill{font-size:min(3vh,1.7vw);}
+  body.no-queue .court-bucket{font-size:min(3vh,1.7vw);}
+  body.no-queue .players .team{flex-direction:row;gap:1.4vw;}
+  body.no-queue .players .team .p{font-size:min(7.4vh,4.4vw);min-width:0;flex:0 1 auto;}
+  body.no-queue .players .team .p + .p::before{content:'& ';color:var(--muted);}
+  body.no-queue .players .vs{font-size:min(3.6vh,2vw);margin:.8vh 0;}
+  body.no-queue .court-card .timer{font-size:min(13vh,8vw);}
+  body.no-queue .court-card .ready-note{font-size:min(5.6vh,3.2vw);}
+  body.no-queue .court-card .free-label{font-size:min(8.4vh,5vw);}
+  /* leaderboard popup (sits under the call / winner popups, z-index 80) */
+  .lb-overlay{position:fixed;inset:0;background:rgba(4,15,22,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:70;padding:3vh 3vw;}
+  .lb-overlay.show{display:flex;}
+  .lb-title{font-family:'Baloo 2';font-weight:800;font-size:min(7vh,4.2vw);color:var(--gold);text-transform:uppercase;letter-spacing:.12em;line-height:1;margin-bottom:.8vh;text-align:center;}
+  .lb-sub{font-family:'Baloo 2';font-weight:700;font-size:min(3vh,1.8vw);color:var(--muted);margin-bottom:3vh;text-align:center;}
+  .lb-cols{display:grid;gap:2vw;width:100%;flex:1;min-height:0;}
+  .lb-col{background:var(--surface);border:.4vh solid var(--border);border-radius:2vh;padding:2vh 1.6vw;display:flex;flex-direction:column;min-width:0;box-shadow:var(--shadow);}
+  .lb-col h3{margin:0 0 1.6vh;font-size:min(5vh,2.8vw);color:var(--gold);text-align:center;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lb-row{display:flex;align-items:center;gap:1vw;flex:1;min-height:0;border-top:.2vh solid var(--border);}
+  .lb-row:first-of-type{border-top:none;}
+  .lb-rank{font-family:'Baloo 2';font-weight:800;font-size:min(6vh,3.4vw);color:var(--gold);width:3.4vw;text-align:center;flex-shrink:0;}
+  .lb-name{flex:1;min-width:0;font-family:'Baloo 2';font-weight:800;font-size:min(4.8vh,2.7vw);white-space:nowrap;overflow:hidden;}
+  .lb-stat{font-family:'Baloo 2';font-weight:800;font-size:min(3.4vh,1.9vw);color:var(--muted);text-align:right;flex-shrink:0;line-height:1.1;}
+  .lb-stat b{color:var(--text);font-size:1.25em;}
+  .lb-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'Baloo 2';font-weight:700;font-size:min(4vh,2.2vw);}
 </style>
 </head>
 <body>
@@ -133,6 +162,12 @@
     <div class="court-card" id="court-4"></div>
   </div>
 </main>
+
+<div class="lb-overlay" id="lbOverlay">
+  <div class="lb-title">🏆 Leaderboard</div>
+  <div class="lb-sub" id="lbSub">Top 5 per bucket</div>
+  <div class="lb-cols" id="lbCols"></div>
+</div>
 
 <div class="tv-overlay" id="callOverlay">
   <div class="tv-popup" id="callPopup">
@@ -200,7 +235,7 @@ db.collection('ccpc-queue-matches').onSnapshot(snap => {
 }, err => console.error(err));
 
 function courtBucketHtml(m){ const t = bucketTag(m.bucket); return t ? `<span class="court-bucket">${escapeHtml(t)}</span>` : ''; }
-function playersHtml(team){ return team.map(p=>`<div class="p fit">${escapeHtml(p.name)}</div>`).join(''); }
+function playersHtml(team){ return `<div class="team">${team.map(p=>`<div class="p fit">${escapeHtml(p.name)}</div>`).join('')}</div>`; }
 
 function renderCourts(){
   const occupying = queueMatches.filter(m => m.status==='assigned' || m.status==='playing');
@@ -287,6 +322,41 @@ function fitAll(){
 }
 window.addEventListener('resize', fitAll);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+
+/* Display settings from the admin: show/hide the queue, leaderboard popup */
+let displaySettings = {};
+db.collection('ccpc-queue-events').doc('displaySettings').onSnapshot(doc => {
+  displaySettings = doc.exists ? doc.data() : {};
+  applyDisplaySettings();
+}, err => console.error(err));
+function applyDisplaySettings(){
+  const showQueue = displaySettings.showQueue !== false;
+  document.body.classList.toggle('no-queue', !showQueue);
+  renderLeaderboardPopup();
+  fitAll();
+  setTimeout(fitAll, 150);
+}
+function renderLeaderboardPopup(){
+  const ov = document.getElementById('lbOverlay');
+  const lb = displaySettings.leaderboard;
+  if (!lb || !lb.show) { ov.classList.remove('show'); return; }
+  const buckets = (lb.buckets || []).slice(0, 3);
+  document.getElementById('lbSub').textContent = (lb.sessionName ? lb.sessionName + ' · ' : '') + 'Top 5 per bucket';
+  const cols = document.getElementById('lbCols');
+  cols.style.gridTemplateColumns = `repeat(${Math.max(1, buckets.length)}, 1fr)`;
+  cols.innerHTML = buckets.map(b => `
+    <div class="lb-col">
+      <h3>${escapeHtml(b.name)}</h3>
+      ${(b.rows && b.rows.length) ? b.rows.map(r => `
+        <div class="lb-row">
+          <div class="lb-rank">${r.rank}</div>
+          <div class="lb-name fit">${escapeHtml(r.name)}</div>
+          <div class="lb-stat"><b>${r.w}</b> W<br>${r.pf} pts</div>
+        </div>`).join('') : `<div class="lb-empty">No results yet</div>`}
+    </div>`).join('');
+  ov.classList.add('show');
+  fitAll();
+}
 
 /* TV events: call players / winner popups */
 let eventsInitialized = false;

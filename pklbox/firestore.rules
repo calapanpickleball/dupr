@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // DUPR Engine v.1 (pkl-index.html + pkl-display.html): no sign-in, so these collections are open to read and write.
+    match /pkl-queue-buckets/{id}      { allow read, write: if true; }
+    match /pkl-queue-participants/{id} { allow read, write: if true; }
+    match /pkl-queue-matches/{id}      { allow read, write: if true; }
+    match /pkl-queue-logs/{id}         { allow read, write: if true; }
+    match /pkl-queue-stats/{id}        { allow read, write: if true; }
+    match /pkl-queue-sessions/{id}     { allow read, write: if true; }
+    match /pkl-queue-session/{id}      { allow read, write: if true; }
+    match /pkl-queue-events/{id}       { allow read, write: if true; }
+    match /pkl-queue-snapshots/{id}    { allow read, write: if true; }
+
+    // Everything else stays closed.
+    match /{document=**} { allow read, write: if false; }
+  }
+}
