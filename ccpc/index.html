@@ -8,15 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#2f332e; --navy-deep:#222622;
-    --gold:#4f9d2d; --orange:#ff6600; --blue:#3992b9; --red:#bb1421;
-    --bg:#ececec; --surface:#ffffff; --surface-2:#f7f7f5;
-    --text:#262a26; --muted:#6a706a; --border:#dcdddb;
-    --shadow: 0 6px 20px rgba(38,42,38,0.08); --radius:14px;
+    --navy:#083d5f; --navy-deep:#052b44;
+    --gold:#fab813; --orange:#ff6600; --blue:#3992b9; --red:#bb1421;
+    --bg:#f2f5f8; --surface:#ffffff; --surface-2:#f6f8fa;
+    --text:#1b2a36; --muted:#5f7080; --border:#d9e0e6;
+    --shadow: 0 6px 20px rgba(8,61,95,0.10); --radius:14px;
   }
   html[data-theme="dark"]{
-    --gold:#6cc144; --bg:#141714; --surface:#1e231e; --surface-2:#191d19;
-    --text:#eef1ec; --muted:#9aa49a; --border:#2f372f;
+    --gold:#fab813; --bg:#0b1a26; --surface:#112a3c; --surface-2:#0e2231;
+    --text:#eef3f7; --muted:#8fa6b8; --border:#1f3d54;
     --shadow: 0 6px 24px rgba(0,0,0,0.35);
   }
   *{box-sizing:border-box;}
@@ -30,7 +30,7 @@
     position:relative;overflow:hidden;
   }
   header.top::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;
-    background:radial-gradient(circle, rgba(79,157,45,0.25) 0%, transparent 70%);}
+    background:radial-gradient(circle, rgba(250,184,19,0.25) 0%, transparent 70%);}
   header.top .titles{position:relative;z-index:1;}
   header.top h1{margin:0;font-size:clamp(19px,3vw,27px);font-weight:700;line-height:1.05;}
   header.top .sub{margin-top:0;line-height:1.15;font-size:13px;color:#c3cdc3;font-weight:500;}
@@ -110,8 +110,8 @@
   .btn{border:none;border-radius:9px;padding:9px 16px;font-family:'Inter',sans-serif;font-weight:600;
     font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
   .btn:disabled{opacity:.5;cursor:not-allowed;}
-  .btn-primary{background:var(--gold);color:#ffffff;}
-  .btn-primary:hover:not(:disabled){box-shadow:0 4px 14px rgba(79,157,45,.4);}
+  .btn-primary{background:var(--gold);color:var(--navy-deep);}
+  .btn-primary:hover:not(:disabled){box-shadow:0 4px 14px rgba(250,184,19,.45);}
   .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
   .btn-ghost:hover:not(:disabled){border-color:var(--blue);}
   .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:7px;}
@@ -150,7 +150,7 @@
   .gen-name{flex:1;font-weight:600;}
   .gen-state{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;color:#fff;background:#2e9e5b;}
   .gen-state.s-playing{background:#1f7fb8;}
-  .gen-state.s-queued{background:var(--gold);color:#ffffff;}
+  .gen-state.s-queued{background:var(--gold);color:var(--navy-deep);}
   .gen-state.s-resting{background:#8a97a0;}
   .gen-rounds{display:flex;align-items:center;gap:10px;margin-top:14px;font-weight:600;font-size:14px;}
   .gen-rounds input{width:80px;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;}
@@ -170,7 +170,7 @@
   .court-status{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff;}
   .court-status.free{background:#2e9e5b;}
   .court-status.busy{background:var(--orange);}
-  .court-status.assigned{background:var(--gold);color:#ffffff;}
+  .court-status.assigned{background:var(--gold);color:var(--navy-deep);}
   .court-match .mid{font-size:12px;color:var(--muted);margin-bottom:4px;}
   .court-match .teams{font-weight:700;margin-bottom:6px;}
   .court-timer{font-family:'Baloo 2';font-size:22px;color:var(--navy);margin-bottom:10px;}
@@ -299,6 +299,7 @@
 <body>
 
 <header class="top">
+  <img class="brand-logo" alt="CCPC" src="ccpc-logo.png" onerror="this.style.display='none'">
   <img class="brand-logo" alt="DUPR" src="data:image/jpeg;base64,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">
   <div class="titles">
     <h1>DUPR Engine v.1</h1>
@@ -524,7 +525,7 @@
     <div class="modal-sub" id="duprSettingsSub"></div>
     <div class="field"><label>Event name</label><input type="text" id="dsEvent" placeholder="e.g. Saturday Open Play"></div>
     <div class="field"><label>Date</label><input type="date" id="dsDate"></div>
-    <div class="field"><label>Location</label><input type="text" id="dsLocation" placeholder="e.g. PKL Box, Calapan City, Oriental Mindoro"></div>
+    <div class="field"><label>Location</label><input type="text" id="dsLocation" placeholder="e.g. Calapan City, Oriental Mindoro"></div>
     <div class="field"><label>Scoring type</label>
       <select id="dsScoreType"><option value="SIDEOUT">SIDEOUT</option><option value="RALLY">RALLY</option></select></div>
     <div class="error-text" id="errDs"></div>
@@ -601,20 +602,6 @@
 <script>
 /* ================= Firebase ================= */
 const firebaseConfig = {
-  apiKey: "AIzaSyDhWLbY2QERNuOn7R-g8VljB4VTKW9RgEs",
-  authDomain: "pklbox-e01b3.firebaseapp.com",
-  projectId: "pklbox-e01b3",
-  storageBucket: "pklbox-e01b3.firebasestorage.app",
-  messagingSenderId: "197030960226",
-  appId: "1:197030960226:web:529888c44967b2c30d853b"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-try { db.settings({ experimentalAutoDetectLongPolling: true, merge: true }); } catch (e) { console.warn('Firestore settings:', e); }
-db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn('Offline persistence is off:', err.code || err.message));
-
-/* Members list: read-only, from the original CCPC Firebase project */
-const ccpcMembersConfig = {
   apiKey: "AIzaSyBv_s3wzr6nbFcqZbTI0UDdcijFWnO-t4I",
   authDomain: "ccpc-dupr.firebaseapp.com",
   databaseURL: "https://ccpc-dupr-default-rtdb.firebaseio.com",
@@ -624,7 +611,11 @@ const ccpcMembersConfig = {
   appId: "1:49883771837:web:ca4be96157a62afbc858d4",
   measurementId: "G-9D46L85X2T"
 };
-const dbMembers = firebase.initializeApp(ccpcMembersConfig, 'ccpc-members').firestore();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+try { db.settings({ experimentalAutoDetectLongPolling: true, merge: true }); } catch (e) { console.warn('Firestore settings:', e); }
+db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn('Offline persistence is off:', err.code || err.message));
+const dbMembers = db;   // members live in the same ccpc-dupr project (collection ccpc-dupr)
 const COURTS = 4;
 const BUCKET_COLOR = 'var(--blue)';
 let BUCKETS = [];            // live from Firestore: { key:docId, label:name, mode:'singles'|'doubles', size:2|4, color }
@@ -660,8 +651,8 @@ const QUEUE_MATCH_STATUSES = ['waiting','onhold','assigned','playing'];
 const html = document.documentElement;
 const themeToggle = document.getElementById('themeToggle');
 const themeKnob = document.getElementById('themeKnob');
-function applyTheme(t){ html.setAttribute('data-theme', t); themeKnob.textContent = t==='dark' ? '🌙' : '☀️'; localStorage.setItem('pkl-theme', t); }
-applyTheme(localStorage.getItem('pkl-theme') || 'light');
+function applyTheme(t){ html.setAttribute('data-theme', t); themeKnob.textContent = t==='dark' ? '🌙' : '☀️'; localStorage.setItem('ccpc-theme', t); }
+applyTheme(localStorage.getItem('ccpc-theme') || 'light');
 themeToggle.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 
 /* ================= Tabs ================= */
@@ -726,7 +717,7 @@ let sessionEnsureAttempted = false;
 
 dbMembers.collection('ccpc-dupr').onSnapshot(snap => { allMembers = snap.docs.map(d => ({ id:d.id, ...d.data() })); }, err => showToast('CCPC Members Database error: ' + err.message, true));
 
-db.collection('pkl-queue-buckets').onSnapshot(snap => {
+db.collection('ccpc-queue-buckets').onSnapshot(snap => {
   BUCKETS = snap.docs.map(d => {
     const x = d.data(), mode = x.mode === 'singles' ? 'singles' : 'doubles';
     return { key:d.id, label:x.name || 'Bucket', mode, size: mode === 'singles' ? 2 : 4, color: BUCKET_COLOR, createdAtMs: x.createdAtMs || 0,
@@ -746,7 +737,7 @@ db.collection('pkl-queue-buckets').onSnapshot(snap => {
   scheduleLeaderboardPush();
 }, err => showToast('Buckets sync error: ' + err.message, true));
 
-db.collection('pkl-queue-participants').onSnapshot(snap => {
+db.collection('ccpc-queue-participants').onSnapshot(snap => {
   participants = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   computeDuplicates();
   renderParticipants();
@@ -754,7 +745,7 @@ db.collection('pkl-queue-participants').onSnapshot(snap => {
   refreshGenList();
 }, err => showToast('Participants sync error: ' + err.message, true));
 
-db.collection('pkl-queue-matches').onSnapshot(snap => {
+db.collection('ccpc-queue-matches').onSnapshot(snap => {
   queueMatches = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderCourts();
   renderQueueList();
@@ -762,7 +753,7 @@ db.collection('pkl-queue-matches').onSnapshot(snap => {
   refreshGenList();
 }, err => showToast('Queue sync error: ' + err.message, true));
 
-db.collection('pkl-queue-logs').orderBy('completedAt','desc').limit(2000).onSnapshot(snap => {
+db.collection('ccpc-queue-logs').orderBy('completedAt','desc').limit(2000).onSnapshot(snap => {
   logs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderLogs();
   renderLeaderboard();
@@ -770,14 +761,14 @@ db.collection('pkl-queue-logs').orderBy('completedAt','desc').limit(2000).onSnap
   scheduleLeaderboardPush();
 }, err => showToast('Logs sync error: ' + err.message, true));
 
-db.collection('pkl-queue-stats').onSnapshot(snap => { statsCache = {}; snap.docs.forEach(d => { statsCache[d.id] = d.data(); }); });
+db.collection('ccpc-queue-stats').onSnapshot(snap => { statsCache = {}; snap.docs.forEach(d => { statsCache[d.id] = d.data(); }); });
 
-db.collection('pkl-queue-sessions').orderBy('createdAt','desc').onSnapshot(snap => {
+db.collection('ccpc-queue-sessions').orderBy('createdAt','desc').onSnapshot(snap => {
   sessionsList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderSessionFilterOptions();
 }, err => showToast('Sessions sync error: ' + err.message, true));
 
-db.collection('pkl-queue-session').doc('state').onSnapshot(doc => {
+db.collection('ccpc-queue-session').doc('state').onSnapshot(doc => {
   sessionState = doc.exists ? doc.data() : {};
   updateSessionLabel();
   updateCourtsButtons();
@@ -790,8 +781,8 @@ async function ensureDefaultSession(){
   try {
     const name = 'Session 1';
     const date = new Date().toISOString().slice(0,10);
-    const sessRef = await db.collection('pkl-queue-sessions').add({ name, date, eventName: name, location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    await db.collection('pkl-queue-session').doc('state').set({
+    const sessRef = await db.collection('ccpc-queue-sessions').add({ name, date, eventName: name, location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('ccpc-queue-session').doc('state').set({
       matchCounter:0, partnerCounts:{}, opponentCounts:{},
       currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date
     }, { merge:true });
@@ -831,7 +822,7 @@ function elapsedWrite(p){
   const elapsed = Math.max(0, Math.round((Date.now() - since) / 1000));
   if (elapsed <= 0) return null;
   const field = { waiting:'totalWaitingSeconds', playing:'totalPlayingSeconds', resting:'totalRestingSeconds' }[timeCategory(p)];
-  return { ref: db.collection('pkl-queue-stats').doc(statDocId(refKeyFor(p))),
+  return { ref: db.collection('ccpc-queue-stats').doc(statDocId(refKeyFor(p))),
            data: { name: p.name, sessionId: sessionState.currentSessionId || null, [field]: firebase.firestore.FieldValue.increment(elapsed) } };
 }
 async function flushElapsed(p){
@@ -857,7 +848,7 @@ function updateSyncChip(){
   chip.className = 'sync-chip ' + (offline ? 'off' : 'busy');
   chip.textContent = offline ? '⚠ Offline · changes will sync' : '⟳ Syncing…';
 }
-[['pkl-queue-participants','p'], ['pkl-queue-matches','m']].forEach(([col, k]) =>
+[['ccpc-queue-participants','p'], ['ccpc-queue-matches','m']].forEach(([col, k]) =>
   db.collection(col).onSnapshot({ includeMetadataChanges:true }, snap => { syncState[k] = snap.metadata.hasPendingWrites; updateSyncChip(); }, () => {}));
 window.addEventListener('online', updateSyncChip);
 window.addEventListener('offline', updateSyncChip);
@@ -883,7 +874,7 @@ async function dismissDuplicate(pid){
   if (!confirm(`Mark ${group.map(x => x.name).join(', ')} as NOT duplicates? They will become available for matches.`)) return;
   try {
     const batch = db.batch();
-    group.forEach(x => batch.update(db.collection('pkl-queue-participants').doc(x.id), { dupDismissed: true }));
+    group.forEach(x => batch.update(db.collection('ccpc-queue-participants').doc(x.id), { dupDismissed: true }));
     await batch.commit();
     showToast('Duplicate mark removed.');
   } catch (err) { showToast('Could not update: ' + err.message, true); }
@@ -970,8 +961,8 @@ document.getElementById('btnBucketSave').addEventListener('click', async () => {
   const btn = document.getElementById('btnBucketSave');
   btn.disabled = true;
   try {
-    if (editBucketId) { await db.collection('pkl-queue-buckets').doc(editBucketId).update({ name, courts }); showToast('Bucket updated.'); }
-    else { await db.collection('pkl-queue-buckets').add({ name, mode, courts, order: Math.max(0, ...BUCKETS.map(b => b.order)) + 1000, createdAtMs: Date.now(), createdAt: firebase.firestore.FieldValue.serverTimestamp() }); showToast('Bucket added.'); }
+    if (editBucketId) { await db.collection('ccpc-queue-buckets').doc(editBucketId).update({ name, courts }); showToast('Bucket updated.'); }
+    else { await db.collection('ccpc-queue-buckets').add({ name, mode, courts, order: Math.max(0, ...BUCKETS.map(b => b.order)) + 1000, createdAtMs: Date.now(), createdAt: firebase.firestore.FieldValue.serverTimestamp() }); showToast('Bucket added.'); }
     bucketOverlay.classList.remove('show');
   } catch (err) { errEl.textContent = 'Could not save: ' + err.message; }
   finally { btn.disabled = false; }
@@ -982,7 +973,7 @@ async function deleteBucket(id){
   const count = participants.filter(p => p.bucket === id).length;
   if (count > 0) { showToast(`Remove the ${count} participant${count===1?'':'s'} from "${b.label}" first (or move them to another bucket).`, true); return; }
   if (!confirm(`Delete the bucket "${b.label}"?`)) return;
-  try { await db.collection('pkl-queue-buckets').doc(id).delete(); showToast('Bucket deleted.'); }
+  try { await db.collection('ccpc-queue-buckets').doc(id).delete(); showToast('Bucket deleted.'); }
   catch (err) { showToast('Delete failed: ' + err.message, true); }
 }
 
@@ -1000,14 +991,14 @@ async function clearBucketParticipants(key){
   if (!confirm(`Remove all ${list.length} participant${list.length===1?'':'s'} from "${b.label}"?`)) return;
   try {
     await Promise.all(list.map(flushElapsed));
-    await commitDeletes(list.map(p => db.collection('pkl-queue-participants').doc(p.id)));
+    await commitDeletes(list.map(p => db.collection('ccpc-queue-participants').doc(p.id)));
     discardSuggestions(key);
     showToast(`"${b.label}" cleared.`);
   } catch (err) { showToast('Clear failed: ' + err.message, true); }
 }
 async function saveBucketOrder(keys){
   const batch = db.batch();
-  keys.forEach((k, i) => batch.update(db.collection('pkl-queue-buckets').doc(k), { order: (i + 1) * 1000 }));
+  keys.forEach((k, i) => batch.update(db.collection('ccpc-queue-buckets').doc(k), { order: (i + 1) * 1000 }));
   try { await batch.commit(); } catch (err) { showToast('Could not reorder buckets: ' + err.message, true); }
 }
 function moveBucket(key, dir){
@@ -1066,7 +1057,7 @@ async function moveParticipantToBucket(pid, bucketKey){
   if (!p || p.bucket === bucketKey) return;
   if (p.status === 'queued') { showToast(`${p.name} is in a match and can't be moved right now.`, true); return; }
   try {
-    await db.collection('pkl-queue-participants').doc(pid).update({ bucket: bucketKey, sitOutStreak: 0 });
+    await db.collection('ccpc-queue-participants').doc(pid).update({ bucket: bucketKey, sitOutStreak: 0 });
     const old = p.bucket;
     if (suggestionState[old] && allRoundParticipants(old).some(x => x.id === pid)) discardSuggestions(old);
     showToast(`${p.name} moved to ${bucketLabel(bucketKey)}.`);
@@ -1080,13 +1071,13 @@ async function toggleRest(id, current){
   const next = current === 'resting' ? 'active' : 'resting';
   const update = { status: next, statusSince: Date.now() };
   if (next === 'active') update.sitOutStreak = 0;
-  try { await db.collection('pkl-queue-participants').doc(id).update(update); }
+  try { await db.collection('ccpc-queue-participants').doc(id).update(update); }
   catch(err){ showToast('Update failed: ' + err.message, true); }
 }
 async function removeParticipant(id){
   const p = participants.find(x=>x.id===id);
   if (!confirm(`Remove ${p ? p.name : 'this participant'} from the bucket?`)) return;
-  try { if (p) await flushElapsed(p); await db.collection('pkl-queue-participants').doc(id).delete(); }
+  try { if (p) await flushElapsed(p); await db.collection('ccpc-queue-participants').doc(id).delete(); }
   catch(err){ showToast('Remove failed: ' + err.message, true); }
 }
 
@@ -1235,7 +1226,7 @@ document.getElementById('btnAddConfirm').addEventListener('click', async () => {
   try {
     const batch = db.batch(), now = Date.now();
     pendingAdds.forEach(x => {
-      batch.set(db.collection('pkl-queue-participants').doc(), {
+      batch.set(db.collection('ccpc-queue-participants').doc(), {
         bucket: addBucket, sourceType:x.sourceType, memberId:x.memberId, name:x.name, duprId:x.duprId || '',
         dupr:x.dupr, duprRaw:x.duprRaw, status:'active', statusSince: now, sitOutStreak: 0,
         joinedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1339,7 +1330,7 @@ function generateSuggestions(bucketKey, selected, roundCount){
   selected.filter(p => p.status === 'active').forEach(p => {
     const cur = p.sitOutStreak || 0;
     const next = placed.has(p.id) ? 0 : cur + 1;
-    if (next !== cur){ batch.update(db.collection('pkl-queue-participants').doc(p.id), { sitOutStreak: next }); touched = true; }
+    if (next !== cur){ batch.update(db.collection('ccpc-queue-participants').doc(p.id), { sitOutStreak: next }); touched = true; }
   });
   if (touched) batch.commit().catch(() => {});
 }
@@ -1511,20 +1502,20 @@ function queueMatchesBatch(items, onFail){
     if (team2.length === 2) bump(partnerInc, team2[0].id, team2[1].id);
     for (const p of team1) for (const q of team2) bump(opponentInc, p.id, q.id);
     [...team1, ...team2].forEach(p => players.set(p.id, p));
-    batch.set(db.collection('pkl-queue-matches').doc(), { matchId: r.matchId, bucket: bucketKey, team1: snapshotArr(team1), team2: snapshotArr(team2),
+    batch.set(db.collection('ccpc-queue-matches').doc(), { matchId: r.matchId, bucket: bucketKey, team1: snapshotArr(team1), team2: snapshotArr(team2),
       status:'waiting', court:null, startedAt:null, order: nextQueueOrder(), createdAt: FV.serverTimestamp() });
   });
   players.forEach(p => {
     const lp = participantOf(p) || p;                       // LIVE participant, so the elapsed time is right
     const w = elapsedWrite(lp);
     if (w) batch.set(w.ref, w.data, { merge:true });
-    batch.update(db.collection('pkl-queue-participants').doc(p.id), { status:'queued', statusSince: now });
+    batch.update(db.collection('ccpc-queue-participants').doc(p.id), { status:'queued', statusSince: now });
   });
   const toInc = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, FV.increment(v)]));
   const sess = { matchCounter: lastNo };
   if (Object.keys(partnerInc).length) sess.partnerCounts = toInc(partnerInc);      // never send an empty map: with merge it would wipe the history
   if (Object.keys(opponentInc).length) sess.opponentCounts = toInc(opponentInc);
-  batch.set(db.collection('pkl-queue-session').doc('state'), sess, { merge:true });
+  batch.set(db.collection('ccpc-queue-session').doc('state'), sess, { merge:true });
   players.forEach(p => { const lp = participantOf(p); if (lp) { lp.status = 'queued'; lp.statusSince = now; } });   // keep local clock in sync for back-to-back commits
   const commit = batch.commit();
   commit.catch(err => { showToast('Could not save to the server: ' + err.message, true); if (onFail) onFail(err); });
@@ -1645,7 +1636,7 @@ function renderCourts(){
   attachCourtDropZones();
 }
 /* ---- Activate courts / flip courts (admin view only) ---- */
-let flipCourts = localStorage.getItem('pkl-flip-courts') === '1';
+let flipCourts = localStorage.getItem('ccpc-flip-courts') === '1';
 function courtOrder(){ const a = Array.from({ length: COURTS }, (_, i) => i + 1); return flipCourts ? a.reverse() : a; }
 function updateCourtsButtons(){
   const act = document.getElementById('btnActivateCourts');
@@ -1664,12 +1655,12 @@ function updateCourtsButtons(){
 document.getElementById('btnActivateCourts').addEventListener('click', async () => {
   if (courtsActive()) return;
   if (!confirm('Start the session now?\n\nWaiting, playing and resting timers start counting from this moment, and matches can be assigned to courts.')) return;
-  try { await db.collection('pkl-queue-session').doc('state').set({ courtsActiveAt: Date.now() }, { merge:true }); showToast('Courts activated. Timers are running.'); }
+  try { await db.collection('ccpc-queue-session').doc('state').set({ courtsActiveAt: Date.now() }, { merge:true }); showToast('Courts activated. Timers are running.'); }
   catch (err) { showToast('Could not activate courts: ' + err.message, true); }
 });
 document.getElementById('btnFlipCourts').addEventListener('click', () => {
   flipCourts = !flipCourts;
-  localStorage.setItem('pkl-flip-courts', flipCourts ? '1' : '0');
+  localStorage.setItem('ccpc-flip-courts', flipCourts ? '1' : '0');
   updateCourtsButtons();
   renderCourts();
 });
@@ -1774,7 +1765,7 @@ async function reorderQueueMatch(id, newIndex){
   newIndex = Math.max(0, Math.min(others.length, newIndex));
   if (newIndex === curIndex) return;
   const prev = others[newIndex - 1], next = others[newIndex];
-  const col = db.collection('pkl-queue-matches');
+  const col = db.collection('ccpc-queue-matches');
   const onErr = err => showToast('Could not move match: ' + err.message, true);
   try {
     if (!prev && !next) return;
@@ -1893,7 +1884,7 @@ document.getElementById('btnOptApply').addEventListener('click', async () => {
     const batch = db.batch(), undo = [];
     optPlan.after.forEach((m, i) => {
       const newOrder = optPlan.orders[i];
-      if (m.order !== newOrder) { undo.push({ id: m.id, order: m.order }); batch.update(db.collection('pkl-queue-matches').doc(m.id), { order: newOrder }); }
+      if (m.order !== newOrder) { undo.push({ id: m.id, order: m.order }); batch.update(db.collection('ccpc-queue-matches').doc(m.id), { order: newOrder }); }
     });
     batch.commit().catch(err => showToast('Could not optimize: ' + err.message, true));
     lastOptimizeUndo = undo;
@@ -1910,7 +1901,7 @@ document.getElementById('btnUndoOptimize').addEventListener('click', async () =>
   const live = new Map(queueMatches.map(m => [m.id, m]));
   try {
     const batch = db.batch(); let n = 0;
-    undo.forEach(u => { const m = live.get(u.id); if (m && (m.status === 'waiting' || m.status === 'onhold')) { batch.update(db.collection('pkl-queue-matches').doc(u.id), { order: u.order }); n++; } });
+    undo.forEach(u => { const m = live.get(u.id); if (m && (m.status === 'waiting' || m.status === 'onhold')) { batch.update(db.collection('ccpc-queue-matches').doc(u.id), { order: u.order }); n++; } });
     if (n) await batch.commit();
     lastOptimizeUndo = null; btn.style.display = 'none';
     showToast(n ? 'Previous queue order restored.' : 'Nothing to undo.');
@@ -1959,10 +1950,10 @@ document.getElementById('btnClearQueue').addEventListener('click', async () => {
     const pids = [...new Set(list.flatMap(matchPlayerIds))];
     await Promise.all(pids.map(id => participantOf({ id })).filter(Boolean).map(flushElapsed));
     const ops = [];
-    list.forEach(m => ops.push(b => b.delete(db.collection('pkl-queue-matches').doc(m.id))));
+    list.forEach(m => ops.push(b => b.delete(db.collection('ccpc-queue-matches').doc(m.id))));
     pids.forEach(id => {
       const stillLive = queueMatches.some(x => !cleared.has(x.id) && QUEUE_MATCH_STATUSES.includes(x.status) && isInMatch(id, x));
-      ops.push(b => b.update(db.collection('pkl-queue-participants').doc(id), stillLive ? { statusSince: Date.now() } : { status:'active', statusSince: Date.now() }));
+      ops.push(b => b.update(db.collection('ccpc-queue-participants').doc(id), stillLive ? { statusSince: Date.now() } : { status:'active', statusSince: Date.now() }));
     });
     for (let i = 0; i < ops.length; i += 400) { const batch = db.batch(); ops.slice(i, i + 400).forEach(f => f(batch)); await batch.commit(); }
     lastOptimizeUndo = null; document.getElementById('btnUndoOptimize').style.display = 'none';
@@ -2052,9 +2043,9 @@ async function applyMatchPlayers(m, newTeam1, newTeam2){
   await Promise.all([...addedIds, ...removedIds].map(id => { const p = participants.find(x => x.id === id); return p ? flushElapsed(p) : null; }));
   await adjustSessionCounts(m.team1, m.team2, snapshotArr(newTeam1), snapshotArr(newTeam2));
   const batch = db.batch();
-  removedIds.forEach(id => batch.update(db.collection('pkl-queue-participants').doc(id), releaseUpdate(id, m.id)));
-  addedIds.forEach(id => batch.update(db.collection('pkl-queue-participants').doc(id), { status:'queued', statusSince: Date.now() }));
-  batch.update(db.collection('pkl-queue-matches').doc(m.id), { team1: snapshotArr(newTeam1), team2: snapshotArr(newTeam2) });
+  removedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), releaseUpdate(id, m.id)));
+  addedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), { status:'queued', statusSince: Date.now() }));
+  batch.update(db.collection('ccpc-queue-matches').doc(m.id), { team1: snapshotArr(newTeam1), team2: snapshotArr(newTeam2) });
   await batch.commit();
 }
 document.getElementById('btnReplaceSave').addEventListener('click', async () => {
@@ -2079,7 +2070,7 @@ document.getElementById('btnReplaceSave').addEventListener('click', async () => 
 });
 
 /* ---- TV display controls: Display queue + Leaderboard popup ---- */
-const displayRef = db.collection('pkl-queue-events').doc('displaySettings');   // no createdAt field, so the TV popup listener ignores it
+const displayRef = db.collection('ccpc-queue-events').doc('displaySettings');   // no createdAt field, so the TV popup listener ignores it
 let displaySettings = {}, lbPushTimer = null;
 function leaderboardShown(){ return !!(displaySettings.leaderboard && displaySettings.leaderboard.show); }
 function updateDisplayControls(){
@@ -2110,8 +2101,8 @@ document.getElementById('btnShowLeaderboard').addEventListener('click', async ()
   catch (err) { showToast('Could not update the TV: ' + err.message, true); }
 });
 
-async function holdMatch(id){ try { await db.collection('pkl-queue-matches').doc(id).update({ status:'onhold' }); } catch(err){ showToast(err.message, true); } }
-async function resumeMatch(id){ try { await db.collection('pkl-queue-matches').doc(id).update({ status:'waiting' }); } catch(err){ showToast(err.message, true); } }
+async function holdMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'onhold' }); } catch(err){ showToast(err.message, true); } }
+async function resumeMatch(id){ try { await db.collection('ccpc-queue-matches').doc(id).update({ status:'waiting' }); } catch(err){ showToast(err.message, true); } }
 async function deleteQueueMatch(id){
   const m = queueMatches.find(x=>x.id===id);
   if (!m) return;
@@ -2119,8 +2110,8 @@ async function deleteQueueMatch(id){
   try {
     await Promise.all([...m.team1, ...m.team2].map(participantOf).filter(Boolean).map(flushElapsed));
     const batch = db.batch();
-    batch.delete(db.collection('pkl-queue-matches').doc(id));
-    [...m.team1, ...m.team2].forEach(p => batch.update(db.collection('pkl-queue-participants').doc(p.participantId), releaseUpdate(p.participantId, m.id)));
+    batch.delete(db.collection('ccpc-queue-matches').doc(id));
+    [...m.team1, ...m.team2].forEach(p => batch.update(db.collection('ccpc-queue-participants').doc(p.participantId), releaseUpdate(p.participantId, m.id)));
     await batch.commit();
     showToast('Match deleted.');
   } catch(err){ showToast('Delete failed: ' + err.message, true); }
@@ -2157,7 +2148,7 @@ async function assignToCourt(matchDocId, court){
     if (busy.length && !confirm(`${busy.map(p => p.name).join(', ')} ${busy.length===1?'is':'are'} still on a court in another match. Assign anyway?`)) return;
   }
   try {
-    await db.collection('pkl-queue-matches').doc(matchDocId).update({ status:'assigned', court, startedAt:null });
+    await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'assigned', court, startedAt:null });
     courtOverlay.classList.remove('show');
     showToast(`Match assigned to Court ${court}. Calling players…`);
   } catch(err){ showToast('Could not assign court: ' + err.message, true); return; }
@@ -2173,25 +2164,25 @@ async function startGame(matchDocId){
     const ps = [...m.team1, ...m.team2].map(participantOf).filter(Boolean);
     await Promise.all(ps.map(flushElapsed));           // close out waiting time before the clock switches to playing time
     const batch = db.batch(), now = Date.now();
-    ps.forEach(p => batch.update(db.collection('pkl-queue-participants').doc(p.id), { statusSince: now }));
-    batch.update(db.collection('pkl-queue-matches').doc(matchDocId), { status:'playing', startedAt: now });
+    ps.forEach(p => batch.update(db.collection('ccpc-queue-participants').doc(p.id), { statusSince: now }));
+    batch.update(db.collection('ccpc-queue-matches').doc(matchDocId), { status:'playing', startedAt: now });
     await batch.commit();
     showToast('Game started!');
   } catch(err){ showToast('Could not start game: ' + err.message, true); }
   finally { startingGames.delete(matchDocId); }
 }
 async function backToQueue(matchDocId){
-  try { await db.collection('pkl-queue-matches').doc(matchDocId).update({ status:'waiting', court:null, startedAt:null, order: nextQueueOrder() }); showToast('Moved back to queue.'); }
+  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ status:'waiting', court:null, startedAt:null, order: nextQueueOrder() }); showToast('Moved back to queue.'); }
   catch(err){ showToast('Could not move to queue: ' + err.message, true); }
 }
 async function resetTimer(matchDocId){
   if (!confirm('Reset the timer for this match?')) return;
-  try { await db.collection('pkl-queue-matches').doc(matchDocId).update({ startedAt: Date.now() }); }
+  try { await db.collection('ccpc-queue-matches').doc(matchDocId).update({ startedAt: Date.now() }); }
   catch(err){ showToast('Could not reset timer: ' + err.message, true); }
 }
 async function sendCallEvent(m, court){
   try {
-    await db.collection('pkl-queue-events').add({
+    await db.collection('ccpc-queue-events').add({
       type:'call', matchId:m.matchId, bucket:m.bucket, court,
       team1: m.team1.map(p=>p.name), team2: m.team2.map(p=>p.name),
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2234,7 +2225,7 @@ function openEditQueueModal(matchDocId){
 document.getElementById('btnEditQueueCancel').addEventListener('click', () => editQueueOverlay.classList.remove('show'));
 editQueueOverlay.addEventListener('click', e => { if (e.target===editQueueOverlay) editQueueOverlay.classList.remove('show'); });
 async function adjustSessionCounts(oldTeam1, oldTeam2, newTeam1, newTeam2){
-  const sessionRef = db.collection('pkl-queue-session').doc('state');
+  const sessionRef = db.collection('ccpc-queue-session').doc('state');
   await db.runTransaction(async tx => {
     const snap = await tx.get(sessionRef);
     const data = snap.exists ? snap.data() : {};
@@ -2274,9 +2265,9 @@ document.getElementById('btnEditQueueSave').addEventListener('click', async () =
     await Promise.all([...addedIds, ...removedIds].map(id => { const p = participants.find(x=>x.id===id); return p ? flushElapsed(p) : null; }));
     await adjustSessionCounts(m.team1, m.team2, snapshotArr(newTeam1), snapshotArr(newTeam2));
     const batch = db.batch();
-    removedIds.forEach(id => batch.update(db.collection('pkl-queue-participants').doc(id), releaseUpdate(id, m.id)));
-    addedIds.forEach(id => batch.update(db.collection('pkl-queue-participants').doc(id), { status:'queued', statusSince: Date.now() }));
-    batch.update(db.collection('pkl-queue-matches').doc(m.id), { team1: snapshotArr(newTeam1), team2: snapshotArr(newTeam2) });
+    removedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), releaseUpdate(id, m.id)));
+    addedIds.forEach(id => batch.update(db.collection('ccpc-queue-participants').doc(id), { status:'queued', statusSince: Date.now() }));
+    batch.update(db.collection('ccpc-queue-matches').doc(m.id), { team1: snapshotArr(newTeam1), team2: snapshotArr(newTeam2) });
     await batch.commit();
     editQueueOverlay.classList.remove('show');
     showToast(`${m.matchId} updated.`);
@@ -2332,7 +2323,7 @@ document.getElementById('btnEndConfirm').addEventListener('click', async () => {
   try {
     await Promise.all([...m.team1, ...m.team2].map(participantOf).filter(Boolean).map(flushElapsed)); // closes out playing time
     const batch = db.batch();
-    const logRef = db.collection('pkl-queue-logs').doc();
+    const logRef = db.collection('ccpc-queue-logs').doc();
     batch.set(logRef, {
       matchId: m.matchId, bucket: m.bucket, bucketName: bucketLabel(m.bucket), team1: m.team1, team2: m.team2,
       winner, score1, score2, court: m.court,
@@ -2340,10 +2331,10 @@ document.getElementById('btnEndConfirm').addEventListener('click', async () => {
       sessionId: sessionState.currentSessionId || null, sessionName: sessionState.currentSessionName || '', sessionDate: sessionState.currentSessionDate || '',
       completedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    batch.delete(db.collection('pkl-queue-matches').doc(m.id));
-    [...m.team1, ...m.team2].forEach(p => { batch.update(db.collection('pkl-queue-participants').doc(p.participantId), releaseUpdate(p.participantId, m.id)); });
+    batch.delete(db.collection('ccpc-queue-matches').doc(m.id));
+    [...m.team1, ...m.team2].forEach(p => { batch.update(db.collection('ccpc-queue-participants').doc(p.participantId), releaseUpdate(p.participantId, m.id)); });
     await batch.commit();
-    await db.collection('pkl-queue-events').add({
+    await db.collection('ccpc-queue-events').add({
       type:'winner', matchId: m.matchId, bucket: m.bucket, court: m.court,
       team1: m.team1.map(p=>p.name), team2: m.team2.map(p=>p.name), winner, score1, score2,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2426,14 +2417,14 @@ document.getElementById('btnLogEditSave').addEventListener('click', async () => 
   const winner = score1>score2 ? 'team1' : 'team2';
   const btn = document.getElementById('btnLogEditSave');
   btn.disabled = true;
-  try { await db.collection('pkl-queue-logs').doc(logEditId).update({ score1, score2, winner }); logEditOverlay.classList.remove('show'); showToast('Match result updated.'); }
+  try { await db.collection('ccpc-queue-logs').doc(logEditId).update({ score1, score2, winner }); logEditOverlay.classList.remove('show'); showToast('Match result updated.'); }
   catch (err) { showToast('Could not update log: ' + err.message, true); }
   finally { btn.disabled = false; }
 });
 async function deleteLog(logId){
   const l = logs.find(x=>x.id===logId);
   if (!confirm(`Delete log ${l ? l.matchId : ''}? This cannot be undone.`)) return;
-  try { await db.collection('pkl-queue-logs').doc(logId).delete(); showToast('Log deleted.'); }
+  try { await db.collection('ccpc-queue-logs').doc(logId).delete(); showToast('Log deleted.'); }
   catch (err) { showToast('Delete failed: ' + err.message, true); }
 }
 
@@ -2464,18 +2455,18 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
       catch (e) { throw new Error('Could not auto-save the current session, so nothing was cleared. ' + e.message); }
     }
     const prev = sessionsList.find(x => x.id === sessionState.currentSessionId) || {};
-    const sessRef = await db.collection('pkl-queue-sessions').add({ name, date, eventName: name, location: prev.location || '', scoreType: prev.scoreType || 'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    const sessRef = await db.collection('ccpc-queue-sessions').add({ name, date, eventName: name, location: prev.location || '', scoreType: prev.scoreType || 'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
     const [partsSnap, matchesSnap, bucketsSnap] = await Promise.all([
-      db.collection('pkl-queue-participants').get(),
-      db.collection('pkl-queue-matches').get(),
-      db.collection('pkl-queue-buckets').get()
+      db.collection('ccpc-queue-participants').get(),
+      db.collection('ccpc-queue-matches').get(),
+      db.collection('ccpc-queue-buckets').get()
     ]);
     await Promise.all(partsSnap.docs.map(d => flushElapsed({ id:d.id, ...d.data() })));
     const batch = db.batch();
     partsSnap.forEach(d => batch.delete(d.ref));
     matchesSnap.forEach(d => batch.delete(d.ref));
     bucketsSnap.forEach(d => batch.delete(d.ref));
-    batch.set(db.collection('pkl-queue-session').doc('state'), { matchCounter: 0, partnerCounts:{}, opponentCounts:{}, courtsActiveAt: null, currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date }, { merge:true });
+    batch.set(db.collection('ccpc-queue-session').doc('state'), { matchCounter: 0, partnerCounts:{}, opponentCounts:{}, courtsActiveAt: null, currentSessionId: sessRef.id, currentSessionName: name, currentSessionDate: date }, { merge:true });
     await batch.commit();
     await displayRef.set({ showQueue: true, leaderboard: { show: false, buckets: [] } }, { merge: true });
     lastOptimizeUndo = null; document.getElementById('btnUndoOptimize').style.display = 'none';
@@ -2487,7 +2478,7 @@ document.getElementById('btnSessionStart').addEventListener('click', async () =>
 
 
 /* ================= SNAPSHOTS (save / view / restore a session) ================= */
-const SNAP_COL = 'pkl-queue-snapshots';
+const SNAP_COL = 'ccpc-queue-snapshots';
 let snapshotsList = [], snapBusy = false, snapViewId = null;
 db.collection(SNAP_COL).orderBy('savedAtMs','desc').limit(60).onSnapshot(snap => {
   snapshotsList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
@@ -2496,10 +2487,10 @@ db.collection(SNAP_COL).orderBy('savedAtMs','desc').limit(60).onSnapshot(snap =>
 
 async function readLiveState(){
   const [pSnap, mSnap, sSnap, bSnap] = await Promise.all([
-    db.collection('pkl-queue-participants').get(),
-    db.collection('pkl-queue-matches').get(),
-    db.collection('pkl-queue-session').doc('state').get(),
-    db.collection('pkl-queue-buckets').get()
+    db.collection('ccpc-queue-participants').get(),
+    db.collection('ccpc-queue-matches').get(),
+    db.collection('ccpc-queue-session').doc('state').get(),
+    db.collection('ccpc-queue-buckets').get()
   ]);
   return {
     buckets: bSnap.docs.map(d => ({ id:d.id, ...d.data() })),
@@ -2637,26 +2628,26 @@ async function restoreSnapshot(id){
 
     // make sure the session record exists
     if (s.sessionId && !sessionsList.find(x => x.id === s.sessionId)) {
-      await db.collection('pkl-queue-sessions').doc(s.sessionId).set({ name: s.sessionName || 'Restored session', date: s.sessionDate || '', eventName: s.sessionName || 'Restored session', location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('ccpc-queue-sessions').doc(s.sessionId).set({ name: s.sessionName || 'Restored session', date: s.sessionDate || '', eventName: s.sessionName || 'Restored session', location:'', scoreType:'SIDEOUT', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
     }
 
     const now = Date.now();
     const haveB = new Set((live.buckets || []).map(x => x.id));
     const restoreOps = [];
-    (s.buckets || []).forEach(bk => { if (!haveB.has(bk.id)) { const { id, ...data } = bk; haveB.add(id); restoreOps.push(b => b.set(db.collection('pkl-queue-buckets').doc(id), data)); } });
+    (s.buckets || []).forEach(bk => { if (!haveB.has(bk.id)) { const { id, ...data } = bk; haveB.add(id); restoreOps.push(b => b.set(db.collection('ccpc-queue-buckets').doc(id), data)); } });
     const legacyDefs = { singles:{ name:'Singles', mode:'singles' }, fun:{ name:'Fun Mode (Low)', mode:'doubles' }, competitive:{ name:'Competitive Mode (High)', mode:'doubles' } };
     new Set([...(s.participants || []).map(p => p.bucket), ...(s.matches || []).map(m => m.bucket)]).forEach(k => {
-      if (!haveB.has(k) && legacyDefs[k]) { haveB.add(k); restoreOps.push(b => b.set(db.collection('pkl-queue-buckets').doc(k), { ...legacyDefs[k], createdAtMs: now, createdAt: firebase.firestore.FieldValue.serverTimestamp() })); }
+      if (!haveB.has(k) && legacyDefs[k]) { haveB.add(k); restoreOps.push(b => b.set(db.collection('ccpc-queue-buckets').doc(k), { ...legacyDefs[k], createdAtMs: now, createdAt: firebase.firestore.FieldValue.serverTimestamp() })); }
     });
     const keepP = new Set((s.participants || []).map(p => p.id)), keepM = new Set((s.matches || []).map(m => m.id));
     const ops = [...restoreOps];
-    live.participants.filter(p => !keepP.has(p.id)).forEach(p => ops.push(b => b.delete(db.collection('pkl-queue-participants').doc(p.id))));
-    live.matches.filter(m => !keepM.has(m.id)).forEach(m => ops.push(b => b.delete(db.collection('pkl-queue-matches').doc(m.id))));
-    (s.participants || []).forEach(p => { const { id, ...data } = p; ops.push(b => b.set(db.collection('pkl-queue-participants').doc(id), { ...data, statusSince: now })); });
+    live.participants.filter(p => !keepP.has(p.id)).forEach(p => ops.push(b => b.delete(db.collection('ccpc-queue-participants').doc(p.id))));
+    live.matches.filter(m => !keepM.has(m.id)).forEach(m => ops.push(b => b.delete(db.collection('ccpc-queue-matches').doc(m.id))));
+    (s.participants || []).forEach(p => { const { id, ...data } = p; ops.push(b => b.set(db.collection('ccpc-queue-participants').doc(id), { ...data, statusSince: now })); });
     (s.matches || []).forEach(m => {
       const { id, ...data } = m;
       const onCourt = COURT_BUSY_STATUSES.includes(data.status);
-      ops.push(b => b.set(db.collection('pkl-queue-matches').doc(id), onCourt ? { ...data, status:'waiting', court:null, startedAt:null } : data));
+      ops.push(b => b.set(db.collection('ccpc-queue-matches').doc(id), onCourt ? { ...data, status:'waiting', court:null, startedAt:null } : data));
     });
     for (let i = 0; i < ops.length; i += 400) {
       const batch = db.batch();
@@ -2677,7 +2668,7 @@ async function restoreSnapshot(id){
     (s.matches || []).forEach(m => addTeams(m.team1 || [], m.team2 || []));
     Object.keys(rP).forEach(k => { P[k] = Math.max(P[k] || 0, rP[k]); });
     Object.keys(rO).forEach(k => { O[k] = Math.max(O[k] || 0, rO[k]); });
-    await db.collection('pkl-queue-session').doc('state').set({
+    await db.collection('ccpc-queue-session').doc('state').set({
       partnerCounts: P, opponentCounts: O,
       currentSessionId: s.sessionId || null, currentSessionName: s.sessionName || '', currentSessionDate: s.sessionDate || '',
       matchCounter: Math.max((live.state && live.state.matchCounter) || 0, s.matchCounter || 0)
@@ -2843,9 +2834,9 @@ document.getElementById('btnDsSave').addEventListener('click', async () => {
     if (!sess.id) { errEl.textContent = 'No active session yet. Start one with "New session" first.'; return; }
     const data = { name: sess.name, eventName, date, location: document.getElementById('dsLocation').value.trim(), scoreType: document.getElementById('dsScoreType').value };
     if (sess._virtual) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-    await db.collection('pkl-queue-sessions').doc(sess.id).set(data, { merge:true });
+    await db.collection('ccpc-queue-sessions').doc(sess.id).set(data, { merge:true });
     if (sess.id === sessionState.currentSessionId) {
-      await db.collection('pkl-queue-session').doc('state').set({ currentSessionDate: date }, { merge:true });
+      await db.collection('ccpc-queue-session').doc('state').set({ currentSessionDate: date }, { merge:true });
     }
     duprSettingsOverlay.classList.remove('show');
     showToast('DUPR export settings saved.');

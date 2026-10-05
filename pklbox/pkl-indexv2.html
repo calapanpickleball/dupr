@@ -706,12 +706,6 @@ function parseDupr(raw){
   return { ok:true, raw: rounded.toFixed(3), value: rounded };
 }
 function fmtNum(n){ return (Math.round(n*1000)/1000).toFixed(3); }
-/* A member's rating is their CURRENT DUPR (curDupr); NR counts as 3.000 for matchmaking */
-function memberCur(m){
-  const v = m ? m.curDupr : null;
-  if (v === undefined || v === null || v === '' || String(v).toUpperCase() === 'NR' || isNaN(Number(v))) return { value:3.0, raw:'NR' };
-  return { value:Number(v), raw:fmtNum(Number(v)) };
-}
 
 /* ================= Live data caches ================= */
 let allMembers = [];
@@ -1191,13 +1185,13 @@ memberSearch.addEventListener('input', () => {
   if (!q) { memberResults.classList.remove('show'); memberResults.innerHTML=''; return; }
   const matches = allMembers.filter(m => !excluded.has(m.id) && !chosen.has(m.id) && (m.name.toLowerCase().includes(q) || (m.duprId||'').toLowerCase().includes(q))).slice(0, 8);
   memberResults.innerHTML = matches.length ? matches.map(m => `
-      <div class="combo-item" data-id="${m.id}"><span>${escapeHtml(m.name)}</span><span style="color:var(--muted)">${memberCur(m).raw}</span></div>`).join('')
+      <div class="combo-item" data-id="${m.id}"><span>${escapeHtml(m.name)}</span><span style="color:var(--muted)">${fmtNum(m.curDupr)}</span></div>`).join('')
     : `<div class="combo-item" style="color:var(--muted);cursor:default;">No available members match.</div>`;
   memberResults.querySelectorAll('.combo-item[data-id]').forEach(el => {
     el.addEventListener('click', () => {
       const m = allMembers.find(x => x.id === el.dataset.id);
       if (!m || pendingMemberIds().has(m.id)) return;
-      pendingAdds.push({ sourceType:'member', memberId:m.id, name:m.name, duprId:m.duprId || '', dupr:memberCur(m).value, duprRaw:memberCur(m).raw });
+      pendingAdds.push({ sourceType:'member', memberId:m.id, name:m.name, duprId:m.duprId || '', dupr:m.curDupr, duprRaw:fmtNum(m.curDupr) });
       renderPending();
       memberSearch.value = ''; memberResults.classList.remove('show'); memberSearch.focus();
     });
